@@ -1,12 +1,15 @@
 import { timeOfDayOptions, type TimeOfDay } from './timeOfDay'
 import { terrainTypeColors, terrainTypeLabels, type TerrainType } from './terrainZones'
 import { historicalYears } from './historicalImagery'
+import { basemapOptions, usesSatelliteImagery, type BasemapStyle } from './basemap'
 import type { ElevationSample } from './elevation'
 import type { WeatherData } from './weather'
 import type { ElevationProfile } from './elevationProfile'
 import ElevationProfileChart from './ElevationProfileChart'
 
 interface Props {
+  basemap: BasemapStyle
+  onBasemapChange: (basemap: BasemapStyle) => void
   timeOfDay: TimeOfDay
   onTimeOfDayChange: (t: TimeOfDay) => void
   tourRunning: boolean
@@ -44,6 +47,8 @@ interface Props {
 const terrainTypes = Object.keys(terrainTypeLabels) as TerrainType[]
 
 export default function ControlsPanel({
+  basemap,
+  onBasemapChange,
   timeOfDay,
   onTimeOfDayChange,
   tourRunning,
@@ -103,6 +108,22 @@ export default function ControlsPanel({
           ) : (
             <span className="hint">Loading weather…</span>
           )}
+        </div>
+      </div>
+
+      <div className="control-group">
+        <span className="control-label">Basemap</span>
+        <div className="button-row">
+          {basemapOptions.map((opt) => (
+            <button
+              key={opt.value}
+              className={`chip ${basemap === opt.value ? 'chip-active' : ''}`}
+              onClick={() => onBasemapChange(opt.value)}
+              disabled={tourRunning}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -268,28 +289,23 @@ export default function ControlsPanel({
         )}
       </div>
 
-      <div className="control-group">
-        <span className="control-label">Time travel</span>
-        <div className="button-row">
-          <button
-            className={`chip ${historicalYear === null ? 'chip-active' : ''}`}
-            onClick={() => onHistoricalYearChange(null)}
-            disabled={tourRunning}
-          >
-            Now
-          </button>
-          {historicalYears.map((hy) => (
-            <button
-              key={hy.year}
-              className={`chip ${historicalYear === hy.year ? 'chip-active' : ''}`}
-              onClick={() => onHistoricalYearChange(hy.year)}
-              disabled={tourRunning}
-            >
-              {hy.year}
-            </button>
-          ))}
+      {usesSatelliteImagery(basemap) && (
+        <div className="control-group">
+          <span className="control-label">Satellite imagery year</span>
+          <div className="button-row">
+            {historicalYears.map((hy) => (
+              <button
+                key={hy.year}
+                className={`chip ${historicalYear === hy.year ? 'chip-active' : ''}`}
+                onClick={() => onHistoricalYearChange(hy.year)}
+                disabled={tourRunning}
+              >
+                {hy.year}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="control-group">
         <span className="control-label">Share</span>

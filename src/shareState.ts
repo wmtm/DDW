@@ -1,4 +1,5 @@
 import type { TimeOfDay } from './timeOfDay'
+import type { BasemapStyle } from './basemap'
 
 export interface ShareState {
   longitude?: number
@@ -11,9 +12,11 @@ export interface ShareState {
   historicalYear?: number | null
   sunMode?: boolean
   sunDateTime?: string
+  basemap?: BasemapStyle
 }
 
 const TIME_OF_DAY_VALUES: TimeOfDay[] = ['dawn', 'noon', 'dusk', 'night']
+const BASEMAP_VALUES: BasemapStyle[] = ['satellite', 'map', 'hybrid', 'terrain']
 
 function parseNumber(value: string | null): number | undefined {
   if (value === null) return undefined
@@ -25,6 +28,7 @@ export function parseShareStateFromUrl(): ShareState {
   const params = new URLSearchParams(window.location.search)
   const timeOfDayParam = params.get('t')
   const historicalYearParam = params.get('hy')
+  const basemapParam = params.get('bm')
 
   return {
     longitude: parseNumber(params.get('lng')),
@@ -40,6 +44,10 @@ export function parseShareStateFromUrl(): ShareState {
     historicalYear: historicalYearParam ? (parseNumber(historicalYearParam) ?? null) : undefined,
     sunMode: params.has('sun') ? params.get('sun') === '1' : undefined,
     sunDateTime: params.get('sdt') ?? undefined,
+    basemap:
+      basemapParam && BASEMAP_VALUES.includes(basemapParam as BasemapStyle)
+        ? (basemapParam as BasemapStyle)
+        : undefined,
   }
 }
 
@@ -57,6 +65,7 @@ export function buildShareUrl(state: ShareState): string {
   }
   if (state.sunMode !== undefined) params.set('sun', state.sunMode ? '1' : '0')
   if (state.sunDateTime) params.set('sdt', state.sunDateTime)
+  if (state.basemap) params.set('bm', state.basemap)
 
   return `${window.location.origin}${window.location.pathname}?${params.toString()}`
 }

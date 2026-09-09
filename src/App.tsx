@@ -18,6 +18,15 @@ import { haversineDistanceMeters } from './geo'
 import { estateBoundary } from './boundary'
 import { terrainZones, terrainTypeColors, type TerrainZone } from './terrainZones'
 import { historicalYears, waybackTileUrl } from './historicalImagery'
+import {
+  landcoverLayerIds,
+  waterLayerIds,
+  roadLayerIds,
+  buildingLayerIds,
+  layerVisibilityFor,
+  usesSatelliteImagery,
+  type BasemapStyle,
+} from './basemap'
 import { sampleElevation, type ElevationSample } from './elevation'
 import { applySunLight, mauritiusLocalToUtcDate, utcDateToMauritiusLocalInputValue } from './sunPosition'
 import { fetchCurrentWeather, type WeatherData } from './weather'
@@ -91,6 +100,11 @@ export default function App() {
   const [trailActive, setTrailActive] = useState(false)
   const [trailPoints, setTrailPoints] = useState<MeasurePoint[]>([])
   const [slopeContrast, setSlopeContrast] = useState(false)
+  const [basemap, setBasemap] = useState<BasemapStyle>(shared.basemap ?? 'satellite')
+
+  const handleBasemapChange = useCallback((next: BasemapStyle) => {
+    setBasemap(next)
+  }, [])
 
   const handleTimeOfDayChange = useCallback((t: TimeOfDay) => {
     setTimeOfDay(t)
@@ -228,6 +242,25 @@ export default function App() {
   }, [slopeContrast, mapReady])
 
   useEffect(() => {
+    if (usesSatelliteImagery(basemap)) {
+      setHistoricalYear((y) => y ?? historicalYears[historicalYears.length - 1].year)
+    } else {
+      setHistoricalYear(null)
+    }
+  }, [basemap])
+
+  useEffect(() => {
+    const map = mapRef.current?.getMap()
+    if (!map || !mapReady) return
+
+    const visibility = layerVisibilityFor(basemap)
+    for (const id of landcoverLayerIds) map.setLayoutProperty(id, 'visibility', visibility.landcover)
+    for (const id of waterLayerIds) map.setLayoutProperty(id, 'visibility', visibility.water)
+    for (const id of roadLayerIds) map.setLayoutProperty(id, 'visibility', visibility.roads)
+    for (const id of buildingLayerIds) map.setLayoutProperty(id, 'visibility', visibility.buildings)
+  }, [basemap, mapReady])
+
+  useEffect(() => {
     let cancelled = false
 
     const load = () => {
@@ -276,6 +309,7 @@ export default function App() {
       historicalYear,
       sunMode,
       sunDateTime: sunDateTime.toISOString(),
+      basemap,
     })
 
     setShareUrl(url)
@@ -284,7 +318,7 @@ export default function App() {
       ?.writeText(url)
       .then(() => setShareCopied(true))
       .catch(() => {})
-  }, [timeOfDay, showOverlay, historicalYear, sunMode, sunDateTime])
+  }, [timeOfDay, showOverlay, historicalYear, sunMode, sunDateTime, basemap])
 
   const trailProfile = useMemo(() => computeElevationProfile(trailPoints), [trailPoints])
 
@@ -544,6 +578,8 @@ export default function App() {
       )}
 
       <ControlsPanel
+        basemap={basemap}
+        onBasemapChange={handleBasemapChange}
         timeOfDay={timeOfDay}
         onTimeOfDayChange={handleTimeOfDayChange}
         tourRunning={tourRunning}
