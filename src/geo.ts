@@ -1,3 +1,14 @@
+/** Converts a degrees/minutes/seconds coordinate (as read off a GPS device) to decimal degrees. */
+export function dmsToDecimal(
+  degrees: number,
+  minutes: number,
+  seconds: number,
+  hemisphere: 'N' | 'S' | 'E' | 'W',
+): number {
+  const sign = hemisphere === 'S' || hemisphere === 'W' ? -1 : 1
+  return sign * (degrees + minutes / 60 + seconds / 3600)
+}
+
 export function haversineDistanceMeters(a: [number, number], b: [number, number]): number {
   const R = 6371000
   const toRad = (deg: number) => (deg * Math.PI) / 180

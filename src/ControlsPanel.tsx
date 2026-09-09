@@ -14,6 +14,10 @@ interface Props {
   onTimeOfDayChange: (t: TimeOfDay) => void
   tourRunning: boolean
   onToggleTour: () => void
+  chuteCount: number
+  landmarkTourActive: boolean
+  onStartLandmarkTour: () => void
+  onExitLandmarkTour: () => void
   measureActive: boolean
   onToggleMeasure: () => void
   measureResult: { distanceMeters: number; elevationDeltaMeters: number | null } | null
@@ -53,6 +57,10 @@ export default function ControlsPanel({
   onTimeOfDayChange,
   tourRunning,
   onToggleTour,
+  chuteCount,
+  landmarkTourActive,
+  onStartLandmarkTour,
+  onExitLandmarkTour,
   measureActive,
   onToggleMeasure,
   measureResult,
@@ -119,7 +127,7 @@ export default function ControlsPanel({
               key={opt.value}
               className={`chip ${basemap === opt.value ? 'chip-active' : ''}`}
               onClick={() => onBasemapChange(opt.value)}
-              disabled={tourRunning}
+              disabled={tourRunning || landmarkTourActive}
             >
               {opt.label}
             </button>
@@ -135,7 +143,7 @@ export default function ControlsPanel({
               key={opt.value}
               className={`chip ${timeOfDay === opt.value ? 'chip-active' : ''}`}
               onClick={() => onTimeOfDayChange(opt.value)}
-              disabled={tourRunning || sunMode}
+              disabled={tourRunning || sunMode || landmarkTourActive}
             >
               {opt.label}
             </button>
@@ -147,7 +155,7 @@ export default function ControlsPanel({
         <button
           className={`action-button ${sunMode ? 'chip-active' : ''}`}
           onClick={onToggleSunMode}
-          disabled={tourRunning}
+          disabled={tourRunning || landmarkTourActive}
         >
           {sunMode ? 'Disable real sun position' : 'Use real sun position'}
         </button>
@@ -175,16 +183,29 @@ export default function ControlsPanel({
       </div>
 
       <div className="control-group">
-        <button className="action-button" onClick={onToggleTour}>
+        <button className="action-button" onClick={onToggleTour} disabled={landmarkTourActive}>
           {tourRunning ? 'Stop tour' : 'Start fly-through tour'}
         </button>
       </div>
 
       <div className="control-group">
         <button
+          className={`action-button ${landmarkTourActive ? 'chip-active' : ''}`}
+          onClick={landmarkTourActive ? onExitLandmarkTour : onStartLandmarkTour}
+          disabled={tourRunning || chuteCount === 0}
+        >
+          {landmarkTourActive ? 'Exit chute tour' : 'Visit the chutes'}
+        </button>
+        <span className="hint">
+          {chuteCount} chute{chuteCount === 1 ? '' : 's'} recorded
+        </span>
+      </div>
+
+      <div className="control-group">
+        <button
           className={`action-button ${measureActive ? 'chip-active' : ''}`}
           onClick={onToggleMeasure}
-          disabled={tourRunning || trailActive}
+          disabled={tourRunning || trailActive || landmarkTourActive}
         >
           {measureActive ? 'Exit measure mode' : 'Measure distance'}
         </button>
@@ -211,7 +232,7 @@ export default function ControlsPanel({
         <button
           className={`action-button ${trailActive ? 'chip-active' : ''}`}
           onClick={onToggleTrail}
-          disabled={tourRunning || measureActive}
+          disabled={tourRunning || measureActive || landmarkTourActive}
         >
           {trailActive ? 'Finish trail' : 'Trail elevation profile'}
         </button>
@@ -298,7 +319,7 @@ export default function ControlsPanel({
                 key={hy.year}
                 className={`chip ${historicalYear === hy.year ? 'chip-active' : ''}`}
                 onClick={() => onHistoricalYearChange(hy.year)}
-                disabled={tourRunning}
+                disabled={tourRunning || landmarkTourActive}
               >
                 {hy.year}
               </button>

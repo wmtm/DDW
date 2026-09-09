@@ -33,7 +33,9 @@ import { fetchCurrentWeather, type WeatherData } from './weather'
 import { buildShareUrl, parseShareStateFromUrl } from './shareState'
 import { computeElevationProfile } from './elevationProfile'
 import { flyToEstate } from './cameraMotion'
+import { landmarks, landmarkCategoryColors, landmarkCategoryLabels, type Landmark } from './landmarks'
 import ControlsPanel from './ControlsPanel'
+import LandmarkTourCard from './LandmarkTourCard'
 import './App.css'
 
 interface MeasurePoint {
@@ -101,9 +103,70 @@ export default function App() {
   const [trailPoints, setTrailPoints] = useState<MeasurePoint[]>([])
   const [slopeContrast, setSlopeContrast] = useState(false)
   const [basemap, setBasemap] = useState<BasemapStyle>(shared.basemap ?? 'satellite')
+  const [selectedLandmark, setSelectedLandmark] = useState<Landmark | null>(null)
+  const [landmarkTourIndex, setLandmarkTourIndex] = useState<number | null>(null)
+
+  const chuteLandmarks = useMemo(
+    () =>
+      landmarks
+        .filter((l) => l.category === 'mirador')
+        .sort((a, b) => (a.number ?? 0) - (b.number ?? 0)),
+    [],
+  )
+  const currentTourLandmark = landmarkTourIndex !== null ? chuteLandmarks[landmarkTourIndex] : null
 
   const handleBasemapChange = useCallback((next: BasemapStyle) => {
     setBasemap(next)
+  }, [])
+
+  const flyToLandmark = useCallback((landmark: Landmark) => {
+    const map = mapRef.current?.getMap()
+    if (!map) return
+    flyToEstate(
+      map,
+      {
+        center: [landmark.longitude, landmark.latitude],
+        zoom: Math.max(map.getZoom(), 17.5),
+        pitch: 58,
+        bearing: map.getBearing(),
+      },
+      1400,
+    )
+  }, [])
+
+  const handleStartLandmarkTour = useCallback(() => {
+    if (chuteLandmarks.length === 0) return
+    setSelected(null)
+    setSelectedZone(null)
+    setSelectedLandmark(null)
+    setMeasureActive(false)
+    setTrailActive(false)
+    cancelledRef.current = true
+    setTourRunning(false)
+    setLandmarkTourIndex(0)
+    flyToLandmark(chuteLandmarks[0])
+  }, [chuteLandmarks, flyToLandmark])
+
+  const handleLandmarkTourNext = useCallback(() => {
+    setLandmarkTourIndex((i) => {
+      if (i === null) return i
+      const next = Math.min(i + 1, chuteLandmarks.length - 1)
+      flyToLandmark(chuteLandmarks[next])
+      return next
+    })
+  }, [chuteLandmarks, flyToLandmark])
+
+  const handleLandmarkTourPrevious = useCallback(() => {
+    setLandmarkTourIndex((i) => {
+      if (i === null) return i
+      const prev = Math.max(i - 1, 0)
+      flyToLandmark(chuteLandmarks[prev])
+      return prev
+    })
+  }, [chuteLandmarks, flyToLandmark])
+
+  const handleExitLandmarkTour = useCallback(() => {
+    setLandmarkTourIndex(null)
   }, [])
 
   const handleTimeOfDayChange = useCallback((t: TimeOfDay) => {
@@ -126,6 +189,7 @@ export default function App() {
     setSelectedZone(null)
     setMeasureActive(false)
     setTrailActive(false)
+    setLandmarkTourIndex(null)
     cancelledRef.current = false
     setTourRunning(true)
     runTour(map, cancelledRef).finally(() => setTourRunning(false))
@@ -135,6 +199,7 @@ export default function App() {
     setMeasureActive((active) => !active)
     setMeasurePoints([])
     setTrailActive(false)
+    setLandmarkTourIndex(null)
   }, [])
 
   const handleClearMeasure = useCallback(() => {
@@ -148,6 +213,7 @@ export default function App() {
         setTrailPoints([])
         setMeasureActive(false)
         setMeasurePoints([])
+        setLandmarkTourIndex(null)
       }
       return next
     })
@@ -516,6 +582,54 @@ export default function App() {
         </Popup>
       )}
 
+      {landmarks.map((landmark) => (
+        <Marker
+          key={landmark.id}
+          longitude={landmark.longitude}
+          latitude={landmark.latitude}
+          anchor="bottom"
+          onClick={(e) => {
+            e.originalEvent.stopPropagation()
+            setSelectedLandmark(landmark)
+            flyToLandmark(landmark)
+          }}
+        >
+          <div
+            className="landmark-pin"
+            style={{ background: landmarkCategoryColors[landmark.category] }}
+            title={landmark.name}
+          >
+            {landmark.number !== null && <span className="landmark-pin-number">{landmark.number}</span>}
+          </div>
+        </Marker>
+      ))}
+
+      {selectedLandmark && (
+        <Popup
+          longitude={selectedLandmark.longitude}
+          latitude={selectedLandmark.latitude}
+          anchor="top"
+          onClose={() => setSelectedLandmark(null)}
+          closeOnClick={false}
+        >
+          <strong>
+            {selectedLandmark.number !== null ? `Chute ${selectedLandmark.number} — ` : ''}
+            {selectedLandmark.name}
+          </strong>
+          <p>{landmarkCategoryLabels[selectedLandmark.category]}</p>
+          <p>{selectedLandmark.description}</p>
+          {selectedLandmark.photos.map((photo, i) => (
+            <img
+              key={i}
+              className="landmark-popup-photo"
+              src={photo.src}
+              alt={photo.caption ?? selectedLandmark.name}
+              title={photo.caption}
+            />
+          ))}
+        </Popup>
+      )}
+
       {measurePoints.map((p, i) => (
         <Marker key={i} longitude={p.lngLat[0]} latitude={p.lngLat[1]} anchor="center">
           <div className="measure-pin" />
@@ -577,6 +691,17 @@ export default function App() {
         </Source>
       )}
 
+      {currentTourLandmark && (
+        <LandmarkTourCard
+          landmark={currentTourLandmark}
+          index={landmarkTourIndex!}
+          total={chuteLandmarks.length}
+          onNext={handleLandmarkTourNext}
+          onPrevious={handleLandmarkTourPrevious}
+          onExit={handleExitLandmarkTour}
+        />
+      )}
+
       <ControlsPanel
         basemap={basemap}
         onBasemapChange={handleBasemapChange}
@@ -584,6 +709,10 @@ export default function App() {
         onTimeOfDayChange={handleTimeOfDayChange}
         tourRunning={tourRunning}
         onToggleTour={handleToggleTour}
+        chuteCount={chuteLandmarks.length}
+        landmarkTourActive={landmarkTourIndex !== null}
+        onStartLandmarkTour={handleStartLandmarkTour}
+        onExitLandmarkTour={handleExitLandmarkTour}
         measureActive={measureActive}
         onToggleMeasure={handleToggleMeasure}
         measureResult={measureResult}
