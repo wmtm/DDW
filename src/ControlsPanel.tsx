@@ -271,6 +271,12 @@ export default function ControlsPanel({
           </div>
         )}
       </div>
+
+      <div className="control-group">
+        <a className="action-button leaderboard-link" href="#/leaderboard">
+          2026 Gros Cerf leaderboard
+        </a>
+      </div>
     </div>
   )
 }

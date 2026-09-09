@@ -333,6 +333,12 @@
   cursor: not-allowed;
 }
 
+.leaderboard-link {
+  display: block;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
 .hint {
   font-size: 11px;
   opacity: 0.7;

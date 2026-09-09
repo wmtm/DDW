@@ -1,0 +1,89 @@
+.leaderboard-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #14100c;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 16px;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+  color: #f2f2f2;
+}
+
+.leaderboard-card {
+  width: min(680px, 100%);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 28px 32px 36px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+.leaderboard-back {
+  display: inline-block;
+  color: #6db3ff;
+  font-size: 13px;
+  text-decoration: none;
+  margin-bottom: 20px;
+}
+
+.leaderboard-back:hover {
+  text-decoration: underline;
+}
+
+.leaderboard-card h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.leaderboard-card h2 {
+  margin: 4px 0 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffd166;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.leaderboard-empty {
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.leaderboard-table th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.leaderboard-table td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.leaderboard-table td:first-child,
+.leaderboard-table th:first-child {
+  width: 60px;
+}
+
+.leaderboard-table td:last-child,
+.leaderboard-table th:last-child {
+  width: 60px;
+}
+
+.leaderboard-row-first td {
+  color: #ffd166;
+  font-weight: 700;
+}
