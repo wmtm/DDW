@@ -3,8 +3,6 @@ import { historicalYears, type ImagerySelection } from './historicalImagery'
 import { basemapOptions, usesSatelliteImagery, type BasemapStyle } from './basemap'
 import type { ElevationSample } from './elevation'
 import type { WeatherData } from './weather'
-import type { ElevationProfile } from './elevationProfile'
-import ElevationProfileChart from './ElevationProfileChart'
 import DateTimeWidget from './DateTimeWidget'
 
 interface Props {
@@ -35,12 +33,6 @@ interface Props {
   onGenerateShareLink: () => void
   shareUrl: string | null
   shareCopied: boolean
-  trailActive: boolean
-  onToggleTrail: () => void
-  trailPointCount: number
-  trailProfile: ElevationProfile
-  onClearTrail: () => void
-  onCopyTrailBoundary: () => void
   slopeContrast: boolean
   onToggleSlopeContrast: () => void
 }
@@ -75,12 +67,6 @@ export default function ControlsPanel({
   onGenerateShareLink,
   shareUrl,
   shareCopied,
-  trailActive,
-  onToggleTrail,
-  trailPointCount,
-  trailProfile,
-  onClearTrail,
-  onCopyTrailBoundary,
   slopeContrast,
   onToggleSlopeContrast,
 }: Props) {
@@ -154,7 +140,7 @@ export default function ControlsPanel({
         <button
           className={`action-button ${measureActive ? 'chip-active' : ''}`}
           onClick={onToggleMeasure}
-          disabled={tourRunning || trailActive || landmarkTourActive}
+          disabled={tourRunning || landmarkTourActive}
         >
           {measureActive ? 'Exit measure mode' : 'Measure distance'}
         </button>
@@ -190,37 +176,6 @@ export default function ControlsPanel({
             <button className="clear-button" onClick={onClearMeasure}>
               Clear
             </button>
-          </div>
-        )}
-      </div>
-
-      <div className="control-group">
-        <button
-          className={`action-button ${trailActive ? 'chip-active' : ''}`}
-          onClick={onToggleTrail}
-          disabled={tourRunning || measureActive || landmarkTourActive}
-        >
-          {trailActive ? 'Finish trail' : 'Trail elevation profile'}
-        </button>
-        {trailActive && trailPointCount === 0 && (
-          <span className="hint">Click along a path to build a profile</span>
-        )}
-        {trailPointCount >= 2 && (
-          <div className="trail-result">
-            <ElevationProfileChart profile={trailProfile} />
-            <div>Length: {formatDistance(trailProfile.totalDistanceMeters)}</div>
-            <div>
-              Gain {Math.round(trailProfile.totalGainMeters)} m · Loss{' '}
-              {Math.round(trailProfile.totalLossMeters)} m
-            </div>
-            <button className="clear-button" onClick={onClearTrail}>
-              Clear
-            </button>
-            {trailPointCount >= 3 && (
-              <button className="clear-button" onClick={onCopyTrailBoundary}>
-                Copy boundary coordinates
-              </button>
-            )}
           </div>
         )}
       </div>

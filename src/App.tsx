@@ -29,7 +29,6 @@ import {
 import { sampleElevation, type ElevationSample } from './elevation'
 import { fetchCurrentWeather, type WeatherData } from './weather'
 import { buildShareUrl, parseShareStateFromUrl } from './shareState'
-import { computeElevationProfile } from './elevationProfile'
 import { flyToEstate } from './cameraMotion'
 import { landmarks, landmarkCategoryColors, landmarkCategoryLabels, type Landmark } from './landmarks'
 import ControlsPanel from './ControlsPanel'
@@ -94,8 +93,6 @@ export default function App() {
   const [weatherError, setWeatherError] = useState<string | null>(null)
   const [shareUrl, setShareUrl] = useState<string | null>(null)
   const [shareCopied, setShareCopied] = useState(false)
-  const [trailActive, setTrailActive] = useState(false)
-  const [trailPoints, setTrailPoints] = useState<MeasurePoint[]>([])
   const [slopeContrast, setSlopeContrast] = useState(false)
   const [basemap, setBasemap] = useState<BasemapStyle>(shared.basemap ?? 'satellite')
   const [selectedLandmark, setSelectedLandmark] = useState<Landmark | null>(null)
@@ -137,7 +134,6 @@ export default function App() {
     setSelectedLandmark(null)
     setOpenPopupPhotoIndex(null)
     setMeasureActive(false)
-    setTrailActive(false)
     cancelledRef.current = true
     setTourRunning(false)
     setLandmarkTourIndex(0)
@@ -179,7 +175,6 @@ export default function App() {
     setSelected(null)
     setSelectedZone(null)
     setMeasureActive(false)
-    setTrailActive(false)
     setLandmarkTourIndex(null)
     cancelledRef.current = false
     setTourRunning(true)
@@ -190,7 +185,6 @@ export default function App() {
     setMeasureActive((active) => !active)
     setMeasurePoints([])
     setMeasureClosed(false)
-    setTrailActive(false)
     setLandmarkTourIndex(null)
   }, [])
 
@@ -208,23 +202,6 @@ export default function App() {
     setMeasureClosed(true)
   }, [])
 
-  const handleToggleTrail = useCallback(() => {
-    setTrailActive((active) => {
-      const next = !active
-      if (next) {
-        setTrailPoints([])
-        setMeasureActive(false)
-        setMeasurePoints([])
-        setLandmarkTourIndex(null)
-      }
-      return next
-    })
-  }, [])
-
-  const handleClearTrail = useCallback(() => {
-    setTrailPoints([])
-  }, [])
-
   const handleToggleSlopeContrast = useCallback(() => {
     setSlopeContrast((active) => !active)
   }, [])
@@ -240,19 +217,11 @@ export default function App() {
         return
       }
 
-      if (trailActive) {
-        const map = e.target
-        const elevation = map.queryTerrainElevation(e.lngLat)
-        const point: MeasurePoint = { lngLat: [e.lngLat.lng, e.lngLat.lat], elevation }
-        setTrailPoints((prev) => [...prev, point])
-        return
-      }
-
       const zoneId = e.features?.[0]?.properties?.id as string | undefined
       const zone = zoneId ? terrainZones.find((z) => z.id === zoneId) : undefined
       setSelectedZone(zone ?? null)
     },
-    [measureActive, measureClosed, trailActive],
+    [measureActive, measureClosed],
   )
 
   const handleMapMouseMove = useCallback((e: MapLayerMouseEvent) => {
@@ -274,15 +243,6 @@ export default function App() {
   const handleHistoricalYearChange = useCallback((year: ImagerySelection) => {
     setHistoricalYear(year)
   }, [])
-
-  const handleCopyTrailAsBoundary = useCallback(() => {
-    if (trailPoints.length < 3) return
-    const coords = trailPoints.map((p) => p.lngLat)
-    const first = coords[0]
-    const last = coords[coords.length - 1]
-    if (first[0] !== last[0] || first[1] !== last[1]) coords.push(first)
-    navigator.clipboard?.writeText(JSON.stringify(coords)).catch(() => {})
-  }, [trailPoints])
 
   useEffect(() => {
     const map = mapRef.current?.getMap()
@@ -368,8 +328,6 @@ export default function App() {
       .catch(() => {})
   }, [showOverlay, historicalYear, basemap])
 
-  const trailProfile = useMemo(() => computeElevationProfile(trailPoints), [trailPoints])
-
   const imageryTileUrl =
     historicalYear === 'current'
       ? currentImageryTileUrl()
@@ -428,7 +386,7 @@ export default function App() {
         }
       }}
       interactiveLayerIds={showOverlay ? ['terrain-zones-fill'] : []}
-      cursor={measureActive || trailActive ? 'crosshair' : 'grab'}
+      cursor={measureActive ? 'crosshair' : 'grab'}
     >
       <FullscreenControl position="top-right" />
       <NavigationControl position="top-right" visualizePitch />
@@ -701,36 +659,6 @@ export default function App() {
         </Source>
       )}
 
-      {trailPoints.map((p, i) => (
-        <Marker key={i} longitude={p.lngLat[0]} latitude={p.lngLat[1]} anchor="center">
-          <div className="trail-pin" />
-        </Marker>
-      ))}
-
-      {trailPoints.length >= 2 && (
-        <Source
-          id="trail-line"
-          type="geojson"
-          data={{
-            type: 'Feature',
-            properties: {},
-            geometry: {
-              type: 'LineString',
-              coordinates: trailPoints.map((p) => p.lngLat),
-            },
-          }}
-        >
-          <Layer
-            id="trail-line-layer"
-            type="line"
-            paint={{
-              'line-color': '#4ade80',
-              'line-width': 3,
-            }}
-          />
-        </Source>
-      )}
-
       {currentTourLandmark && (
         <LandmarkTourCard
           landmark={currentTourLandmark}
@@ -770,12 +698,6 @@ export default function App() {
         onGenerateShareLink={handleGenerateShareLink}
         shareUrl={shareUrl}
         shareCopied={shareCopied}
-        trailActive={trailActive}
-        onToggleTrail={handleToggleTrail}
-        trailPointCount={trailPoints.length}
-        trailProfile={trailProfile}
-        onClearTrail={handleClearTrail}
-        onCopyTrailBoundary={handleCopyTrailAsBoundary}
         slopeContrast={slopeContrast}
         onToggleSlopeContrast={handleToggleSlopeContrast}
       />
