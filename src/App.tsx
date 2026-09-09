@@ -47,6 +47,8 @@ const boundaryGeometry: GeoJSON.Feature = {
 }
 
 const HOVER_THROTTLE_MS = 100
+const ZOOM_THROTTLE_MS = 100
+const LANDMARK_NUMBER_MIN_ZOOM = 16
 const ESTATE_CENTER = { longitude: 57.368, latitude: -20.302 }
 
 export default function App() {
@@ -55,6 +57,7 @@ export default function App() {
   const hasFlownInRef = useRef(false)
 
   const lastHoverRef = useRef(0)
+  const lastZoomRef = useRef(0)
 
   const shared = useMemo(() => parseShareStateFromUrl(), [])
 
@@ -87,6 +90,7 @@ export default function App() {
   const [selectedLandmark, setSelectedLandmark] = useState<Landmark | null>(null)
   const [openPopupPhotoIndex, setOpenPopupPhotoIndex] = useState<number | null>(null)
   const [landmarkTourIndex, setLandmarkTourIndex] = useState<number | null>(null)
+  const [zoom, setZoom] = useState(Math.max(targetView.zoom - 3, 5))
 
   const chuteLandmarks = useMemo(
     () =>
@@ -213,6 +217,14 @@ export default function App() {
 
   const handleMapMouseLeave = useCallback(() => {
     setHoverElevation(null)
+  }, [])
+
+  const handleMapZoom = useCallback(() => {
+    const now = performance.now()
+    if (now - lastZoomRef.current < ZOOM_THROTTLE_MS) return
+    lastZoomRef.current = now
+    const map = mapRef.current?.getMap()
+    if (map) setZoom(map.getZoom())
   }, [])
 
   const handleToggleOverlay = useCallback(() => {
@@ -347,6 +359,7 @@ export default function App() {
       onClick={handleMapClick}
       onMouseMove={handleMapMouseMove}
       onMouseOut={handleMapMouseLeave}
+      onZoom={handleMapZoom}
       onLoad={() => {
         setMapReady(true)
         const map = mapRef.current?.getMap()
@@ -477,7 +490,9 @@ export default function App() {
             style={{ background: landmarkCategoryColors[landmark.category] }}
             title={landmark.name}
           >
-            {landmark.number !== null && <span className="landmark-pin-number">{landmark.number}</span>}
+            {landmark.number !== null && zoom >= LANDMARK_NUMBER_MIN_ZOOM && (
+              <span className="landmark-pin-number">{landmark.number}</span>
+            )}
           </div>
         </Marker>
       ))}
