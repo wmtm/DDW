@@ -21,3 +21,11 @@ export const historicalYears: HistoricalYear[] = [
 export function waybackTileUrl(releaseNum: number): string {
   return `https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/${releaseNum}/{z}/{y}/{x}`
 }
+
+/** Live/current Esri World Imagery — more recent than any dated Wayback snapshot above. */
+export function currentImageryTileUrl(): string {
+  return 'https://server.arcgis.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+}
+
+/** Which satellite imagery snapshot is selected: a specific archive year, the live feed, or none. */
+export type ImagerySelection = number | 'current' | null

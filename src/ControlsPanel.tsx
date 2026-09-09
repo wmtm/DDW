@@ -1,6 +1,6 @@
 import { timeOfDayOptions, type TimeOfDay } from './timeOfDay'
 import { terrainTypeColors, terrainTypeLabels, type TerrainType } from './terrainZones'
-import { historicalYears } from './historicalImagery'
+import { historicalYears, type ImagerySelection } from './historicalImagery'
 import { basemapOptions, usesSatelliteImagery, type BasemapStyle } from './basemap'
 import type { ElevationSample } from './elevation'
 import type { WeatherData } from './weather'
@@ -25,8 +25,8 @@ interface Props {
   showOverlay: boolean
   onToggleOverlay: () => void
   hoverElevation: ElevationSample | null
-  historicalYear: number | null
-  onHistoricalYearChange: (year: number | null) => void
+  historicalYear: ImagerySelection
+  onHistoricalYearChange: (year: ImagerySelection) => void
   sunMode: boolean
   onToggleSunMode: () => void
   sunDateTimeValue: string
@@ -44,6 +44,7 @@ interface Props {
   trailPointCount: number
   trailProfile: ElevationProfile
   onClearTrail: () => void
+  onCopyTrailBoundary: () => void
   slopeContrast: boolean
   onToggleSlopeContrast: () => void
 }
@@ -87,6 +88,7 @@ export default function ControlsPanel({
   trailPointCount,
   trailProfile,
   onClearTrail,
+  onCopyTrailBoundary,
   slopeContrast,
   onToggleSlopeContrast,
 }: Props) {
@@ -250,6 +252,11 @@ export default function ControlsPanel({
             <button className="clear-button" onClick={onClearTrail}>
               Clear
             </button>
+            {trailPointCount >= 3 && (
+              <button className="clear-button" onClick={onCopyTrailBoundary}>
+                Copy boundary coordinates
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -314,6 +321,13 @@ export default function ControlsPanel({
         <div className="control-group">
           <span className="control-label">Satellite imagery year</span>
           <div className="button-row">
+            <button
+              className={`chip ${historicalYear === 'current' ? 'chip-active' : ''}`}
+              onClick={() => onHistoricalYearChange('current')}
+              disabled={tourRunning || landmarkTourActive}
+            >
+              Now
+            </button>
             {historicalYears.map((hy) => (
               <button
                 key={hy.year}

@@ -1,5 +1,6 @@
 import type { TimeOfDay } from './timeOfDay'
 import type { BasemapStyle } from './basemap'
+import type { ImagerySelection } from './historicalImagery'
 
 export interface ShareState {
   longitude?: number
@@ -9,7 +10,7 @@ export interface ShareState {
   bearing?: number
   timeOfDay?: TimeOfDay
   showOverlay?: boolean
-  historicalYear?: number | null
+  historicalYear?: ImagerySelection
   sunMode?: boolean
   sunDateTime?: string
   basemap?: BasemapStyle
@@ -41,7 +42,12 @@ export function parseShareStateFromUrl(): ShareState {
         ? (timeOfDayParam as TimeOfDay)
         : undefined,
     showOverlay: params.has('ov') ? params.get('ov') === '1' : undefined,
-    historicalYear: historicalYearParam ? (parseNumber(historicalYearParam) ?? null) : undefined,
+    historicalYear:
+      historicalYearParam === 'current'
+        ? 'current'
+        : historicalYearParam
+          ? (parseNumber(historicalYearParam) ?? null)
+          : undefined,
     sunMode: params.has('sun') ? params.get('sun') === '1' : undefined,
     sunDateTime: params.get('sdt') ?? undefined,
     basemap:

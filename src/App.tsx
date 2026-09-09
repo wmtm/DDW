@@ -17,7 +17,7 @@ import { runTour } from './tour'
 import { haversineDistanceMeters } from './geo'
 import { estateBoundary } from './boundary'
 import { terrainZones, terrainTypeColors, type TerrainZone } from './terrainZones'
-import { historicalYears, waybackTileUrl } from './historicalImagery'
+import { historicalYears, waybackTileUrl, currentImageryTileUrl, type ImagerySelection } from './historicalImagery'
 import {
   landcoverLayerIds,
   waterLayerIds,
@@ -88,7 +88,7 @@ export default function App() {
   const [measurePoints, setMeasurePoints] = useState<MeasurePoint[]>([])
   const [showOverlay, setShowOverlay] = useState(shared.showOverlay ?? true)
   const [selectedZone, setSelectedZone] = useState<TerrainZone | null>(null)
-  const [historicalYear, setHistoricalYear] = useState<number | null>(shared.historicalYear ?? null)
+  const [historicalYear, setHistoricalYear] = useState<ImagerySelection>(shared.historicalYear ?? null)
   const [hoverElevation, setHoverElevation] = useState<ElevationSample | null>(null)
   const [mapReady, setMapReady] = useState(false)
   const [sunMode, setSunMode] = useState(shared.sunMode ?? false)
@@ -268,9 +268,18 @@ export default function App() {
     setSelectedZone(null)
   }, [])
 
-  const handleHistoricalYearChange = useCallback((year: number | null) => {
+  const handleHistoricalYearChange = useCallback((year: ImagerySelection) => {
     setHistoricalYear(year)
   }, [])
+
+  const handleCopyTrailAsBoundary = useCallback(() => {
+    if (trailPoints.length < 3) return
+    const coords = trailPoints.map((p) => p.lngLat)
+    const first = coords[0]
+    const last = coords[coords.length - 1]
+    if (first[0] !== last[0] || first[1] !== last[1]) coords.push(first)
+    navigator.clipboard?.writeText(JSON.stringify(coords)).catch(() => {})
+  }, [trailPoints])
 
   const handleToggleSunMode = useCallback(() => {
     setSunMode((v) => !v)
@@ -309,7 +318,7 @@ export default function App() {
 
   useEffect(() => {
     if (usesSatelliteImagery(basemap)) {
-      setHistoricalYear((y) => y ?? historicalYears[historicalYears.length - 1].year)
+      setHistoricalYear((y) => y ?? 'current')
     } else {
       setHistoricalYear(null)
     }
@@ -388,6 +397,13 @@ export default function App() {
 
   const trailProfile = useMemo(() => computeElevationProfile(trailPoints), [trailPoints])
 
+  const imageryTileUrl =
+    historicalYear === 'current'
+      ? currentImageryTileUrl()
+      : historicalYear !== null
+        ? waybackTileUrl(historicalYears.find((y) => y.year === historicalYear)!.releaseNum)
+        : null
+
   const measureResult =
     measurePoints.length === 2
       ? {
@@ -446,12 +462,13 @@ export default function App() {
 
       <NavigationControl position="top-right" visualizePitch />
       <FullscreenControl position="top-right" />
+      <div className="rotate-hint">Drag to rotate · tilt</div>
 
-      {historicalYear !== null && (
+      {imageryTileUrl !== null && (
         <Source
           id="historical-imagery"
           type="raster"
-          tiles={[waybackTileUrl(historicalYears.find((y) => y.year === historicalYear)!.releaseNum)]}
+          tiles={[imageryTileUrl]}
           tileSize={256}
         >
           <Layer
@@ -739,6 +756,7 @@ export default function App() {
         trailPointCount={trailPoints.length}
         trailProfile={trailProfile}
         onClearTrail={handleClearTrail}
+        onCopyTrailBoundary={handleCopyTrailAsBoundary}
         slopeContrast={slopeContrast}
         onToggleSlopeContrast={handleToggleSlopeContrast}
       />
