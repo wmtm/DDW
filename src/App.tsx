@@ -415,9 +415,9 @@ export default function App() {
       interactiveLayerIds={showOverlay ? ['terrain-zones-fill'] : []}
       cursor={measureActive || trailActive ? 'crosshair' : 'grab'}
     >
-      <NavigationControl position="top-right" visualizePitch />
       <FullscreenControl position="top-right" />
-      <div className="rotate-hint">Drag to rotate · tilt</div>
+      <NavigationControl position="top-right" visualizePitch />
+      <div className="rotate-hint">Click and drag to tilt/rotate</div>
 
       {imageryTileUrl !== null && (
         <Source
