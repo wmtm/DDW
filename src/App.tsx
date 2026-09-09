@@ -13,7 +13,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import { pois, type Poi } from './poi'
 import { mapStyle } from './mapStyle'
 import { runTour } from './tour'
-import { haversineDistanceMeters } from './geo'
+import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
 import { estateBoundary } from './boundary'
 import { terrainZones, terrainTypeColors, type TerrainZone } from './terrainZones'
 import { historicalYears, waybackTileUrl, currentImageryTileUrl, type ImagerySelection } from './historicalImagery'
@@ -84,6 +84,7 @@ export default function App() {
   const [tourRunning, setTourRunning] = useState(false)
   const [measureActive, setMeasureActive] = useState(false)
   const [measurePoints, setMeasurePoints] = useState<MeasurePoint[]>([])
+  const [measureClosed, setMeasureClosed] = useState(false)
   const [showOverlay, setShowOverlay] = useState(shared.showOverlay ?? true)
   const [selectedZone, setSelectedZone] = useState<TerrainZone | null>(null)
   const [historicalYear, setHistoricalYear] = useState<ImagerySelection>(shared.historicalYear ?? null)
@@ -188,12 +189,23 @@ export default function App() {
   const handleToggleMeasure = useCallback(() => {
     setMeasureActive((active) => !active)
     setMeasurePoints([])
+    setMeasureClosed(false)
     setTrailActive(false)
     setLandmarkTourIndex(null)
   }, [])
 
   const handleClearMeasure = useCallback(() => {
     setMeasurePoints([])
+    setMeasureClosed(false)
+  }, [])
+
+  const handleUndoMeasurePoint = useCallback(() => {
+    setMeasurePoints((prev) => prev.slice(0, -1))
+    setMeasureClosed(false)
+  }, [])
+
+  const handleCloseMeasureLoop = useCallback(() => {
+    setMeasureClosed(true)
   }, [])
 
   const handleToggleTrail = useCallback(() => {
@@ -220,10 +232,11 @@ export default function App() {
   const handleMapClick = useCallback(
     (e: MapLayerMouseEvent) => {
       if (measureActive) {
+        if (measureClosed) return
         const map = e.target
         const elevation = map.queryTerrainElevation(e.lngLat)
         const point: MeasurePoint = { lngLat: [e.lngLat.lng, e.lngLat.lat], elevation }
-        setMeasurePoints((prev) => (prev.length >= 2 ? [point] : [...prev, point]))
+        setMeasurePoints((prev) => [...prev, point])
         return
       }
 
@@ -239,7 +252,7 @@ export default function App() {
       const zone = zoneId ? terrainZones.find((z) => z.id === zoneId) : undefined
       setSelectedZone(zone ?? null)
     },
-    [measureActive, trailActive],
+    [measureActive, measureClosed, trailActive],
   )
 
   const handleMapMouseMove = useCallback((e: MapLayerMouseEvent) => {
@@ -364,17 +377,19 @@ export default function App() {
         ? waybackTileUrl(historicalYears.find((y) => y.year === historicalYear)!.releaseNum)
         : null
 
+  const measureCoords = measurePoints.map((p) => p.lngLat)
+  const measureIsClosedLoop = measureClosed && measureCoords.length >= 3
+  const measurePathCoords = measureIsClosedLoop ? [...measureCoords, measureCoords[0]] : measureCoords
+
   const measureResult =
-    measurePoints.length === 2
+    measurePoints.length >= 2
       ? {
-          distanceMeters: haversineDistanceMeters(
-            measurePoints[0].lngLat,
-            measurePoints[1].lngLat,
-          ),
+          distanceMeters: pathLengthMeters(measurePathCoords),
           elevationDeltaMeters:
-            measurePoints[0].elevation !== null && measurePoints[1].elevation !== null
-              ? measurePoints[1].elevation - measurePoints[0].elevation
+            measurePoints[0].elevation !== null && measurePoints[measurePoints.length - 1].elevation !== null
+              ? measurePoints[measurePoints.length - 1].elevation! - measurePoints[0].elevation!
               : null,
+          areaSquareMeters: measureIsClosedLoop ? polygonAreaSquareMeters(measureCoords) : null,
         }
       : null
 
@@ -644,7 +659,24 @@ export default function App() {
         </Marker>
       ))}
 
-      {measurePoints.length === 2 && (
+      {measureIsClosedLoop && (
+        <Source
+          id="measure-area"
+          type="geojson"
+          data={{
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'Polygon',
+              coordinates: [measurePathCoords],
+            },
+          }}
+        >
+          <Layer id="measure-area-fill" type="fill" paint={{ 'fill-color': '#ffdd57', 'fill-opacity': 0.15 }} />
+        </Source>
+      )}
+
+      {measurePoints.length >= 2 && (
         <Source
           id="measure-line"
           type="geojson"
@@ -653,7 +685,7 @@ export default function App() {
             properties: {},
             geometry: {
               type: 'LineString',
-              coordinates: measurePoints.map((p) => p.lngLat),
+              coordinates: measurePathCoords,
             },
           }}
         >
@@ -721,8 +753,12 @@ export default function App() {
         onExitLandmarkTour={handleExitLandmarkTour}
         measureActive={measureActive}
         onToggleMeasure={handleToggleMeasure}
+        measurePointCount={measurePoints.length}
+        measureClosed={measureClosed}
         measureResult={measureResult}
         onClearMeasure={handleClearMeasure}
+        onUndoMeasurePoint={handleUndoMeasurePoint}
+        onCloseMeasureLoop={handleCloseMeasureLoop}
         showOverlay={showOverlay}
         onToggleOverlay={handleToggleOverlay}
         hoverElevation={hoverElevation}

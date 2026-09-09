@@ -18,8 +18,12 @@ interface Props {
   onExitLandmarkTour: () => void
   measureActive: boolean
   onToggleMeasure: () => void
-  measureResult: { distanceMeters: number; elevationDeltaMeters: number | null } | null
+  measurePointCount: number
+  measureClosed: boolean
+  measureResult: { distanceMeters: number; elevationDeltaMeters: number | null; areaSquareMeters: number | null } | null
   onClearMeasure: () => void
+  onUndoMeasurePoint: () => void
+  onCloseMeasureLoop: () => void
   showOverlay: boolean
   onToggleOverlay: () => void
   hoverElevation: ElevationSample | null
@@ -54,8 +58,12 @@ export default function ControlsPanel({
   onExitLandmarkTour,
   measureActive,
   onToggleMeasure,
+  measurePointCount,
+  measureClosed,
   measureResult,
   onClearMeasure,
+  onUndoMeasurePoint,
+  onCloseMeasureLoop,
   showOverlay,
   onToggleOverlay,
   hoverElevation,
@@ -150,12 +158,29 @@ export default function ControlsPanel({
         >
           {measureActive ? 'Exit measure mode' : 'Measure distance'}
         </button>
-        {measureActive && !measureResult && (
-          <span className="hint">Click two points on the terrain</span>
+        {measureActive && measurePointCount === 0 && (
+          <span className="hint">Click points on the terrain to build a path</span>
+        )}
+        {measureActive && measurePointCount > 0 && !measureClosed && (
+          <div className="button-row">
+            <button className="clear-button" onClick={onUndoMeasurePoint}>
+              Undo point
+            </button>
+            {measurePointCount >= 3 && (
+              <button className="clear-button" onClick={onCloseMeasureLoop}>
+                Close loop
+              </button>
+            )}
+          </div>
         )}
         {measureResult && (
           <div className="measure-result">
-            <div>Distance: {formatDistance(measureResult.distanceMeters)}</div>
+            <div>
+              {measureClosed ? 'Perimeter' : 'Length'}: {formatDistance(measureResult.distanceMeters)}
+            </div>
+            {measureResult.areaSquareMeters !== null && (
+              <div>Area: {formatArea(measureResult.areaSquareMeters)}</div>
+            )}
             <div>
               Elevation change:{' '}
               {measureResult.elevationDeltaMeters === null
@@ -309,4 +334,8 @@ export default function ControlsPanel({
 
 function formatDistance(meters: number): string {
   return meters >= 1000 ? `${(meters / 1000).toFixed(2)} km` : `${Math.round(meters)} m`
+}
+
+function formatArea(squareMeters: number): string {
+  return squareMeters >= 10000 ? `${(squareMeters / 10000).toFixed(2)} ha` : `${Math.round(squareMeters)} m²`
 }
