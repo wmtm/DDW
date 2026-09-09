@@ -55,7 +55,7 @@ const terrainZoneCollection: GeoJSON.FeatureCollection = {
 const boundaryGeometry: GeoJSON.Feature = {
   type: 'Feature',
   properties: {},
-  geometry: { type: 'LineString', coordinates: estateBoundary },
+  geometry: { type: 'Polygon', coordinates: [estateBoundary] },
 }
 
 const HOVER_THROTTLE_MS = 100
@@ -527,12 +527,30 @@ export default function App() {
 
           <Source id="estate-boundary" type="geojson" data={boundaryGeometry}>
             <Layer
+              id="estate-boundary-fill"
+              type="fill"
+              paint={{
+                'fill-color': '#f4a300',
+                'fill-opacity': 0.05,
+              }}
+            />
+            <Layer
+              id="estate-boundary-glow"
+              type="line"
+              paint={{
+                'line-color': '#f4a300',
+                'line-width': 10,
+                'line-blur': 6,
+                'line-opacity': 0.35,
+              }}
+            />
+            <Layer
               id="estate-boundary-line"
               type="line"
               paint={{
-                'line-color': '#ff4d4d',
-                'line-width': 3,
-                'line-dasharray': [3, 2],
+                'line-color': '#ffd166',
+                'line-width': 2,
+                'line-opacity': 0.95,
               }}
             />
           </Source>
