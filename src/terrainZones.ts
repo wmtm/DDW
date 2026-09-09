@@ -30,21 +30,6 @@ export const terrainTypeColors: Record<TerrainType, string> = {
  */
 export const terrainZones: TerrainZone[] = [
   {
-    id: 'forest-core',
-    name: 'Wooded hunting ground',
-    type: 'forest',
-    description: 'Dense tree cover forming the bulk of the estate, used for deer hunting June–September.',
-    coordinates: [
-      [57.364, -20.298],
-      [57.371, -20.293],
-      [57.376, -20.297],
-      [57.3745, -20.3025],
-      [57.369, -20.3055],
-      [57.3635, -20.3015],
-      [57.364, -20.298],
-    ],
-  },
-  {
     id: 'main-clearing',
     name: 'Main clearing',
     type: 'field',
