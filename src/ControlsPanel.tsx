@@ -292,5 +292,5 @@ function formatDistance(meters: number): string {
 }
 
 function formatArea(squareMeters: number): string {
-  return squareMeters >= 10000 ? `${(squareMeters / 10000).toFixed(2)} ha` : `${Math.round(squareMeters)} m²`
+  return `${Math.round(squareMeters).toLocaleString('en-US')} m²`
 }
