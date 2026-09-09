@@ -27,14 +27,6 @@
   border-radius: 4px;
 }
 
-.time-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  transition: background-color 0.6s ease;
-}
-
 .measure-pin {
   width: 12px;
   height: 12px;
@@ -414,23 +406,33 @@
   transition: transform 0.4s ease;
 }
 
-.sun-controls {
+.datetime-readout {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 6px;
   padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
 }
 
-.datetime-input {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  padding: 5px 8px;
-  border-radius: 4px;
+.datetime-clock {
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #ffd166;
+  letter-spacing: 0.02em;
+}
+
+.datetime-day {
   font-size: 12px;
-  color-scheme: dark;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+}
+
+.datetime-date {
+  font-size: 11px;
+  opacity: 0.7;
 }
 
 .measure-result {

@@ -12,7 +12,6 @@ import Map, {
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { pois, type Poi } from './poi'
 import { mapStyle } from './mapStyle'
-import { applyTimeOfDay, overlayColorFor, type TimeOfDay } from './timeOfDay'
 import { runTour } from './tour'
 import { haversineDistanceMeters } from './geo'
 import { estateBoundary } from './boundary'
@@ -28,7 +27,6 @@ import {
   type BasemapStyle,
 } from './basemap'
 import { sampleElevation, type ElevationSample } from './elevation'
-import { applySunLight, mauritiusLocalToUtcDate, utcDateToMauritiusLocalInputValue } from './sunPosition'
 import { fetchCurrentWeather, type WeatherData } from './weather'
 import { buildShareUrl, parseShareStateFromUrl } from './shareState'
 import { computeElevationProfile } from './elevationProfile'
@@ -83,7 +81,6 @@ export default function App() {
   )
 
   const [selected, setSelected] = useState<Poi | null>(null)
-  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(shared.timeOfDay ?? 'noon')
   const [tourRunning, setTourRunning] = useState(false)
   const [measureActive, setMeasureActive] = useState(false)
   const [measurePoints, setMeasurePoints] = useState<MeasurePoint[]>([])
@@ -92,10 +89,6 @@ export default function App() {
   const [historicalYear, setHistoricalYear] = useState<ImagerySelection>(shared.historicalYear ?? null)
   const [hoverElevation, setHoverElevation] = useState<ElevationSample | null>(null)
   const [mapReady, setMapReady] = useState(false)
-  const [sunMode, setSunMode] = useState(shared.sunMode ?? false)
-  const [sunDateTime, setSunDateTime] = useState<Date>(() => (shared.sunDateTime ? new Date(shared.sunDateTime) : new Date()))
-  const [sunOverlayColor, setSunOverlayColor] = useState<string | null>(null)
-  const [sunInfo, setSunInfo] = useState<{ altitudeDeg: number; compassAzimuthDeg: number } | null>(null)
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [weatherError, setWeatherError] = useState<string | null>(null)
   const [shareUrl, setShareUrl] = useState<string | null>(null)
@@ -170,12 +163,6 @@ export default function App() {
 
   const handleExitLandmarkTour = useCallback(() => {
     setLandmarkTourIndex(null)
-  }, [])
-
-  const handleTimeOfDayChange = useCallback((t: TimeOfDay) => {
-    setTimeOfDay(t)
-    const map = mapRef.current?.getMap()
-    if (map) applyTimeOfDay(map, t)
   }, [])
 
   const handleToggleTour = useCallback(() => {
@@ -284,33 +271,6 @@ export default function App() {
     navigator.clipboard?.writeText(JSON.stringify(coords)).catch(() => {})
   }, [trailPoints])
 
-  const handleToggleSunMode = useCallback(() => {
-    setSunMode((v) => !v)
-  }, [])
-
-  const handleSunDateTimeInputChange = useCallback((value: string) => {
-    setSunDateTime(mauritiusLocalToUtcDate(value))
-  }, [])
-
-  const handleSunNow = useCallback(() => {
-    setSunDateTime(new Date())
-  }, [])
-
-  useEffect(() => {
-    const map = mapRef.current?.getMap()
-    if (!map || !mapReady) return
-
-    if (sunMode) {
-      const result = applySunLight(map, ESTATE_CENTER.latitude, ESTATE_CENTER.longitude, sunDateTime)
-      setSunOverlayColor(result.overlayColor)
-      setSunInfo({ altitudeDeg: result.altitudeDeg, compassAzimuthDeg: result.compassAzimuthDeg })
-    } else {
-      applyTimeOfDay(map, timeOfDay)
-      setSunOverlayColor(null)
-      setSunInfo(null)
-    }
-  }, [sunMode, sunDateTime, timeOfDay, mapReady])
-
   useEffect(() => {
     const map = mapRef.current?.getMap()
     if (!map || !mapReady) return
@@ -382,11 +342,8 @@ export default function App() {
       zoom: map?.getZoom(),
       pitch: map?.getPitch(),
       bearing: map?.getBearing(),
-      timeOfDay,
       showOverlay,
       historicalYear,
-      sunMode,
-      sunDateTime: sunDateTime.toISOString(),
       basemap,
     })
 
@@ -396,7 +353,7 @@ export default function App() {
       ?.writeText(url)
       .then(() => setShareCopied(true))
       .catch(() => {})
-  }, [timeOfDay, showOverlay, historicalYear, sunMode, sunDateTime, basemap])
+  }, [showOverlay, historicalYear, basemap])
 
   const trailProfile = useMemo(() => computeElevationProfile(trailPoints), [trailPoints])
 
@@ -458,11 +415,6 @@ export default function App() {
       interactiveLayerIds={showOverlay ? ['terrain-zones-fill'] : []}
       cursor={measureActive || trailActive ? 'crosshair' : 'grab'}
     >
-      <div
-        className="time-overlay"
-        style={{ backgroundColor: sunMode && sunOverlayColor !== null ? sunOverlayColor : overlayColorFor(timeOfDay) }}
-      />
-
       <NavigationControl position="top-right" visualizePitch />
       <FullscreenControl position="top-right" />
       <div className="rotate-hint">Drag to rotate · tilt</div>
@@ -761,8 +713,6 @@ export default function App() {
       <ControlsPanel
         basemap={basemap}
         onBasemapChange={handleBasemapChange}
-        timeOfDay={timeOfDay}
-        onTimeOfDayChange={handleTimeOfDayChange}
         tourRunning={tourRunning}
         onToggleTour={handleToggleTour}
         chuteCount={chuteLandmarks.length}
@@ -778,12 +728,6 @@ export default function App() {
         hoverElevation={hoverElevation}
         historicalYear={historicalYear}
         onHistoricalYearChange={handleHistoricalYearChange}
-        sunMode={sunMode}
-        onToggleSunMode={handleToggleSunMode}
-        sunDateTimeValue={utcDateToMauritiusLocalInputValue(sunDateTime)}
-        onSunDateTimeChange={handleSunDateTimeInputChange}
-        onSunNow={handleSunNow}
-        sunInfo={sunInfo}
         weather={weather}
         weatherError={weatherError}
         onCaptureView={handleCaptureView}

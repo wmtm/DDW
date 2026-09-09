@@ -1,4 +1,3 @@
-import { timeOfDayOptions, type TimeOfDay } from './timeOfDay'
 import { terrainTypeColors, terrainTypeLabels, type TerrainType } from './terrainZones'
 import { historicalYears, type ImagerySelection } from './historicalImagery'
 import { basemapOptions, usesSatelliteImagery, type BasemapStyle } from './basemap'
@@ -6,12 +5,11 @@ import type { ElevationSample } from './elevation'
 import type { WeatherData } from './weather'
 import type { ElevationProfile } from './elevationProfile'
 import ElevationProfileChart from './ElevationProfileChart'
+import DateTimeWidget from './DateTimeWidget'
 
 interface Props {
   basemap: BasemapStyle
   onBasemapChange: (basemap: BasemapStyle) => void
-  timeOfDay: TimeOfDay
-  onTimeOfDayChange: (t: TimeOfDay) => void
   tourRunning: boolean
   onToggleTour: () => void
   chuteCount: number
@@ -27,12 +25,6 @@ interface Props {
   hoverElevation: ElevationSample | null
   historicalYear: ImagerySelection
   onHistoricalYearChange: (year: ImagerySelection) => void
-  sunMode: boolean
-  onToggleSunMode: () => void
-  sunDateTimeValue: string
-  onSunDateTimeChange: (value: string) => void
-  onSunNow: () => void
-  sunInfo: { altitudeDeg: number; compassAzimuthDeg: number } | null
   weather: WeatherData | null
   weatherError: string | null
   onCaptureView: () => void
@@ -54,8 +46,6 @@ const terrainTypes = Object.keys(terrainTypeLabels) as TerrainType[]
 export default function ControlsPanel({
   basemap,
   onBasemapChange,
-  timeOfDay,
-  onTimeOfDayChange,
   tourRunning,
   onToggleTour,
   chuteCount,
@@ -71,12 +61,6 @@ export default function ControlsPanel({
   hoverElevation,
   historicalYear,
   onHistoricalYearChange,
-  sunMode,
-  onToggleSunMode,
-  sunDateTimeValue,
-  onSunDateTimeChange,
-  onSunNow,
-  sunInfo,
   weather,
   weatherError,
   onCaptureView,
@@ -121,6 +105,8 @@ export default function ControlsPanel({
         </div>
       </div>
 
+      <DateTimeWidget />
+
       <div className="control-group">
         <span className="control-label">Basemap</span>
         <div className="button-row">
@@ -135,53 +121,6 @@ export default function ControlsPanel({
             </button>
           ))}
         </div>
-      </div>
-
-      <div className="control-group">
-        <span className="control-label">Time of day</span>
-        <div className="button-row">
-          {timeOfDayOptions.map((opt) => (
-            <button
-              key={opt.value}
-              className={`chip ${timeOfDay === opt.value ? 'chip-active' : ''}`}
-              onClick={() => onTimeOfDayChange(opt.value)}
-              disabled={tourRunning || sunMode || landmarkTourActive}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="control-group">
-        <button
-          className={`action-button ${sunMode ? 'chip-active' : ''}`}
-          onClick={onToggleSunMode}
-          disabled={tourRunning || landmarkTourActive}
-        >
-          {sunMode ? 'Disable real sun position' : 'Use real sun position'}
-        </button>
-        {sunMode && (
-          <div className="sun-controls">
-            <input
-              type="datetime-local"
-              className="datetime-input"
-              value={sunDateTimeValue}
-              onChange={(e) => onSunDateTimeChange(e.target.value)}
-            />
-            <button className="clear-button" onClick={onSunNow}>
-              Jump to now
-            </button>
-            {sunInfo && (
-              <span className="hint">
-                Altitude {sunInfo.altitudeDeg.toFixed(1)}° · Azimuth{' '}
-                {sunInfo.compassAzimuthDeg.toFixed(0)}° ·{' '}
-                {sunInfo.altitudeDeg > 0 ? 'daytime' : 'below horizon'}
-              </span>
-            )}
-            <span className="hint">Mauritius local time (UTC+4)</span>
-          </div>
-        )}
       </div>
 
       <div className="control-group">
