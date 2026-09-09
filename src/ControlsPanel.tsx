@@ -312,7 +312,6 @@ export default function ControlsPanel({
               <span className="legend-swatch legend-swatch-boundary" />
               Estate boundary
             </div>
-            <span className="hint">Placeholder outline — pending real site data</span>
           </div>
         )}
       </div>
