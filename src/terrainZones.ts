@@ -57,30 +57,4 @@ export const terrainZones: TerrainZone[] = [
       [57.3665, -20.2995],
     ],
   },
-  {
-    id: 'watering-hole',
-    name: 'Watering hole',
-    type: 'water',
-    description: 'Illustrative placeholder for a small pond — not confirmed from imagery.',
-    coordinates: [
-      [57.3715, -20.2965],
-      [57.3725, -20.2965],
-      [57.3725, -20.2975],
-      [57.3715, -20.2975],
-      [57.3715, -20.2965],
-    ],
-  },
-  {
-    id: 'north-trail-corridor',
-    name: 'North trail corridor',
-    type: 'trail',
-    description: 'Cleared path network cutting through the northern forest block.',
-    coordinates: [
-      [57.369, -20.2955],
-      [57.3735, -20.294],
-      [57.3745, -20.2955],
-      [57.37, -20.297],
-      [57.369, -20.2955],
-    ],
-  },
 ]

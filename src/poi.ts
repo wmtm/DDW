@@ -13,16 +13,9 @@ export interface Poi {
  */
 export const pois: Poi[] = [
   {
-    id: 'estate-center',
-    name: 'Domaine de Wolmar',
-    description: 'Approximate center of the hunting estate / nature reserve.',
-    longitude: 57.368,
-    latitude: -20.302,
-  },
-  {
     id: 'reception-hall',
-    name: 'Salle de réception',
-    description: 'Wedding / reception venue on the estate (placeholder location).',
+    name: 'Campement de chasse',
+    description: 'Hunting camp / lodge on the estate (placeholder location).',
     longitude: 57.3695,
     latitude: -20.3005,
   },
