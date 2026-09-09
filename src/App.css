@@ -134,6 +134,122 @@
   margin-top: 10px;
 }
 
+.lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  font-family: system-ui, sans-serif;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  font-size: 32px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-nav-prev {
+  left: 16px;
+}
+
+.lightbox-nav-next {
+  right: 16px;
+}
+
+.lightbox-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-image {
+  max-width: 90vw;
+  max-height: 75vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.lightbox-frame-panoramic {
+  height: 75vh;
+  width: 90vw;
+  overflow: hidden;
+  border-radius: 8px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.lightbox-frame-panoramic:active {
+  cursor: grabbing;
+}
+
+.lightbox-image-panoramic {
+  height: 100%;
+  width: auto;
+  max-width: none;
+  user-select: none;
+  will-change: transform;
+}
+
+.lightbox-caption {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 20, 20, 0.75);
+  color: #f2f2f2;
+  padding: 6px 14px;
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 13px;
+  max-width: 80vw;
+}
+
+.photo-thumb-button {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 .rotate-hint {
   position: absolute;
   top: 160px;

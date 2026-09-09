@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { landmarkCategoryLabels, type Landmark } from './landmarks'
+import PhotoLightbox from './PhotoLightbox'
 
 interface Props {
   landmark: Landmark
@@ -10,6 +12,8 @@ interface Props {
 }
 
 export default function LandmarkTourCard({ landmark, index, total, onNext, onPrevious, onExit }: Props) {
+  const [openPhotoIndex, setOpenPhotoIndex] = useState<number | null>(null)
+
   return (
     <div className="landmark-tour-card">
       <div className="landmark-tour-header">
@@ -26,7 +30,14 @@ export default function LandmarkTourCard({ landmark, index, total, onNext, onPre
       {landmark.photos.length > 0 && (
         <div className="landmark-tour-photos">
           {landmark.photos.map((photo, i) => (
-            <img key={i} src={photo.src} alt={photo.caption ?? landmark.name} title={photo.caption} />
+            <button
+              key={i}
+              className="photo-thumb-button"
+              onClick={() => setOpenPhotoIndex(i)}
+              aria-label={`View photo: ${photo.caption ?? landmark.name}`}
+            >
+              <img src={photo.src} alt={photo.caption ?? landmark.name} title={photo.caption} />
+            </button>
           ))}
         </div>
       )}
@@ -41,6 +52,14 @@ export default function LandmarkTourCard({ landmark, index, total, onNext, onPre
           Exit
         </button>
       </div>
+
+      {openPhotoIndex !== null && (
+        <PhotoLightbox
+          photos={landmark.photos}
+          initialIndex={openPhotoIndex}
+          onClose={() => setOpenPhotoIndex(null)}
+        />
+      )}
     </div>
   )
 }

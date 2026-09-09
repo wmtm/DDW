@@ -36,6 +36,7 @@ import { flyToEstate } from './cameraMotion'
 import { landmarks, landmarkCategoryColors, landmarkCategoryLabels, type Landmark } from './landmarks'
 import ControlsPanel from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
+import PhotoLightbox from './PhotoLightbox'
 import './App.css'
 
 interface MeasurePoint {
@@ -104,6 +105,7 @@ export default function App() {
   const [slopeContrast, setSlopeContrast] = useState(false)
   const [basemap, setBasemap] = useState<BasemapStyle>(shared.basemap ?? 'satellite')
   const [selectedLandmark, setSelectedLandmark] = useState<Landmark | null>(null)
+  const [openPopupPhotoIndex, setOpenPopupPhotoIndex] = useState<number | null>(null)
   const [landmarkTourIndex, setLandmarkTourIndex] = useState<number | null>(null)
 
   const chuteLandmarks = useMemo(
@@ -139,6 +141,7 @@ export default function App() {
     setSelected(null)
     setSelectedZone(null)
     setSelectedLandmark(null)
+    setOpenPopupPhotoIndex(null)
     setMeasureActive(false)
     setTrailActive(false)
     cancelledRef.current = true
@@ -626,6 +629,7 @@ export default function App() {
           onClick={(e) => {
             e.originalEvent.stopPropagation()
             setSelectedLandmark(landmark)
+            setOpenPopupPhotoIndex(null)
             flyToLandmark(landmark)
           }}
         >
@@ -644,7 +648,10 @@ export default function App() {
           longitude={selectedLandmark.longitude}
           latitude={selectedLandmark.latitude}
           anchor="top"
-          onClose={() => setSelectedLandmark(null)}
+          onClose={() => {
+            setSelectedLandmark(null)
+            setOpenPopupPhotoIndex(null)
+          }}
           closeOnClick={false}
         >
           <strong>
@@ -654,15 +661,29 @@ export default function App() {
           <p>{landmarkCategoryLabels[selectedLandmark.category]}</p>
           <p>{selectedLandmark.description}</p>
           {selectedLandmark.photos.map((photo, i) => (
-            <img
+            <button
               key={i}
-              className="landmark-popup-photo"
-              src={photo.src}
-              alt={photo.caption ?? selectedLandmark.name}
-              title={photo.caption}
-            />
+              className="photo-thumb-button"
+              onClick={() => setOpenPopupPhotoIndex(i)}
+              aria-label={`View photo: ${photo.caption ?? selectedLandmark.name}`}
+            >
+              <img
+                className="landmark-popup-photo"
+                src={photo.src}
+                alt={photo.caption ?? selectedLandmark.name}
+                title={photo.caption}
+              />
+            </button>
           ))}
         </Popup>
+      )}
+
+      {selectedLandmark && openPopupPhotoIndex !== null && (
+        <PhotoLightbox
+          photos={selectedLandmark.photos}
+          initialIndex={openPopupPhotoIndex}
+          onClose={() => setOpenPopupPhotoIndex(null)}
+        />
       )}
 
       {measurePoints.map((p, i) => (
