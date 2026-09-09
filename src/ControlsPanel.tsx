@@ -1,4 +1,3 @@
-import { terrainTypeColors, terrainTypeLabels, type TerrainType } from './terrainZones'
 import { historicalYears, type ImagerySelection } from './historicalImagery'
 import { basemapOptions, usesSatelliteImagery, type BasemapStyle } from './basemap'
 import type { ElevationSample } from './elevation'
@@ -36,8 +35,6 @@ interface Props {
   slopeContrast: boolean
   onToggleSlopeContrast: () => void
 }
-
-const terrainTypes = Object.keys(terrainTypeLabels) as TerrainType[]
 
 export default function ControlsPanel({
   basemap,
@@ -218,15 +215,6 @@ export default function ControlsPanel({
         </button>
         {showOverlay && (
           <div className="legend">
-            {terrainTypes.map((type) => (
-              <div key={type} className="legend-row">
-                <span
-                  className="legend-swatch"
-                  style={{ background: terrainTypeColors[type] }}
-                />
-                {terrainTypeLabels[type]}
-              </div>
-            ))}
             <div className="legend-row">
               <span className="legend-swatch legend-swatch-boundary" />
               Estate boundary

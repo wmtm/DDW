@@ -15,7 +15,6 @@ import { mapStyle } from './mapStyle'
 import { runTour } from './tour'
 import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
 import { estateBoundary } from './boundary'
-import { terrainZones, terrainTypeColors, type TerrainZone } from './terrainZones'
 import { historicalYears, waybackTileUrl, currentImageryTileUrl, type ImagerySelection } from './historicalImagery'
 import {
   landcoverLayerIds,
@@ -39,15 +38,6 @@ import './App.css'
 interface MeasurePoint {
   lngLat: [number, number]
   elevation: number | null
-}
-
-const terrainZoneCollection: GeoJSON.FeatureCollection = {
-  type: 'FeatureCollection',
-  features: terrainZones.map((zone) => ({
-    type: 'Feature',
-    properties: { id: zone.id, type: zone.type },
-    geometry: { type: 'Polygon', coordinates: [zone.coordinates] },
-  })),
 }
 
 const boundaryGeometry: GeoJSON.Feature = {
@@ -85,7 +75,6 @@ export default function App() {
   const [measurePoints, setMeasurePoints] = useState<MeasurePoint[]>([])
   const [measureClosed, setMeasureClosed] = useState(false)
   const [showOverlay, setShowOverlay] = useState(shared.showOverlay ?? true)
-  const [selectedZone, setSelectedZone] = useState<TerrainZone | null>(null)
   const [historicalYear, setHistoricalYear] = useState<ImagerySelection>(shared.historicalYear ?? null)
   const [hoverElevation, setHoverElevation] = useState<ElevationSample | null>(null)
   const [mapReady, setMapReady] = useState(false)
@@ -130,7 +119,6 @@ export default function App() {
   const handleStartLandmarkTour = useCallback(() => {
     if (chuteLandmarks.length === 0) return
     setSelected(null)
-    setSelectedZone(null)
     setSelectedLandmark(null)
     setOpenPopupPhotoIndex(null)
     setMeasureActive(false)
@@ -173,7 +161,6 @@ export default function App() {
     }
 
     setSelected(null)
-    setSelectedZone(null)
     setMeasureActive(false)
     setLandmarkTourIndex(null)
     cancelledRef.current = false
@@ -208,18 +195,11 @@ export default function App() {
 
   const handleMapClick = useCallback(
     (e: MapLayerMouseEvent) => {
-      if (measureActive) {
-        if (measureClosed) return
-        const map = e.target
-        const elevation = map.queryTerrainElevation(e.lngLat)
-        const point: MeasurePoint = { lngLat: [e.lngLat.lng, e.lngLat.lat], elevation }
-        setMeasurePoints((prev) => [...prev, point])
-        return
-      }
-
-      const zoneId = e.features?.[0]?.properties?.id as string | undefined
-      const zone = zoneId ? terrainZones.find((z) => z.id === zoneId) : undefined
-      setSelectedZone(zone ?? null)
+      if (!measureActive || measureClosed) return
+      const map = e.target
+      const elevation = map.queryTerrainElevation(e.lngLat)
+      const point: MeasurePoint = { lngLat: [e.lngLat.lng, e.lngLat.lat], elevation }
+      setMeasurePoints((prev) => [...prev, point])
     },
     [measureActive, measureClosed],
   )
@@ -237,7 +217,6 @@ export default function App() {
 
   const handleToggleOverlay = useCallback(() => {
     setShowOverlay((v) => !v)
-    setSelectedZone(null)
   }, [])
 
   const handleHistoricalYearChange = useCallback((year: ImagerySelection) => {
@@ -385,7 +364,6 @@ export default function App() {
           )
         }
       }}
-      interactiveLayerIds={showOverlay ? ['terrain-zones-fill'] : []}
       cursor={measureActive ? 'crosshair' : 'grab'}
     >
       <FullscreenControl position="top-right" />
@@ -409,99 +387,35 @@ export default function App() {
       )}
 
       {showOverlay && (
-        <>
-          <Source id="terrain-zones" type="geojson" data={terrainZoneCollection}>
-            <Layer
-              id="terrain-zones-fill"
-              type="fill"
-              paint={{
-                'fill-color': [
-                  'match',
-                  ['get', 'type'],
-                  'forest',
-                  terrainTypeColors.forest,
-                  'field',
-                  terrainTypeColors.field,
-                  'water',
-                  terrainTypeColors.water,
-                  'trail',
-                  terrainTypeColors.trail,
-                  '#888888',
-                ],
-                'fill-opacity': 0.35,
-              }}
-            />
-            <Layer
-              id="terrain-zones-outline"
-              type="line"
-              paint={{
-                'line-color': [
-                  'match',
-                  ['get', 'type'],
-                  'forest',
-                  terrainTypeColors.forest,
-                  'field',
-                  terrainTypeColors.field,
-                  'water',
-                  terrainTypeColors.water,
-                  'trail',
-                  terrainTypeColors.trail,
-                  '#888888',
-                ],
-                'line-width': 1.5,
-              }}
-            />
-          </Source>
-
-          <Source id="estate-boundary" type="geojson" data={boundaryGeometry}>
-            <Layer
-              id="estate-boundary-fill"
-              type="fill"
-              paint={{
-                'fill-color': '#f4a300',
-                'fill-opacity': 0.05,
-              }}
-            />
-            <Layer
-              id="estate-boundary-glow"
-              type="line"
-              paint={{
-                'line-color': '#f4a300',
-                'line-width': 10,
-                'line-blur': 6,
-                'line-opacity': 0.35,
-              }}
-            />
-            <Layer
-              id="estate-boundary-line"
-              type="line"
-              paint={{
-                'line-color': '#ffd166',
-                'line-width': 2,
-                'line-opacity': 0.95,
-              }}
-            />
-          </Source>
-        </>
-      )}
-
-      {selectedZone && (
-        <Popup
-          longitude={
-            selectedZone.coordinates.reduce((sum, c) => sum + c[0], 0) /
-            selectedZone.coordinates.length
-          }
-          latitude={
-            selectedZone.coordinates.reduce((sum, c) => sum + c[1], 0) /
-            selectedZone.coordinates.length
-          }
-          anchor="bottom"
-          onClose={() => setSelectedZone(null)}
-          closeOnClick={false}
-        >
-          <strong>{selectedZone.name}</strong>
-          <p>{selectedZone.description}</p>
-        </Popup>
+        <Source id="estate-boundary" type="geojson" data={boundaryGeometry}>
+          <Layer
+            id="estate-boundary-fill"
+            type="fill"
+            paint={{
+              'fill-color': '#f4a300',
+              'fill-opacity': 0.05,
+            }}
+          />
+          <Layer
+            id="estate-boundary-glow"
+            type="line"
+            paint={{
+              'line-color': '#f4a300',
+              'line-width': 10,
+              'line-blur': 6,
+              'line-opacity': 0.35,
+            }}
+          />
+          <Layer
+            id="estate-boundary-line"
+            type="line"
+            paint={{
+              'line-color': '#ffd166',
+              'line-width': 2,
+              'line-opacity': 0.95,
+            }}
+          />
+        </Source>
       )}
 
       {pois.map((poi) => (
