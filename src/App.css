@@ -406,6 +406,23 @@
   box-sizing: border-box;
 }
 
+.passcode-gate {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border: 1px dashed var(--panel-border);
+  border-radius: 8px;
+}
+
+.passcode-input {
+  max-width: 140px;
+}
+
+.passcode-error {
+  color: #f87171;
+}
+
 .search-input {
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.2);
