@@ -349,7 +349,11 @@ export default function ControlsPanel({
                 value={shareUrl}
                 onFocus={(e) => e.currentTarget.select()}
               />
-              <span className="hint">{shareCopied ? 'Copied to clipboard' : 'Copy the link above'}</span>
+              {shareCopied ? (
+                <div className="share-toast">Copied to clipboard</div>
+              ) : (
+                <span className="hint">Copy the link above</span>
+              )}
             </div>
           )}
         </div>

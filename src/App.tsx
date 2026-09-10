@@ -17,6 +17,7 @@ import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
 import { estateBoundary } from './boundary'
 import { historicalYears, waybackTileUrl, currentImageryTileUrl, type ImagerySelection } from './historicalImagery'
 import {
+  basemapOptions,
   landcoverLayerIds,
   waterLayerIds,
   roadLayerIds,
@@ -33,6 +34,7 @@ import { landmarks, landmarkCategoryColors, landmarkCategoryLabels, type Landmar
 import ControlsPanel from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
 import PhotoLightbox from './PhotoLightbox'
+import OnboardingCard from './OnboardingCard'
 import './App.css'
 
 interface MeasurePoint {
@@ -52,6 +54,16 @@ const LANDMARK_NUMBER_MIN_ZOOM = 16
 const LANDMARK_FADE_START_ZOOM = 13
 const LANDMARK_FADE_END_ZOOM = 11
 const ESTATE_CENTER = { longitude: 57.368, latitude: -20.302 }
+const BASEMAP_STORAGE_KEY = 'ddw-basemap'
+
+function readStoredBasemap(): BasemapStyle | null {
+  try {
+    const v = localStorage.getItem(BASEMAP_STORAGE_KEY)
+    return v && basemapOptions.some((o) => o.value === v) ? (v as BasemapStyle) : null
+  } catch {
+    return null
+  }
+}
 
 function landmarkPinOpacity(zoom: number): number {
   if (zoom >= LANDMARK_FADE_START_ZOOM) return 1
@@ -66,6 +78,7 @@ export default function App() {
 
   const lastHoverRef = useRef(0)
   const lastZoomRef = useRef(0)
+  const shareCopiedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const shared = useMemo(() => parseShareStateFromUrl(), [])
 
@@ -94,7 +107,7 @@ export default function App() {
   const [shareUrl, setShareUrl] = useState<string | null>(null)
   const [shareCopied, setShareCopied] = useState(false)
   const [slopeContrast, setSlopeContrast] = useState(false)
-  const [basemap, setBasemap] = useState<BasemapStyle>(shared.basemap ?? 'satellite')
+  const [basemap, setBasemap] = useState<BasemapStyle>(shared.basemap ?? readStoredBasemap() ?? 'satellite')
   const [selectedLandmark, setSelectedLandmark] = useState<Landmark | null>(null)
   const [openPopupPhotoIndex, setOpenPopupPhotoIndex] = useState<number | null>(null)
   const [landmarkTourIndex, setLandmarkTourIndex] = useState<number | null>(null)
@@ -111,6 +124,11 @@ export default function App() {
 
   const handleBasemapChange = useCallback((next: BasemapStyle) => {
     setBasemap(next)
+    try {
+      localStorage.setItem(BASEMAP_STORAGE_KEY, next)
+    } catch {
+      // ignore (private browsing / storage disabled)
+    }
   }, [])
 
   const flyToLandmark = useCallback((landmark: Landmark) => {
@@ -334,7 +352,11 @@ export default function App() {
     setShareCopied(false)
     navigator.clipboard
       ?.writeText(url)
-      .then(() => setShareCopied(true))
+      .then(() => {
+        setShareCopied(true)
+        if (shareCopiedTimeoutRef.current) clearTimeout(shareCopiedTimeoutRef.current)
+        shareCopiedTimeoutRef.current = setTimeout(() => setShareCopied(false), 2500)
+      })
       .catch(() => {})
   }, [showOverlay, historicalYear, basemap])
 
@@ -401,6 +423,7 @@ export default function App() {
       <FullscreenControl position="top-right" />
       <NavigationControl position="top-right" visualizePitch />
       <div className="rotate-hint">Click and drag to tilt/rotate</div>
+      <OnboardingCard />
 
       {imageryTileUrl !== null && (
         <Source
