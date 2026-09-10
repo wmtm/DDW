@@ -171,7 +171,7 @@ export default function ControlsPanel({
             ))}
           </div>
 
-          <div className="panel-section-content">
+          <div className="panel-section-content" key={activeSection}>
             {activeSection === 'weather' && (
           <ControlGroup>
             <div className="estate-status">

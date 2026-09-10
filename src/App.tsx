@@ -33,6 +33,7 @@ import { sampleElevation, type ElevationSample } from './elevation'
 import { fetchCurrentWeather, type WeatherData } from './weather'
 import { buildShareUrl, parseShareStateFromUrl } from './shareState'
 import { flyToEstate } from './cameraMotion'
+import { computeDayNight } from './dayNight'
 import { landmarks, landmarkCategoryColors, landmarkCategoryLabels, type Landmark } from './landmarks'
 import ControlsPanel from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
@@ -129,6 +130,8 @@ export default function App() {
   const [rotateHintExpired, setRotateHintExpired] = useState(false)
   const rotateHintTimerStarted = useRef(false)
   const rotateHintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [renderedImageryUrl, setRenderedImageryUrl] = useState<string | null>(null)
+  const imageryFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [unlocked, setUnlockedState] = useState(isUnlocked())
   const [showChutes, setShowChutes] = useState(true)
   const [showSpots, setShowSpots] = useState(true)
@@ -303,6 +306,21 @@ export default function App() {
     setShowOverlay((v) => !v)
   }, [])
 
+  const handleRecenter = useCallback(() => {
+    const map = mapRef.current?.getMap()
+    if (!map) return
+    flyToEstate(
+      map,
+      {
+        center: [targetView.longitude, targetView.latitude],
+        zoom: targetView.zoom,
+        pitch: targetView.pitch,
+        bearing: targetView.bearing,
+      },
+      1800,
+    )
+  }, [targetView])
+
   const handleHistoricalYearChange = useCallback((year: ImagerySelection) => {
     setHistoricalYear(year)
   }, [])
@@ -333,6 +351,20 @@ export default function App() {
     for (const id of roadLayerIds) map.setLayoutProperty(id, 'visibility', visibility.roads)
     for (const id of buildingLayerIds) map.setLayoutProperty(id, 'visibility', visibility.buildings)
   }, [basemap, mapReady])
+
+  useEffect(() => {
+    const map = mapRef.current?.getMap()
+    if (!map || !mapReady) return
+
+    const applyDayNight = () => {
+      const { light, sky } = computeDayNight(new Date())
+      map.setLight(light)
+      map.setSky(sky)
+    }
+    applyDayNight()
+    const interval = setInterval(applyDayNight, 60000)
+    return () => clearInterval(interval)
+  }, [mapReady])
 
   useEffect(() => {
     if (!rotateHintTimerStarted.current && zoom >= ROTATE_HINT_MIN_ZOOM) {
@@ -415,6 +447,20 @@ export default function App() {
         ? waybackTileUrl(historicalYears.find((y) => y.year === historicalYear)!.releaseNum)
         : null
 
+  useEffect(() => {
+    if (imageryFadeTimerRef.current) {
+      clearTimeout(imageryFadeTimerRef.current)
+      imageryFadeTimerRef.current = null
+    }
+    if (imageryTileUrl !== null) {
+      setRenderedImageryUrl(imageryTileUrl)
+    } else {
+      // Keep the tile source mounted briefly so the layer can fade out
+      // instead of popping off instantly when leaving satellite basemaps.
+      imageryFadeTimerRef.current = setTimeout(() => setRenderedImageryUrl(null), 400)
+    }
+  }, [imageryTileUrl])
+
   const measureCoords = measurePoints.map((p) => p.lngLat)
   const measureIsClosedLoop = measureClosed && measureCoords.length >= 3
   const measurePathCoords = measureIsClosedLoop ? [...measureCoords, measureCoords[0]] : measureCoords
@@ -473,20 +519,33 @@ export default function App() {
       {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && (
         <div className="rotate-hint">Cliquez et glissez pour incliner/pivoter</div>
       )}
+      <button
+        type="button"
+        className="recenter-button"
+        onClick={handleRecenter}
+        aria-label="Recentrer sur le domaine"
+        title="Recentrer sur le domaine"
+      >
+        ⌂
+      </button>
       <OnboardingCard />
 
-      {imageryTileUrl !== null && (
+      {renderedImageryUrl !== null && (
         <Source
           id="historical-imagery"
           type="raster"
-          tiles={[imageryTileUrl]}
+          tiles={[renderedImageryUrl]}
           tileSize={256}
         >
           <Layer
             id="historical-imagery-layer"
             type="raster"
             beforeId="hillshade"
-            paint={{ 'raster-fade-duration': 500 }}
+            paint={{
+              'raster-opacity': imageryTileUrl !== null ? 1 : 0,
+              'raster-opacity-transition': { duration: 400, delay: 0 },
+              'raster-fade-duration': 500,
+            }}
           />
         </Source>
       )}

@@ -287,6 +287,33 @@
   border-radius: 4px;
 }
 
+.recenter-button {
+  position: absolute;
+  bottom: 34px;
+  left: 16px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel-bg);
+  backdrop-filter: blur(var(--panel-blur));
+  border: 1.5px solid var(--accent-amber);
+  border-radius: 50%;
+  color: var(--text-primary);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1;
+  box-shadow: var(--panel-shadow);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.recenter-button:hover {
+  color: var(--accent-amber);
+  transform: scale(1.06);
+}
+
 .controls-panel {
   position: absolute;
   top: 16px;
@@ -407,6 +434,18 @@
   gap: 12px;
   border-top: 1px solid var(--panel-border);
   padding-top: 12px;
+  animation: panel-section-enter 0.22s ease;
+}
+
+@keyframes panel-section-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hall-of-fame-panel {
@@ -868,6 +907,12 @@
 @media (max-width: 720px) {
   .panel-edge-toggle {
     display: none;
+  }
+
+  .recenter-button {
+    bottom: auto;
+    top: 16px;
+    left: 16px;
   }
 
   .controls-panel {
