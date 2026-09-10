@@ -60,11 +60,13 @@ const LANDMARK_FADE_END_ZOOM = 11
 const ESTATE_CENTER = { longitude: 57.368, latitude: -20.302 }
 // Fitted from 4 ground-control points the user marked on the drawn map (image
 // corners -> lng/lat via least-squares affine); the drawing isn't north-up.
+// Nudged ~1.5% outward from center after the user flagged the artwork edge
+// falling slightly short of the true boundary in a couple of spots.
 const drawnMapCoordinates: [[number, number], [number, number], [number, number], [number, number]] = [
-  [57.393771, -20.285574],
-  [57.388169, -20.318561],
-  [57.362021, -20.314259],
-  [57.367623, -20.281272],
+  [57.394009, -20.285359],
+  [57.388323, -20.318841],
+  [57.361783, -20.314474],
+  [57.367469, -20.280992],
 ]
 const BASEMAP_STORAGE_KEY = 'ddw-basemap'
 
