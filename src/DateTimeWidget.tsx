@@ -11,29 +11,26 @@ export default function DateTimeWidget() {
   }, [])
 
   return (
-    <div className="control-group">
-      <span className="control-label">Estate time</span>
-      <div className="datetime-readout">
-        <span className="datetime-clock">
-          {time.toLocaleTimeString('en-GB', {
-            timeZone: MAURITIUS_TIME_ZONE,
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-          })}
-        </span>
-        <span className="datetime-day">
-          {time.toLocaleDateString('en-GB', { timeZone: MAURITIUS_TIME_ZONE, weekday: 'long' })}
-        </span>
-        <span className="datetime-date">
-          {time.toLocaleDateString('en-GB', {
-            timeZone: MAURITIUS_TIME_ZONE,
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          })}
-        </span>
-      </div>
+    <div className="datetime-readout">
+      <span className="datetime-clock">
+        {time.toLocaleTimeString('en-GB', {
+          timeZone: MAURITIUS_TIME_ZONE,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        })}
+      </span>
+      <span className="datetime-day">
+        {time.toLocaleDateString('en-GB', { timeZone: MAURITIUS_TIME_ZONE, weekday: 'long' })}
+      </span>
+      <span className="datetime-date">
+        {time.toLocaleDateString('en-GB', {
+          timeZone: MAURITIUS_TIME_ZONE,
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })}
+      </span>
     </div>
   )
 }

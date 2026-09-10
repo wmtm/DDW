@@ -115,33 +115,34 @@ export default function ControlsPanel({
       </button>
 
       <div className="control-group">
-        <span className="control-label">Current weather</span>
-        <div className="weather-readout">
-          {weather ? (
-            <>
-              <div className="weather-main">
-                <span
-                  className="wind-arrow"
-                  style={{ transform: `rotate(${weather.windDirectionDeg}deg)` }}
-                  title={`Wind from ${Math.round(weather.windDirectionDeg)}°`}
-                />
-                <span>{Math.round(weather.temperatureC)}°C</span>
-                <span className="hint">{weather.description}</span>
-              </div>
-              <span className="hint">
-                Wind {Math.round(weather.windSpeedKmh)} km/h · Precip{' '}
-                {weather.precipitationMm.toFixed(1)} mm
-              </span>
-            </>
-          ) : weatherError ? (
-            <span className="hint">{weatherError}</span>
-          ) : (
-            <div className="skeleton-line skeleton-line-weather" />
-          )}
+        <span className="control-label">Estate now</span>
+        <div className="estate-status">
+          <div className="weather-readout">
+            {weather ? (
+              <>
+                <div className="weather-main">
+                  <span
+                    className="wind-arrow"
+                    style={{ transform: `rotate(${weather.windDirectionDeg}deg)` }}
+                    title={`Wind from ${Math.round(weather.windDirectionDeg)}°`}
+                  />
+                  <span>{Math.round(weather.temperatureC)}°C</span>
+                  <span className="hint">{weather.description}</span>
+                </div>
+                <span className="hint">
+                  Wind {Math.round(weather.windSpeedKmh)} km/h · Precip{' '}
+                  {weather.precipitationMm.toFixed(1)} mm
+                </span>
+              </>
+            ) : weatherError ? (
+              <span className="hint">{weatherError}</span>
+            ) : (
+              <div className="skeleton-line skeleton-line-weather" />
+            )}
+          </div>
+          <DateTimeWidget />
         </div>
       </div>
-
-      <DateTimeWidget />
 
       <PanelSection title="Explore">
         <div className="control-group">
