@@ -124,6 +124,9 @@ export default function App() {
   const [openPopupPhotoIndex, setOpenPopupPhotoIndex] = useState<number | null>(null)
   const [landmarkTourIndex, setLandmarkTourIndex] = useState<number | null>(null)
   const [zoom, setZoom] = useState(Math.max(targetView.zoom - 3, 5))
+  const [rotateHintExpired, setRotateHintExpired] = useState(false)
+  const rotateHintTimerStarted = useRef(false)
+  const rotateHintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [unlocked, setUnlockedState] = useState(isUnlocked())
   const [showChutes, setShowChutes] = useState(true)
   const [showSpots, setShowSpots] = useState(true)
@@ -330,6 +333,19 @@ export default function App() {
   }, [basemap, mapReady])
 
   useEffect(() => {
+    if (!rotateHintTimerStarted.current && zoom >= ROTATE_HINT_MIN_ZOOM) {
+      rotateHintTimerStarted.current = true
+      rotateHintTimerRef.current = setTimeout(() => setRotateHintExpired(true), 30000)
+    }
+  }, [zoom])
+
+  useEffect(() => {
+    return () => {
+      if (rotateHintTimerRef.current) clearTimeout(rotateHintTimerRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
     let cancelled = false
 
     const load = () => {
@@ -452,7 +468,7 @@ export default function App() {
     >
       <FullscreenControl position="top-right" />
       <NavigationControl position="top-right" visualizePitch />
-      {zoom >= ROTATE_HINT_MIN_ZOOM && (
+      {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && (
         <div className="rotate-hint">Cliquez et glissez pour incliner/pivoter</div>
       )}
       <OnboardingCard />
