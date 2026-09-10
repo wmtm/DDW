@@ -806,6 +806,15 @@
   cursor: pointer;
 }
 
+.layer-toggle-row:has(input:disabled) {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.layer-toggle-row input:disabled {
+  cursor: default;
+}
+
 .legend {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 6px;

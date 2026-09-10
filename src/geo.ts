@@ -9,6 +9,20 @@ export function dmsToDecimal(
   return sign * (degrees + minutes / 60 + seconds / 3600)
 }
 
+/** Point at a given distance (meters) and compass bearing (0=N, 90=E) from an origin [lon, lat]. */
+export function destinationPoint(
+  origin: [number, number],
+  bearingDeg: number,
+  distanceMeters: number,
+): [number, number] {
+  const [lon, lat] = origin
+  const bearingRad = (bearingDeg * Math.PI) / 180
+  const latRad = (lat * Math.PI) / 180
+  const dLat = (distanceMeters * Math.cos(bearingRad)) / 110540
+  const dLon = (distanceMeters * Math.sin(bearingRad)) / (111320 * Math.cos(latRad))
+  return [lon + dLon, lat + dLat]
+}
+
 export function haversineDistanceMeters(a: [number, number], b: [number, number]): number {
   const R = 6371000
   const toRad = (deg: number) => (deg * Math.PI) / 180

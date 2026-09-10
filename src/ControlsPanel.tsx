@@ -20,6 +20,8 @@ interface Props {
   onUnlock: () => void
   showChutes: boolean
   onToggleChutes: () => void
+  showWindCones: boolean
+  onToggleWindCones: () => void
   showSpots: boolean
   onToggleSpots: () => void
   showNames: boolean
@@ -83,6 +85,8 @@ export default function ControlsPanel({
   onUnlock,
   showChutes,
   onToggleChutes,
+  showWindCones,
+  onToggleWindCones,
   showSpots,
   onToggleSpots,
   showNames,
@@ -358,6 +362,20 @@ export default function ControlsPanel({
                   <input type="checkbox" checked={showChutes} onChange={onToggleChutes} />
                   <span>Afficher les chutes sur la carte</span>
                 </label>
+                <label className="layer-toggle-row">
+                  <input
+                    type="checkbox"
+                    checked={showWindCones}
+                    onChange={onToggleWindCones}
+                    disabled={!showChutes}
+                  />
+                  <span>Zones sous le vent (odeur)</span>
+                </label>
+                {showWindCones && showChutes && (
+                  <span className="hint">
+                    Cône indicatif dans le sens où porte le vent actuel — pas une garantie.
+                  </span>
+                )}
               </PasscodeGate>
             </ControlGroup>
           </>

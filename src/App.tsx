@@ -34,6 +34,7 @@ import { fetchCurrentWeather, type WeatherData } from './weather'
 import { buildShareUrl, parseShareStateFromUrl } from './shareState'
 import { flyToEstate } from './cameraMotion'
 import { computeDayNight } from './dayNight'
+import { buildWindConeGeoJSON } from './windCone'
 import { landmarks, landmarkCategoryColors, landmarkCategoryLabels, type Landmark } from './landmarks'
 import ControlsPanel from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
@@ -137,6 +138,7 @@ export default function App() {
   const [showSpots, setShowSpots] = useState(true)
   const [showNames, setShowNames] = useState(true)
   const [showDrawnMap, setShowDrawnMap] = useState(false)
+  const [showWindCones, setShowWindCones] = useState(false)
 
   const chutesVisible = unlocked && showChutes
 
@@ -154,11 +156,17 @@ export default function App() {
   )
   const currentTourLandmark = landmarkTourIndex !== null ? chuteLandmarks[landmarkTourIndex] : null
 
+  const windConeGeoJSON = useMemo(() => {
+    if (!showWindCones || !chutesVisible || chuteLandmarks.length === 0 || !weather) return null
+    return buildWindConeGeoJSON(chuteLandmarks, weather.windDirectionDeg, weather.windSpeedKmh)
+  }, [showWindCones, chutesVisible, chuteLandmarks, weather])
+
   const handleUnlock = useCallback(() => setUnlockedState(true), [])
   const handleToggleChutes = useCallback(() => setShowChutes((v) => !v), [])
   const handleToggleSpots = useCallback(() => setShowSpots((v) => !v), [])
   const handleToggleNames = useCallback(() => setShowNames((v) => !v), [])
   const handleToggleDrawnMap = useCallback(() => setShowDrawnMap((v) => !v), [])
+  const handleToggleWindCones = useCallback(() => setShowWindCones((v) => !v), [])
 
   const handleBasemapChange = useCallback((next: BasemapStyle) => {
     setBasemap(next)
@@ -582,6 +590,28 @@ export default function App() {
         </Source>
       )}
 
+      {windConeGeoJSON && (
+        <Source id="wind-cones" type="geojson" data={windConeGeoJSON}>
+          <Layer
+            id="wind-cones-fill"
+            type="fill"
+            paint={{
+              'fill-color': '#9fd8ff',
+              'fill-opacity': 0.18,
+            }}
+          />
+          <Layer
+            id="wind-cones-outline"
+            type="line"
+            paint={{
+              'line-color': '#9fd8ff',
+              'line-width': 1,
+              'line-opacity': 0.45,
+            }}
+          />
+        </Source>
+      )}
+
       {showDrawnMap && (
         <>
           <Source id="drawn-map-shadow" type="geojson" data={boundaryGeometry}>
@@ -824,6 +854,8 @@ export default function App() {
         onUnlock={handleUnlock}
         showChutes={showChutes}
         onToggleChutes={handleToggleChutes}
+        showWindCones={showWindCones}
+        onToggleWindCones={handleToggleWindCones}
         showSpots={showSpots}
         onToggleSpots={handleToggleSpots}
         showNames={showNames}
