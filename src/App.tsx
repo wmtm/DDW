@@ -338,7 +338,7 @@ export default function App() {
           }
         })
         .catch(() => {
-          if (!cancelled) setWeatherError('Weather unavailable')
+          if (!cancelled) setWeatherError('Météo indisponible')
         })
     }
 
@@ -449,7 +449,7 @@ export default function App() {
     >
       <FullscreenControl position="top-right" />
       <NavigationControl position="top-right" visualizePitch />
-      <div className="rotate-hint">Click and drag to tilt/rotate</div>
+      <div className="rotate-hint">Cliquez et glissez pour incliner/pivoter</div>
       <OnboardingCard />
 
       {imageryTileUrl !== null && (
@@ -607,7 +607,7 @@ export default function App() {
               key={i}
               className="photo-thumb-button"
               onClick={() => setOpenPopupPhotoIndex(i)}
-              aria-label={`View photo: ${photo.caption ?? selectedLandmark.name}`}
+              aria-label={`Voir la photo : ${photo.caption ?? selectedLandmark.name}`}
             >
               <img
                 className="landmark-popup-photo"

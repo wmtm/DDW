@@ -158,7 +158,7 @@ export default function PhotoLightbox({ photos, initialIndex, onClose }: Props) 
 
   return createPortal(
     <div className="lightbox-backdrop" onClick={onClose}>
-      <button className="lightbox-close" onClick={onClose} aria-label="Close">
+      <button className="lightbox-close" onClick={onClose} aria-label="Fermer">
         ×
       </button>
 
@@ -169,7 +169,7 @@ export default function PhotoLightbox({ photos, initialIndex, onClose }: Props) 
             e.stopPropagation()
             goPrevious()
           }}
-          aria-label="Previous photo"
+          aria-label="Photo précédente"
         >
           ‹
         </button>
@@ -201,7 +201,7 @@ export default function PhotoLightbox({ photos, initialIndex, onClose }: Props) 
             e.stopPropagation()
             goNext()
           }}
-          aria-label="Next photo"
+          aria-label="Photo suivante"
         >
           ›
         </button>
@@ -212,10 +212,10 @@ export default function PhotoLightbox({ photos, initialIndex, onClose }: Props) 
         {photos.length > 1 && (
           <span className="hint">
             {index + 1} / {photos.length}
-            {isPanoramic ? ' · drag to look around' : ''}
+            {isPanoramic ? ' · glissez pour regarder autour' : ''}
           </span>
         )}
-        {photos.length === 1 && isPanoramic && <span className="hint">Drag to look around</span>}
+        {photos.length === 1 && isPanoramic && <span className="hint">Glissez pour regarder autour</span>}
       </div>
     </div>,
     document.body,

@@ -43,10 +43,10 @@ export default function PasscodeGate({ label, children, onUnlock }: Props) {
           placeholder="Code"
         />
         <button type="submit" className="action-button">
-          Unlock
+          Déverrouiller
         </button>
       </div>
-      {error && <span className="hint passcode-error">Incorrect code</span>}
+      {error && <span className="hint passcode-error">Code incorrect</span>}
     </form>
   )
 }

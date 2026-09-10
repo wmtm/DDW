@@ -128,13 +128,13 @@ export default function ControlsPanel({
         type="button"
         className="controls-panel-toggle"
         onClick={() => setCollapsed((c) => !c)}
-        aria-label={collapsed ? 'Expand controls' : 'Collapse controls'}
+        aria-label={collapsed ? 'Agrandir les commandes' : 'Réduire les commandes'}
       >
-        Controls {collapsed ? '▲' : '▼'}
+        Commandes {collapsed ? '▲' : '▼'}
       </button>
 
       <div className="control-group">
-        <span className="control-label">Estate now</span>
+        <span className="control-label">En ce moment</span>
         <div className="estate-status">
           <div className="weather-readout">
             {weather ? (
@@ -143,13 +143,13 @@ export default function ControlsPanel({
                   <span
                     className="wind-arrow"
                     style={{ transform: `rotate(${weather.windDirectionDeg}deg)` }}
-                    title={`Wind from ${Math.round(weather.windDirectionDeg)}°`}
+                    title={`Vent venant de ${Math.round(weather.windDirectionDeg)}°`}
                   />
                   <span>{Math.round(weather.temperatureC)}°C</span>
                   <span className="hint">{weather.description}</span>
                 </div>
                 <span className="hint">
-                  Wind {Math.round(weather.windSpeedKmh)} km/h · Precip{' '}
+                  Vent {Math.round(weather.windSpeedKmh)} km/h · Précip.{' '}
                   {weather.precipitationMm.toFixed(1)} mm
                 </span>
               </>
@@ -163,13 +163,13 @@ export default function ControlsPanel({
         </div>
       </div>
 
-      <PanelSection title="Explore">
+      <PanelSection title="Explorer">
         <div className="control-group">
-          <span className="control-label">Find a chute or landmark</span>
+          <span className="control-label">Rechercher une chute ou un point d'intérêt</span>
           <input
             type="text"
             className="search-input"
-            placeholder="Search by name or number…"
+            placeholder="Rechercher par nom ou numéro…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -193,12 +193,12 @@ export default function ControlsPanel({
             </div>
           )}
           {searchQuery.trim() && searchResults.length === 0 && (
-            <span className="hint">No matches</span>
+            <span className="hint">Aucun résultat</span>
           )}
         </div>
 
         <div className="control-group">
-          <span className="control-label">Basemap</span>
+          <span className="control-label">Fond de carte</span>
           <div className="button-row">
             {basemapOptions.map((opt) => (
               <button
@@ -215,7 +215,7 @@ export default function ControlsPanel({
 
         <div className="control-group">
           <button className="action-button" onClick={onToggleTour} disabled={landmarkTourActive}>
-            {tourRunning ? 'Stop tour' : 'Start fly-through tour'}
+            {tourRunning ? 'Arrêter la visite' : 'Démarrer la visite aérienne'}
           </button>
         </div>
 
@@ -225,17 +225,17 @@ export default function ControlsPanel({
             onClick={landmarkTourActive ? onExitLandmarkTour : onStartLandmarkTour}
             disabled={tourRunning || chuteCount === 0}
           >
-            {landmarkTourActive ? 'Exit chute tour' : 'Visit the chutes'}
+            {landmarkTourActive ? 'Quitter la visite des chutes' : 'Visiter les chutes'}
           </button>
           <span className="hint">
-            {chuteCount} chute{chuteCount === 1 ? '' : 's'} recorded
+            {chuteCount} chute{chuteCount === 1 ? '' : 's'} enregistrée{chuteCount === 1 ? '' : 's'}
           </span>
         </div>
       </PanelSection>
 
-      <PanelSection title="Layers">
+      <PanelSection title="Couches">
         <div className="control-group">
-          <PasscodeGate label="Chutes are private. Enter the code to show them." onUnlock={onUnlock}>
+          <PasscodeGate label="Les chutes sont privées. Entrez le code pour les afficher." onUnlock={onUnlock}>
             <label className="layer-toggle-row">
               <input type="checkbox" checked={showChutes} onChange={onToggleChutes} />
               <span>Chutes</span>
@@ -244,41 +244,41 @@ export default function ControlsPanel({
 
           <label className="layer-toggle-row">
             <input type="checkbox" checked={showSpots} onChange={onToggleSpots} />
-            <span>Histoires &amp; Important spots</span>
+            <span>Histoires et lieux importants</span>
           </label>
 
           <label className="layer-toggle-row">
             <input type="checkbox" checked={showDrawnMap} onChange={onToggleDrawnMap} />
-            <span>Map dessinée</span>
+            <span>Carte dessinée</span>
           </label>
 
           <label className="layer-toggle-row">
             <input type="checkbox" checked={showNames} onChange={onToggleNames} />
-            <span>Names</span>
+            <span>Noms</span>
           </label>
         </div>
       </PanelSection>
 
-      <PanelSection title="Tools">
+      <PanelSection title="Outils">
         <div className="control-group">
           <button
             className={`action-button ${measureActive ? 'chip-active' : ''}`}
             onClick={onToggleMeasure}
             disabled={tourRunning || landmarkTourActive}
           >
-            {measureActive ? 'Exit measure mode' : 'Measure distance'}
+            {measureActive ? 'Quitter le mode mesure' : 'Mesurer une distance'}
           </button>
           {measureActive && measurePointCount === 0 && (
-            <span className="hint">Click points on the terrain to build a path</span>
+            <span className="hint">Cliquez sur le terrain pour tracer un parcours</span>
           )}
           {measureActive && measurePointCount > 0 && !measureClosed && (
             <div className="button-row">
               <button className="clear-button" onClick={onUndoMeasurePoint}>
-                Undo point
+                Annuler le point
               </button>
               {measurePointCount >= 3 && (
                 <button className="clear-button" onClick={onCloseMeasureLoop}>
-                  Close loop
+                  Fermer la boucle
                 </button>
               )}
             </div>
@@ -286,19 +286,19 @@ export default function ControlsPanel({
           {measureResult && (
             <div className="measure-result">
               <div>
-                {measureClosed ? 'Perimeter' : 'Length'}: {formatDistance(measureResult.distanceMeters)}
+                {measureClosed ? 'Périmètre' : 'Longueur'} : {formatDistance(measureResult.distanceMeters)}
               </div>
               {measureResult.areaSquareMeters !== null && (
-                <div>Area: {formatArea(measureResult.areaSquareMeters)}</div>
+                <div>Surface : {formatArea(measureResult.areaSquareMeters)}</div>
               )}
               <div>
-                Elevation change:{' '}
+                Dénivelé :{' '}
                 {measureResult.elevationDeltaMeters === null
-                  ? 'unavailable'
+                  ? 'indisponible'
                   : `${Math.round(measureResult.elevationDeltaMeters)} m`}
               </div>
               <button className="clear-button" onClick={onClearMeasure}>
-                Clear
+                Effacer
               </button>
             </div>
           )}
@@ -309,26 +309,26 @@ export default function ControlsPanel({
           <div className="elevation-readout">
             {hoverElevation && hoverElevation.elevationMeters !== null ? (
               <>
-                <div>Elevation: {Math.round(hoverElevation.elevationMeters)} m</div>
+                <div>Altitude : {Math.round(hoverElevation.elevationMeters)} m</div>
                 <div>
-                  Slope (dénivelé):{' '}
+                  Pente :{' '}
                   {hoverElevation.slopePercent === null
-                    ? 'unavailable'
+                    ? 'indisponible'
                     : `${hoverElevation.slopePercent.toFixed(1)}%`}
                 </div>
               </>
             ) : (
-              <span className="hint">Hover the terrain</span>
+              <span className="hint">Survolez le terrain</span>
             )}
           </div>
           <button
             className={`action-button ${slopeContrast ? 'chip-active' : ''}`}
             onClick={onToggleSlopeContrast}
           >
-            {slopeContrast ? 'Show normal shading' : 'Highlight slope contrast'}
+            {slopeContrast ? "Afficher l'ombrage normal" : 'Accentuer le contraste des pentes'}
           </button>
           {slopeContrast && (
-            <span className="hint">Steeper ground shows redder/darker as you fly around</span>
+            <span className="hint">Les terrains plus pentus apparaissent plus rouges/sombres lors du survol</span>
           )}
         </div>
 
@@ -338,13 +338,13 @@ export default function ControlsPanel({
             onClick={onToggleOverlay}
             disabled={tourRunning}
           >
-            {showOverlay ? 'Hide estate overlay' : 'Show estate overlay'}
+            {showOverlay ? 'Masquer le contour du domaine' : 'Afficher le contour du domaine'}
           </button>
           {showOverlay && (
             <div className="legend">
               <div className="legend-row">
                 <span className="legend-swatch legend-swatch-boundary" />
-                Estate boundary
+                Limite du domaine
               </div>
             </div>
           )}
@@ -352,14 +352,14 @@ export default function ControlsPanel({
 
         {usesSatelliteImagery(basemap) && (
           <div className="control-group">
-            <span className="control-label">Satellite imagery year</span>
+            <span className="control-label">Année de l'imagerie satellite</span>
             <div className="button-row">
               <button
                 className={`chip ${historicalYear === 'current' ? 'chip-active' : ''}`}
                 onClick={() => onHistoricalYearChange('current')}
                 disabled={tourRunning || landmarkTourActive}
               >
-                Now
+                Actuel
               </button>
               {historicalYears.map((hy) => (
                 <button
@@ -376,14 +376,14 @@ export default function ControlsPanel({
         )}
       </PanelSection>
 
-      <PanelSection title="Share">
+      <PanelSection title="Partager">
         <div className="control-group">
           <div className="button-row">
             <button className="action-button" onClick={onCaptureView}>
-              Capture view (PNG)
+              Capturer la vue (PNG)
             </button>
             <button className="action-button" onClick={onGenerateShareLink}>
-              Copy share link
+              Copier le lien de partage
             </button>
           </div>
           {shareUrl && (
@@ -396,9 +396,9 @@ export default function ControlsPanel({
                 onFocus={(e) => e.currentTarget.select()}
               />
               {shareCopied ? (
-                <div className="share-toast">Copied to clipboard</div>
+                <div className="share-toast">Copié dans le presse-papiers</div>
               ) : (
-                <span className="hint">Copy the link above</span>
+                <span className="hint">Copiez le lien ci-dessus</span>
               )}
             </div>
           )}
@@ -406,7 +406,7 @@ export default function ControlsPanel({
 
         <div className="control-group">
           <a className="action-button leaderboard-link" href="#/leaderboard">
-            2026 Gros Cerf leaderboard
+            Classement Gros Cerf 2026
           </a>
         </div>
       </PanelSection>
@@ -419,5 +419,5 @@ function formatDistance(meters: number): string {
 }
 
 function formatArea(squareMeters: number): string {
-  return `${Math.round(squareMeters).toLocaleString('en-US')} m²`
+  return `${Math.round(squareMeters).toLocaleString('fr-FR')} m²`
 }

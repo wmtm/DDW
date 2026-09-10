@@ -13,31 +13,31 @@ export default function LeaderboardPage() {
     <div className="leaderboard-page">
       <div className="leaderboard-card">
         <a className="leaderboard-back" href="#/">
-          ← Back to map
+          ← Retour à la carte
         </a>
 
         <div className="leaderboard-hero">
-          <span className="leaderboard-badge">{leaderboardSeason} Season</span>
+          <span className="leaderboard-badge">Saison {leaderboardSeason}</span>
           <h1>Chassée de Wolmar</h1>
-          <h2>Gros Cerf Leaderboard</h2>
+          <h2>Classement Gros Cerf</h2>
         </div>
 
-        <PasscodeGate label="This leaderboard is private. Enter the code to view results.">
+        <PasscodeGate label="Ce classement est privé. Entrez le code pour voir les résultats.">
           {leaderboardPendingNote && (
             <div className="leaderboard-pending-note">{leaderboardPendingNote}</div>
           )}
 
           {ranked.length === 0 ? (
             <div className="leaderboard-empty">
-              <p>No results recorded yet for the {leaderboardSeason} season.</p>
-              <span className="hint">Results will appear here once the season's kills are logged.</span>
+              <p>Aucun résultat enregistré pour la saison {leaderboardSeason} pour le moment.</p>
+              <span className="hint">Les résultats apparaîtront ici une fois les prises de la saison enregistrées.</span>
             </div>
           ) : (
             <table className="leaderboard-table">
               <thead>
                 <tr>
-                  <th>Rank</th>
-                  <th>Hunter</th>
+                  <th>Rang</th>
+                  <th>Chasseur</th>
                   <th>GC</th>
                 </tr>
               </thead>

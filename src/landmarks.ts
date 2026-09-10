@@ -37,9 +37,9 @@ export interface Landmark {
 
 export const landmarkCategoryLabels: Record<LandmarkCategory, string> = {
   mirador: 'Chute / mirador',
-  'water-point': 'Water point',
-  'historic-marker': 'Historic marker',
-  other: 'Other feature',
+  'water-point': "Point d'eau",
+  'historic-marker': 'Repère historique',
+  other: 'Autre élément',
 }
 
 export const landmarkCategoryColors: Record<LandmarkCategory, string> = {
@@ -55,13 +55,13 @@ export const landmarks: Landmark[] = [
     number: 123,
     name: 'Pont Mimi',
     category: 'mirador',
-    description: 'Elevated mirador built into a large tree, overlooking an open, rocky clearing.',
+    description: 'Mirador surélevé construit dans un grand arbre, surplombant une clairière rocheuse dégagée.',
     // DMS: 20°18'08.8"S 57°22'54.9"E
     latitude: dmsToDecimal(20, 18, 8.8, 'S'),
     longitude: dmsToDecimal(57, 22, 54.9, 'E'),
     photos: [
-      { src: pontMimiStructure, caption: 'Mirador structure' },
-      { src: pontMimiTerrain, caption: 'Surrounding terrain' },
+      { src: pontMimiStructure, caption: 'Structure du mirador' },
+      { src: pontMimiTerrain, caption: 'Terrain environnant' },
     ],
   },
 ]

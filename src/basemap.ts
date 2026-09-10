@@ -2,8 +2,8 @@ export type BasemapStyle = 'satellite' | 'map' | 'hybrid' | 'terrain'
 
 export const basemapOptions: { value: BasemapStyle; label: string }[] = [
   { value: 'satellite', label: 'Satellite' },
-  { value: 'map', label: 'Map' },
-  { value: 'hybrid', label: 'Hybrid' },
+  { value: 'map', label: 'Carte' },
+  { value: 'hybrid', label: 'Hybride' },
   { value: 'terrain', label: 'Terrain' },
 ]
 

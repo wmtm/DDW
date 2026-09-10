@@ -13,7 +13,7 @@ export default function DateTimeWidget() {
   return (
     <div className="datetime-readout">
       <span className="datetime-clock">
-        {time.toLocaleTimeString('en-GB', {
+        {time.toLocaleTimeString('fr-FR', {
           timeZone: MAURITIUS_TIME_ZONE,
           hour: '2-digit',
           minute: '2-digit',
@@ -21,10 +21,10 @@ export default function DateTimeWidget() {
         })}
       </span>
       <span className="datetime-day">
-        {time.toLocaleDateString('en-GB', { timeZone: MAURITIUS_TIME_ZONE, weekday: 'long' })}
+        {time.toLocaleDateString('fr-FR', { timeZone: MAURITIUS_TIME_ZONE, weekday: 'long' })}
       </span>
       <span className="datetime-date">
-        {time.toLocaleDateString('en-GB', {
+        {time.toLocaleDateString('fr-FR', {
           timeZone: MAURITIUS_TIME_ZONE,
           day: 'numeric',
           month: 'long',

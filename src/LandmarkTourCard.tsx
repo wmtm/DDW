@@ -34,7 +34,7 @@ export default function LandmarkTourCard({ landmark, index, total, onNext, onPre
               key={i}
               className="photo-thumb-button"
               onClick={() => setOpenPhotoIndex(i)}
-              aria-label={`View photo: ${photo.caption ?? landmark.name}`}
+              aria-label={`Voir la photo : ${photo.caption ?? landmark.name}`}
             >
               <img src={photo.src} alt={photo.caption ?? landmark.name} title={photo.caption} />
             </button>
@@ -43,13 +43,13 @@ export default function LandmarkTourCard({ landmark, index, total, onNext, onPre
       )}
       <div className="landmark-tour-nav">
         <button className="action-button" onClick={onPrevious} disabled={index === 0}>
-          Previous
+          Précédent
         </button>
         <button className="action-button" onClick={onNext} disabled={index === total - 1}>
-          Next
+          Suivant
         </button>
         <button className="clear-button" onClick={onExit}>
-          Exit
+          Quitter
         </button>
       </div>
 

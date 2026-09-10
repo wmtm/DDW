@@ -11,7 +11,7 @@ export interface LeaderboardEntry {
 
 export const leaderboardSeason = '2026'
 
-export const leaderboardPendingNote = 'Results for the 3 September 2026 hunt are not yet recorded.'
+export const leaderboardPendingNote = 'Les résultats de la chasse du 3 septembre 2026 ne sont pas encore enregistrés.'
 
 export const leaderboardEntries: LeaderboardEntry[] = [
   { id: 'bertrand-closel', hunterName: 'Bertrand Closel', gc: 1 },

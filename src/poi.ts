@@ -13,7 +13,7 @@ export const pois: Poi[] = [
   {
     id: 'reception-hall',
     name: 'Campement de chasse',
-    description: 'Hunting camp / lodge on the estate.',
+    description: 'Camp de chasse / pavillon du domaine.',
     // DMS: 20°17'45.2"S 57°22'24.6"E
     latitude: dmsToDecimal(20, 17, 45.2, 'S'),
     longitude: dmsToDecimal(57, 22, 24.6, 'E'),
@@ -21,7 +21,7 @@ export const pois: Poi[] = [
   {
     id: 'entree',
     name: 'Entrée',
-    description: 'Main entrance to the estate.',
+    description: 'Entrée principale du domaine.',
     // DMS: 20°17'41.7"S 57°22'00.7"E
     latitude: dmsToDecimal(20, 17, 41.7, 'S'),
     longitude: dmsToDecimal(57, 22, 0.7, 'E'),
