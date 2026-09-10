@@ -132,36 +132,47 @@ export default function ControlsPanel({
   }, [landmarks, searchQuery])
 
   return (
-    <div className={`controls-panel ${collapsed ? 'controls-panel-collapsed' : ''}`}>
+    <>
       <button
         type="button"
-        className="controls-panel-toggle"
+        className={`panel-edge-toggle ${collapsed ? 'panel-edge-toggle-collapsed' : ''}`}
         onClick={() => setCollapsed((c) => !c)}
-        aria-label={collapsed ? 'Agrandir les commandes' : 'Réduire les commandes'}
+        aria-label={collapsed ? 'Afficher les commandes' : 'Masquer les commandes'}
       >
-        Commandes {collapsed ? '▲' : '▼'}
+        {collapsed ? '›' : '‹'}
       </button>
 
-      <img src={logoWolmar} alt="Domaine de Wolmar" className="panel-logo" />
+      <div className={`controls-panel ${collapsed ? 'controls-panel-collapsed' : ''}`}>
+        <button
+          type="button"
+          className="controls-panel-toggle"
+          onClick={() => setCollapsed((c) => !c)}
+          aria-label={collapsed ? 'Agrandir les commandes' : 'Réduire les commandes'}
+        >
+          Commandes {collapsed ? '▲' : '▼'}
+        </button>
 
-      <div className="panel-icon-tabs">
-        {SECTIONS.map((section) => (
-          <button
-            key={section.key}
-            type="button"
-            className={`panel-icon-tab ${activeSection === section.key ? 'panel-icon-tab-active' : ''}`}
-            onClick={() => setActiveSection(section.key)}
-            aria-label={section.label}
-            aria-pressed={activeSection === section.key}
-            title={section.label}
-          >
-            <img src={section.icon} alt="" />
-          </button>
-        ))}
-      </div>
+        <div className="controls-panel-scroll">
+          <img src={logoWolmar} alt="Domaine de Wolmar" className="panel-logo" />
 
-      <div className="panel-section-content">
-        {activeSection === 'weather' && (
+          <div className="panel-icon-tabs">
+            {SECTIONS.map((section) => (
+              <button
+                key={section.key}
+                type="button"
+                className={`panel-icon-tab ${activeSection === section.key ? 'panel-icon-tab-active' : ''}`}
+                onClick={() => setActiveSection(section.key)}
+                aria-label={section.label}
+                aria-pressed={activeSection === section.key}
+                title={section.label}
+              >
+                <img src={section.icon} alt="" />
+              </button>
+            ))}
+          </div>
+
+          <div className="panel-section-content">
+            {activeSection === 'weather' && (
           <ControlGroup>
             <div className="estate-status">
               <div className="weather-readout">
@@ -448,8 +459,10 @@ export default function ControlsPanel({
             </ControlGroup>
           </>
         )}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

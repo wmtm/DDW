@@ -55,6 +55,7 @@ const HOVER_THROTTLE_MS = 100
 const ZOOM_THROTTLE_MS = 100
 const LANDMARK_NUMBER_MIN_ZOOM = 16
 const LANDMARK_FADE_START_ZOOM = 13
+const ROTATE_HINT_MIN_ZOOM = 13
 const LANDMARK_FADE_END_ZOOM = 11
 const ESTATE_CENTER = { longitude: 57.368, latitude: -20.302 }
 const drawnMapCoordinates: [[number, number], [number, number], [number, number], [number, number]] = [
@@ -449,7 +450,9 @@ export default function App() {
     >
       <FullscreenControl position="top-right" />
       <NavigationControl position="top-right" visualizePitch />
-      <div className="rotate-hint">Cliquez et glissez pour incliner/pivoter</div>
+      {zoom >= ROTATE_HINT_MIN_ZOOM && (
+        <div className="rotate-hint">Cliquez et glissez pour incliner/pivoter</div>
+      )}
       <OnboardingCard />
 
       {imageryTileUrl !== null && (

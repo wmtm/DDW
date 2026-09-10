@@ -268,35 +268,84 @@
   top: 160px;
   right: 10px;
   background: rgba(20, 20, 20, 0.7);
+  border: 1.5px solid var(--accent-amber);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 11px;
   white-space: nowrap;
-  padding: 4px 8px;
+  padding: 3px 8px;
   border-radius: 12px;
   pointer-events: none;
   z-index: 1;
+  transition: opacity 0.2s ease;
+}
+
+/* Ties the compass/pitch button visually to the .rotate-hint above it. */
+.maplibregl-ctrl-group button.maplibregl-ctrl-compass {
+  background-color: rgba(20, 20, 20, 0.7);
+  border: 1.5px solid var(--accent-amber);
+  border-radius: 4px;
 }
 
 .controls-panel {
   position: absolute;
   top: 16px;
   left: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  width: 280px;
   background: var(--panel-bg);
   backdrop-filter: blur(var(--panel-blur));
   color: var(--text-primary);
-  padding: 14px;
   border-radius: var(--panel-radius);
   font-family: var(--font-body);
   font-size: 13px;
-  min-width: 200px;
-  max-width: 280px;
+  box-shadow: var(--panel-shadow);
+  overflow: visible;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.controls-panel-collapsed {
+  transform: translateX(-320px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.controls-panel-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
   max-height: calc(100vh - 32px);
   overflow-y: auto;
+}
+
+.panel-edge-toggle {
+  position: absolute;
+  top: 100px;
+  left: 296px;
+  width: 22px;
+  height: 56px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel-bg);
+  backdrop-filter: blur(var(--panel-blur));
+  border: none;
+  border-radius: 0 10px 10px 0;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 2;
   box-shadow: var(--panel-shadow);
+  transition: left 0.25s ease, color 0.15s ease;
+}
+
+.panel-edge-toggle:hover {
+  color: var(--accent-amber);
+}
+
+.panel-edge-toggle-collapsed {
+  left: 16px;
 }
 
 .control-group {
@@ -773,22 +822,35 @@
 }
 
 @media (max-width: 720px) {
+  .panel-edge-toggle {
+    display: none;
+  }
+
   .controls-panel {
     top: auto;
     left: 0;
     right: 0;
     bottom: 0;
     width: 100%;
-    min-width: 0;
     max-height: 55vh;
     border-radius: var(--panel-radius) var(--panel-radius) 0 0;
     box-sizing: border-box;
+    overflow: hidden;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
     transition: max-height 0.25s ease;
   }
 
   .controls-panel-collapsed {
     max-height: 44px;
-    overflow: hidden;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .controls-panel-scroll {
+    max-height: calc(55vh - 44px);
   }
 
   .controls-panel-toggle {
@@ -796,8 +858,7 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    width: calc(100% + 28px);
-    margin: -14px -14px 10px -14px;
+    width: 100%;
     padding: 10px 0;
     background: rgba(255, 255, 255, 0.06);
     border: none;
