@@ -5,10 +5,20 @@ import type { ElevationSample } from './elevation'
 import type { WeatherData } from './weather'
 import type { Landmark } from './landmarks'
 import DateTimeWidget from './DateTimeWidget'
+import PasscodeGate from './PasscodeGate'
 
 interface Props {
   landmarks: Landmark[]
   onSelectLandmark: (landmark: Landmark) => void
+  onUnlock: () => void
+  showChutes: boolean
+  onToggleChutes: () => void
+  showSpots: boolean
+  onToggleSpots: () => void
+  showNames: boolean
+  onToggleNames: () => void
+  showDrawnMap: boolean
+  onToggleDrawnMap: () => void
   basemap: BasemapStyle
   onBasemapChange: (basemap: BasemapStyle) => void
   tourRunning: boolean
@@ -62,6 +72,15 @@ function PanelSection({ title, children }: { title: string; children: ReactNode 
 export default function ControlsPanel({
   landmarks,
   onSelectLandmark,
+  onUnlock,
+  showChutes,
+  onToggleChutes,
+  showSpots,
+  onToggleSpots,
+  showNames,
+  onToggleNames,
+  showDrawnMap,
+  onToggleDrawnMap,
   basemap,
   onBasemapChange,
   tourRunning,
@@ -211,6 +230,32 @@ export default function ControlsPanel({
           <span className="hint">
             {chuteCount} chute{chuteCount === 1 ? '' : 's'} recorded
           </span>
+        </div>
+      </PanelSection>
+
+      <PanelSection title="Layers">
+        <div className="control-group">
+          <PasscodeGate label="Chutes are private. Enter the code to show them." onUnlock={onUnlock}>
+            <label className="layer-toggle-row">
+              <input type="checkbox" checked={showChutes} onChange={onToggleChutes} />
+              <span>Chutes</span>
+            </label>
+          </PasscodeGate>
+
+          <label className="layer-toggle-row">
+            <input type="checkbox" checked={showSpots} onChange={onToggleSpots} />
+            <span>Histoires &amp; Important spots</span>
+          </label>
+
+          <label className="layer-toggle-row">
+            <input type="checkbox" checked={showDrawnMap} onChange={onToggleDrawnMap} />
+            <span>Map dessinée</span>
+          </label>
+
+          <label className="layer-toggle-row">
+            <input type="checkbox" checked={showNames} onChange={onToggleNames} />
+            <span>Names</span>
+          </label>
         </div>
       </PanelSection>
 

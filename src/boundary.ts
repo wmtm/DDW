@@ -57,3 +57,14 @@ export const estateBoundary: [number, number][] = [
   [57.3681053, -20.28679],
   [57.3667613, -20.2908203],
 ]
+
+/** Bounding box of the estate boundary, used to georeference raster overlays. */
+export const estateBoundingBox = estateBoundary.reduce(
+  (acc, [lng, lat]) => ({
+    minLng: Math.min(acc.minLng, lng),
+    maxLng: Math.max(acc.maxLng, lng),
+    minLat: Math.min(acc.minLat, lat),
+    maxLat: Math.max(acc.maxLat, lat),
+  }),
+  { minLng: Infinity, maxLng: -Infinity, minLat: Infinity, maxLat: -Infinity },
+)

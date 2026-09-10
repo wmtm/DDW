@@ -14,7 +14,10 @@ import { pois, type Poi } from './poi'
 import { mapStyle } from './mapStyle'
 import { runTour } from './tour'
 import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
-import { estateBoundary } from './boundary'
+import { estateBoundary, estateBoundingBox } from './boundary'
+import { placeNames } from './placeNames'
+import { isUnlocked } from './passcode'
+import drawnMapPlaceholder from './assets/branding/estate-drawn-map-placeholder.png'
 import { historicalYears, waybackTileUrl, currentImageryTileUrl, type ImagerySelection } from './historicalImagery'
 import {
   basemapOptions,
@@ -54,6 +57,12 @@ const LANDMARK_NUMBER_MIN_ZOOM = 16
 const LANDMARK_FADE_START_ZOOM = 13
 const LANDMARK_FADE_END_ZOOM = 11
 const ESTATE_CENTER = { longitude: 57.368, latitude: -20.302 }
+const drawnMapCoordinates: [[number, number], [number, number], [number, number], [number, number]] = [
+  [estateBoundingBox.minLng, estateBoundingBox.maxLat],
+  [estateBoundingBox.maxLng, estateBoundingBox.maxLat],
+  [estateBoundingBox.maxLng, estateBoundingBox.minLat],
+  [estateBoundingBox.minLng, estateBoundingBox.minLat],
+]
 const BASEMAP_STORAGE_KEY = 'ddw-basemap'
 
 function readStoredBasemap(): BasemapStyle | null {
@@ -112,15 +121,33 @@ export default function App() {
   const [openPopupPhotoIndex, setOpenPopupPhotoIndex] = useState<number | null>(null)
   const [landmarkTourIndex, setLandmarkTourIndex] = useState<number | null>(null)
   const [zoom, setZoom] = useState(Math.max(targetView.zoom - 3, 5))
+  const [unlocked, setUnlockedState] = useState(isUnlocked())
+  const [showChutes, setShowChutes] = useState(true)
+  const [showSpots, setShowSpots] = useState(true)
+  const [showNames, setShowNames] = useState(true)
+  const [showDrawnMap, setShowDrawnMap] = useState(false)
+
+  const chutesVisible = unlocked && showChutes
+
+  const visibleLandmarks = useMemo(
+    () => landmarks.filter((l) => (l.category === 'mirador' ? chutesVisible : showSpots)),
+    [chutesVisible, showSpots],
+  )
 
   const chuteLandmarks = useMemo(
     () =>
-      landmarks
-        .filter((l) => l.category === 'mirador')
-        .sort((a, b) => (a.number ?? 0) - (b.number ?? 0)),
-    [],
+      chutesVisible
+        ? landmarks.filter((l) => l.category === 'mirador').sort((a, b) => (a.number ?? 0) - (b.number ?? 0))
+        : [],
+    [chutesVisible],
   )
   const currentTourLandmark = landmarkTourIndex !== null ? chuteLandmarks[landmarkTourIndex] : null
+
+  const handleUnlock = useCallback(() => setUnlockedState(true), [])
+  const handleToggleChutes = useCallback(() => setShowChutes((v) => !v), [])
+  const handleToggleSpots = useCallback(() => setShowSpots((v) => !v), [])
+  const handleToggleNames = useCallback(() => setShowNames((v) => !v), [])
+  const handleToggleDrawnMap = useCallback(() => setShowDrawnMap((v) => !v), [])
 
   const handleBasemapChange = useCallback((next: BasemapStyle) => {
     setBasemap(next)
@@ -473,6 +500,12 @@ export default function App() {
         </Source>
       )}
 
+      {showDrawnMap && (
+        <Source id="drawn-map" type="image" url={drawnMapPlaceholder} coordinates={drawnMapCoordinates}>
+          <Layer id="drawn-map-layer" type="raster" paint={{ 'raster-opacity': 0.85 }} />
+        </Source>
+      )}
+
       {pois.map((poi) => (
         <Marker
           key={poi.id}
@@ -514,7 +547,7 @@ export default function App() {
         </Popup>
       )}
 
-      {landmarks.map((landmark) => (
+      {visibleLandmarks.map((landmark) => (
         <Marker
           key={landmark.id}
           longitude={landmark.longitude}
@@ -542,6 +575,15 @@ export default function App() {
           </div>
         </Marker>
       ))}
+
+      {showNames &&
+        placeNames
+          .filter((p) => zoom >= p.minZoom)
+          .map((place) => (
+            <Marker key={place.id} longitude={place.longitude} latitude={place.latitude} anchor="center">
+              <span className="place-name-label">{place.name}</span>
+            </Marker>
+          ))}
 
       {selectedLandmark && (
         <Popup
@@ -646,8 +688,17 @@ export default function App() {
       )}
 
       <ControlsPanel
-        landmarks={landmarks}
+        landmarks={visibleLandmarks}
         onSelectLandmark={handleSelectLandmark}
+        onUnlock={handleUnlock}
+        showChutes={showChutes}
+        onToggleChutes={handleToggleChutes}
+        showSpots={showSpots}
+        onToggleSpots={handleToggleSpots}
+        showNames={showNames}
+        onToggleNames={handleToggleNames}
+        showDrawnMap={showDrawnMap}
+        onToggleDrawnMap={handleToggleDrawnMap}
         basemap={basemap}
         onBasemapChange={handleBasemapChange}
         tourRunning={tourRunning}
