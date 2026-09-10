@@ -11,13 +11,20 @@ export default function LeaderboardPage() {
     <div className="leaderboard-page">
       <div className="leaderboard-card">
         <a className="leaderboard-back" href="#/">
-          Back to map
+          ← Back to map
         </a>
-        <h1>Chassée de Wolmar</h1>
-        <h2>{leaderboardSeason} Season — Gros Cerf Leaderboard</h2>
+
+        <div className="leaderboard-hero">
+          <span className="leaderboard-badge">{leaderboardSeason} Season</span>
+          <h1>Chassée de Wolmar</h1>
+          <h2>Gros Cerf Leaderboard</h2>
+        </div>
 
         {ranked.length === 0 ? (
-          <p className="leaderboard-empty">No results recorded yet for the {leaderboardSeason} season.</p>
+          <div className="leaderboard-empty">
+            <p>No results recorded yet for the {leaderboardSeason} season.</p>
+            <span className="hint">Results will appear here once the season's kills are logged.</span>
+          </div>
         ) : (
           <table className="leaderboard-table">
             <thead>
