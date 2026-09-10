@@ -1,4 +1,4 @@
-import { leaderboardEntries, leaderboardSeason } from './leaderboard'
+import { leaderboardEntries, leaderboardPendingNote, leaderboardSeason } from './leaderboard'
 import './Leaderboard.css'
 
 export default function LeaderboardPage() {
@@ -19,6 +19,8 @@ export default function LeaderboardPage() {
           <h1>Chassée de Wolmar</h1>
           <h2>Gros Cerf Leaderboard</h2>
         </div>
+
+        {leaderboardPendingNote && <div className="leaderboard-pending-note">{leaderboardPendingNote}</div>}
 
         {ranked.length === 0 ? (
           <div className="leaderboard-empty">

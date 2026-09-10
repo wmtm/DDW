@@ -72,6 +72,18 @@
   letter-spacing: 0.08em;
 }
 
+.leaderboard-pending-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  border: 1px dashed var(--panel-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 18px;
+}
+
 .leaderboard-empty {
   display: flex;
   flex-direction: column;
