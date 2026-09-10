@@ -1,20 +1,20 @@
 .leaderboard-page {
   min-height: 100vh;
   width: 100%;
-  background: #14100c;
+  background: var(--panel-bg-solid);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding: 48px 16px;
   box-sizing: border-box;
-  font-family: system-ui, sans-serif;
-  color: #f2f2f2;
+  font-family: var(--font-body);
+  color: var(--text-primary);
 }
 
 .leaderboard-card {
   width: min(680px, 100%);
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--panel-border);
   border-radius: 12px;
   padding: 28px 32px 36px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
@@ -22,7 +22,7 @@
 
 .leaderboard-back {
   display: inline-block;
-  color: #6db3ff;
+  color: var(--accent-blue);
   font-size: 13px;
   text-decoration: none;
   margin-bottom: 20px;
@@ -34,15 +34,17 @@
 
 .leaderboard-card h1 {
   margin: 0;
-  font-size: 22px;
+  font-family: var(--font-display);
+  font-size: 24px;
   font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .leaderboard-card h2 {
   margin: 4px 0 24px;
   font-size: 14px;
   font-weight: 500;
-  color: #ffd166;
+  color: var(--accent-amber);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -84,6 +86,6 @@
 }
 
 .leaderboard-row-first td {
-  color: #ffd166;
+  color: var(--accent-amber);
   font-weight: 700;
 }

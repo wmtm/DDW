@@ -486,7 +486,7 @@ export default function App() {
           }}
         >
           <div
-            className="landmark-pin"
+            className={`landmark-pin ${selectedLandmark?.id === landmark.id ? 'landmark-pin-selected' : ''}`}
             style={{ background: landmarkCategoryColors[landmark.category] }}
             title={landmark.name}
           >
