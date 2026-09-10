@@ -6,6 +6,13 @@ import type { WeatherData } from './weather'
 import type { Landmark } from './landmarks'
 import DateTimeWidget from './DateTimeWidget'
 import PasscodeGate from './PasscodeGate'
+import logoWolmar from './assets/branding/logo-wolmar-small.png'
+import iconWeather from './assets/branding/icon-weather.png'
+import iconTimeTravel from './assets/branding/icon-time-travel.png'
+import iconDistances from './assets/branding/icon-distances.png'
+import iconMiradors from './assets/branding/icon-miradors.png'
+import iconHallOfFame from './assets/branding/icon-hall-of-fame.png'
+import iconSeeMore from './assets/branding/icon-see-more.png'
 
 interface Props {
   landmarks: Landmark[]
@@ -50,21 +57,22 @@ interface Props {
   onToggleSlopeContrast: () => void
 }
 
-function PanelSection({ title, children }: { title: string; children: ReactNode }) {
-  const [open, setOpen] = useState(true)
+type SectionKey = 'weather' | 'timeTravel' | 'distances' | 'miradors' | 'hallOfFame' | 'more'
 
+const SECTIONS: { key: SectionKey; icon: string; label: string }[] = [
+  { key: 'weather', icon: iconWeather, label: 'Météo' },
+  { key: 'timeTravel', icon: iconTimeTravel, label: 'Voyage dans le temps' },
+  { key: 'distances', icon: iconDistances, label: 'Distances' },
+  { key: 'miradors', icon: iconMiradors, label: 'Miradors' },
+  { key: 'hallOfFame', icon: iconHallOfFame, label: 'Hall of Fame' },
+  { key: 'more', icon: iconSeeMore, label: 'Plus' },
+]
+
+function ControlGroup({ label, children }: { label?: string; children: ReactNode }) {
   return (
-    <div className="panel-section">
-      <button
-        type="button"
-        className="panel-section-header"
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-      >
-        <span>{title}</span>
-        <span className={`panel-section-chevron ${open ? 'panel-section-chevron-open' : ''}`}>›</span>
-      </button>
-      {open && <div className="panel-section-body">{children}</div>}
+    <div className="control-group">
+      {label && <span className="control-label">{label}</span>}
+      {children}
     </div>
   )
 }
@@ -113,6 +121,7 @@ export default function ControlsPanel({
 }: Props) {
   const [collapsed, setCollapsed] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [activeSection, setActiveSection] = useState<SectionKey>('weather')
 
   const searchResults = useMemo(() => {
     const q = searchQuery.trim().toLowerCase()
@@ -133,283 +142,313 @@ export default function ControlsPanel({
         Commandes {collapsed ? '▲' : '▼'}
       </button>
 
-      <div className="control-group">
-        <span className="control-label">En ce moment</span>
-        <div className="estate-status">
-          <div className="weather-readout">
-            {weather ? (
-              <>
-                <div className="weather-main">
-                  <span
-                    className="wind-arrow"
-                    style={{ transform: `rotate(${weather.windDirectionDeg}deg)` }}
-                    title={`Vent venant de ${Math.round(weather.windDirectionDeg)}°`}
-                  />
-                  <span>{Math.round(weather.temperatureC)}°C</span>
-                  <span className="hint">{weather.description}</span>
-                </div>
-                <span className="hint">
-                  Vent {Math.round(weather.windSpeedKmh)} km/h · Précip.{' '}
-                  {weather.precipitationMm.toFixed(1)} mm
-                </span>
-              </>
-            ) : weatherError ? (
-              <span className="hint">{weatherError}</span>
-            ) : (
-              <div className="skeleton-line skeleton-line-weather" />
-            )}
-          </div>
-          <DateTimeWidget />
-        </div>
+      <img src={logoWolmar} alt="Domaine de Wolmar" className="panel-logo" />
+
+      <div className="panel-icon-tabs">
+        {SECTIONS.map((section) => (
+          <button
+            key={section.key}
+            type="button"
+            className={`panel-icon-tab ${activeSection === section.key ? 'panel-icon-tab-active' : ''}`}
+            onClick={() => setActiveSection(section.key)}
+            aria-label={section.label}
+            aria-pressed={activeSection === section.key}
+            title={section.label}
+          >
+            <img src={section.icon} alt="" />
+          </button>
+        ))}
       </div>
 
-      <PanelSection title="Explorer">
-        <div className="control-group">
-          <span className="control-label">Rechercher une chute ou un point d'intérêt</span>
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Rechercher par nom ou numéro…"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {searchResults.length > 0 && (
-            <div className="search-results">
-              {searchResults.map((landmark) => (
+      <div className="panel-section-content">
+        {activeSection === 'weather' && (
+          <ControlGroup>
+            <div className="estate-status">
+              <div className="weather-readout">
+                {weather ? (
+                  <>
+                    <div className="weather-main">
+                      <span
+                        className="wind-arrow"
+                        style={{ transform: `rotate(${weather.windDirectionDeg}deg)` }}
+                        title={`Vent venant de ${Math.round(weather.windDirectionDeg)}°`}
+                      />
+                      <span>{Math.round(weather.temperatureC)}°C</span>
+                      <span className="hint">{weather.description}</span>
+                    </div>
+                    <span className="hint">
+                      Vent {Math.round(weather.windSpeedKmh)} km/h · Précip.{' '}
+                      {weather.precipitationMm.toFixed(1)} mm
+                    </span>
+                  </>
+                ) : weatherError ? (
+                  <span className="hint">{weatherError}</span>
+                ) : (
+                  <div className="skeleton-line skeleton-line-weather" />
+                )}
+              </div>
+              <DateTimeWidget />
+            </div>
+          </ControlGroup>
+        )}
+
+        {activeSection === 'timeTravel' && (
+          <ControlGroup label="Année de l'imagerie satellite">
+            {usesSatelliteImagery(basemap) ? (
+              <div className="button-row">
                 <button
-                  key={landmark.id}
-                  className="search-result"
-                  onClick={() => {
-                    onSelectLandmark(landmark)
-                    setSearchQuery('')
-                  }}
-                >
-                  {landmark.number !== null && (
-                    <span className="search-result-number">{landmark.number}</span>
-                  )}
-                  {landmark.name}
-                </button>
-              ))}
-            </div>
-          )}
-          {searchQuery.trim() && searchResults.length === 0 && (
-            <span className="hint">Aucun résultat</span>
-          )}
-        </div>
-
-        <div className="control-group">
-          <span className="control-label">Fond de carte</span>
-          <div className="button-row">
-            {basemapOptions.map((opt) => (
-              <button
-                key={opt.value}
-                className={`chip ${basemap === opt.value ? 'chip-active' : ''}`}
-                onClick={() => onBasemapChange(opt.value)}
-                disabled={tourRunning || landmarkTourActive}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="control-group">
-          <button className="action-button" onClick={onToggleTour} disabled={landmarkTourActive}>
-            {tourRunning ? 'Arrêter la visite' : 'Démarrer la visite aérienne'}
-          </button>
-        </div>
-
-        <div className="control-group">
-          <button
-            className={`action-button ${landmarkTourActive ? 'chip-active' : ''}`}
-            onClick={landmarkTourActive ? onExitLandmarkTour : onStartLandmarkTour}
-            disabled={tourRunning || chuteCount === 0}
-          >
-            {landmarkTourActive ? 'Quitter la visite des chutes' : 'Visiter les chutes'}
-          </button>
-          <span className="hint">
-            {chuteCount} chute{chuteCount === 1 ? '' : 's'} enregistrée{chuteCount === 1 ? '' : 's'}
-          </span>
-        </div>
-      </PanelSection>
-
-      <PanelSection title="Couches">
-        <div className="control-group">
-          <PasscodeGate label="Les chutes sont privées. Entrez le code pour les afficher." onUnlock={onUnlock}>
-            <label className="layer-toggle-row">
-              <input type="checkbox" checked={showChutes} onChange={onToggleChutes} />
-              <span>Chutes</span>
-            </label>
-          </PasscodeGate>
-
-          <label className="layer-toggle-row">
-            <input type="checkbox" checked={showSpots} onChange={onToggleSpots} />
-            <span>Histoires et lieux importants</span>
-          </label>
-
-          <label className="layer-toggle-row">
-            <input type="checkbox" checked={showDrawnMap} onChange={onToggleDrawnMap} />
-            <span>Carte dessinée</span>
-          </label>
-
-          <label className="layer-toggle-row">
-            <input type="checkbox" checked={showNames} onChange={onToggleNames} />
-            <span>Noms</span>
-          </label>
-        </div>
-      </PanelSection>
-
-      <PanelSection title="Outils">
-        <div className="control-group">
-          <button
-            className={`action-button ${measureActive ? 'chip-active' : ''}`}
-            onClick={onToggleMeasure}
-            disabled={tourRunning || landmarkTourActive}
-          >
-            {measureActive ? 'Quitter le mode mesure' : 'Mesurer une distance'}
-          </button>
-          {measureActive && measurePointCount === 0 && (
-            <span className="hint">Cliquez sur le terrain pour tracer un parcours</span>
-          )}
-          {measureActive && measurePointCount > 0 && !measureClosed && (
-            <div className="button-row">
-              <button className="clear-button" onClick={onUndoMeasurePoint}>
-                Annuler le point
-              </button>
-              {measurePointCount >= 3 && (
-                <button className="clear-button" onClick={onCloseMeasureLoop}>
-                  Fermer la boucle
-                </button>
-              )}
-            </div>
-          )}
-          {measureResult && (
-            <div className="measure-result">
-              <div>
-                {measureClosed ? 'Périmètre' : 'Longueur'} : {formatDistance(measureResult.distanceMeters)}
-              </div>
-              {measureResult.areaSquareMeters !== null && (
-                <div>Surface : {formatArea(measureResult.areaSquareMeters)}</div>
-              )}
-              <div>
-                Dénivelé :{' '}
-                {measureResult.elevationDeltaMeters === null
-                  ? 'indisponible'
-                  : `${Math.round(measureResult.elevationDeltaMeters)} m`}
-              </div>
-              <button className="clear-button" onClick={onClearMeasure}>
-                Effacer
-              </button>
-            </div>
-          )}
-        </div>
-
-        <div className="control-group">
-          <span className="control-label">Terrain</span>
-          <div className="elevation-readout">
-            {hoverElevation && hoverElevation.elevationMeters !== null ? (
-              <>
-                <div>Altitude : {Math.round(hoverElevation.elevationMeters)} m</div>
-                <div>
-                  Pente :{' '}
-                  {hoverElevation.slopePercent === null
-                    ? 'indisponible'
-                    : `${hoverElevation.slopePercent.toFixed(1)}%`}
-                </div>
-              </>
-            ) : (
-              <span className="hint">Survolez le terrain</span>
-            )}
-          </div>
-          <button
-            className={`action-button ${slopeContrast ? 'chip-active' : ''}`}
-            onClick={onToggleSlopeContrast}
-          >
-            {slopeContrast ? "Afficher l'ombrage normal" : 'Accentuer le contraste des pentes'}
-          </button>
-          {slopeContrast && (
-            <span className="hint">Les terrains plus pentus apparaissent plus rouges/sombres lors du survol</span>
-          )}
-        </div>
-
-        <div className="control-group">
-          <button
-            className={`action-button ${showOverlay ? 'chip-active' : ''}`}
-            onClick={onToggleOverlay}
-            disabled={tourRunning}
-          >
-            {showOverlay ? 'Masquer le contour du domaine' : 'Afficher le contour du domaine'}
-          </button>
-          {showOverlay && (
-            <div className="legend">
-              <div className="legend-row">
-                <span className="legend-swatch legend-swatch-boundary" />
-                Limite du domaine
-              </div>
-            </div>
-          )}
-        </div>
-
-        {usesSatelliteImagery(basemap) && (
-          <div className="control-group">
-            <span className="control-label">Année de l'imagerie satellite</span>
-            <div className="button-row">
-              <button
-                className={`chip ${historicalYear === 'current' ? 'chip-active' : ''}`}
-                onClick={() => onHistoricalYearChange('current')}
-                disabled={tourRunning || landmarkTourActive}
-              >
-                Actuel
-              </button>
-              {historicalYears.map((hy) => (
-                <button
-                  key={hy.year}
-                  className={`chip ${historicalYear === hy.year ? 'chip-active' : ''}`}
-                  onClick={() => onHistoricalYearChange(hy.year)}
+                  className={`chip ${historicalYear === 'current' ? 'chip-active' : ''}`}
+                  onClick={() => onHistoricalYearChange('current')}
                   disabled={tourRunning || landmarkTourActive}
                 >
-                  {hy.year}
+                  Actuel
                 </button>
-              ))}
-            </div>
-          </div>
+                {historicalYears.map((hy) => (
+                  <button
+                    key={hy.year}
+                    className={`chip ${historicalYear === hy.year ? 'chip-active' : ''}`}
+                    onClick={() => onHistoricalYearChange(hy.year)}
+                    disabled={tourRunning || landmarkTourActive}
+                  >
+                    {hy.year}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <span className="hint">
+                Passez en fond de carte Satellite ou Hybride pour explorer les images historiques.
+              </span>
+            )}
+          </ControlGroup>
         )}
-      </PanelSection>
 
-      <PanelSection title="Partager">
-        <div className="control-group">
-          <div className="button-row">
-            <button className="action-button" onClick={onCaptureView}>
-              Capturer la vue (PNG)
+        {activeSection === 'distances' && (
+          <ControlGroup>
+            <button
+              className={`action-button ${measureActive ? 'chip-active' : ''}`}
+              onClick={onToggleMeasure}
+              disabled={tourRunning || landmarkTourActive}
+            >
+              {measureActive ? 'Quitter le mode mesure' : 'Mesurer une distance'}
             </button>
-            <button className="action-button" onClick={onGenerateShareLink}>
-              Copier le lien de partage
-            </button>
-          </div>
-          {shareUrl && (
-            <div className="share-result">
+            {measureActive && measurePointCount === 0 && (
+              <span className="hint">Cliquez sur le terrain pour tracer un parcours</span>
+            )}
+            {measureActive && measurePointCount > 0 && !measureClosed && (
+              <div className="button-row">
+                <button className="clear-button" onClick={onUndoMeasurePoint}>
+                  Annuler le point
+                </button>
+                {measurePointCount >= 3 && (
+                  <button className="clear-button" onClick={onCloseMeasureLoop}>
+                    Fermer la boucle
+                  </button>
+                )}
+              </div>
+            )}
+            {measureResult && (
+              <div className="measure-result">
+                <div>
+                  {measureClosed ? 'Périmètre' : 'Longueur'} : {formatDistance(measureResult.distanceMeters)}
+                </div>
+                {measureResult.areaSquareMeters !== null && (
+                  <div>Surface : {formatArea(measureResult.areaSquareMeters)}</div>
+                )}
+                <div>
+                  Dénivelé :{' '}
+                  {measureResult.elevationDeltaMeters === null
+                    ? 'indisponible'
+                    : `${Math.round(measureResult.elevationDeltaMeters)} m`}
+                </div>
+                <button className="clear-button" onClick={onClearMeasure}>
+                  Effacer
+                </button>
+              </div>
+            )}
+          </ControlGroup>
+        )}
+
+        {activeSection === 'miradors' && (
+          <>
+            <ControlGroup label="Rechercher une chute ou un point d'intérêt">
               <input
-                className="share-link-input"
                 type="text"
-                readOnly
-                value={shareUrl}
-                onFocus={(e) => e.currentTarget.select()}
+                className="search-input"
+                placeholder="Rechercher par nom ou numéro…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              {shareCopied ? (
-                <div className="share-toast">Copié dans le presse-papiers</div>
-              ) : (
-                <span className="hint">Copiez le lien ci-dessus</span>
+              {searchResults.length > 0 && (
+                <div className="search-results">
+                  {searchResults.map((landmark) => (
+                    <button
+                      key={landmark.id}
+                      className="search-result"
+                      onClick={() => {
+                        onSelectLandmark(landmark)
+                        setSearchQuery('')
+                      }}
+                    >
+                      {landmark.number !== null && (
+                        <span className="search-result-number">{landmark.number}</span>
+                      )}
+                      {landmark.name}
+                    </button>
+                  ))}
+                </div>
               )}
-            </div>
-          )}
-        </div>
+              {searchQuery.trim() && searchResults.length === 0 && (
+                <span className="hint">Aucun résultat</span>
+              )}
+            </ControlGroup>
 
-        <div className="control-group">
-          <a className="action-button leaderboard-link" href="#/leaderboard">
-            Classement Gros Cerf 2026
-          </a>
-        </div>
-      </PanelSection>
+            <ControlGroup>
+              <button
+                className={`action-button ${landmarkTourActive ? 'chip-active' : ''}`}
+                onClick={landmarkTourActive ? onExitLandmarkTour : onStartLandmarkTour}
+                disabled={tourRunning || chuteCount === 0}
+              >
+                {landmarkTourActive ? 'Quitter la visite des chutes' : 'Visiter les chutes'}
+              </button>
+              <span className="hint">
+                {chuteCount} chute{chuteCount === 1 ? '' : 's'} enregistrée{chuteCount === 1 ? '' : 's'}
+              </span>
+            </ControlGroup>
+
+            <ControlGroup>
+              <PasscodeGate label="Les chutes sont privées. Entrez le code pour les afficher." onUnlock={onUnlock}>
+                <label className="layer-toggle-row">
+                  <input type="checkbox" checked={showChutes} onChange={onToggleChutes} />
+                  <span>Afficher les chutes sur la carte</span>
+                </label>
+              </PasscodeGate>
+            </ControlGroup>
+          </>
+        )}
+
+        {activeSection === 'hallOfFame' && (
+          <ControlGroup>
+            <div className="hall-of-fame-panel">
+              <img src={iconHallOfFame} alt="" className="hall-of-fame-icon" />
+              <a className="action-button leaderboard-link" href="#/leaderboard">
+                Voir le classement Gros Cerf 2026
+              </a>
+            </div>
+          </ControlGroup>
+        )}
+
+        {activeSection === 'more' && (
+          <>
+            <ControlGroup label="Fond de carte">
+              <div className="button-row">
+                {basemapOptions.map((opt) => (
+                  <button
+                    key={opt.value}
+                    className={`chip ${basemap === opt.value ? 'chip-active' : ''}`}
+                    onClick={() => onBasemapChange(opt.value)}
+                    disabled={tourRunning || landmarkTourActive}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </ControlGroup>
+
+            <ControlGroup>
+              <button className="action-button" onClick={onToggleTour} disabled={landmarkTourActive}>
+                {tourRunning ? 'Arrêter la visite' : 'Démarrer la visite aérienne'}
+              </button>
+            </ControlGroup>
+
+            <ControlGroup label="Terrain">
+              <div className="elevation-readout">
+                {hoverElevation && hoverElevation.elevationMeters !== null ? (
+                  <>
+                    <div>Altitude : {Math.round(hoverElevation.elevationMeters)} m</div>
+                    <div>
+                      Pente :{' '}
+                      {hoverElevation.slopePercent === null
+                        ? 'indisponible'
+                        : `${hoverElevation.slopePercent.toFixed(1)}%`}
+                    </div>
+                  </>
+                ) : (
+                  <span className="hint">Survolez le terrain</span>
+                )}
+              </div>
+              <button
+                className={`action-button ${slopeContrast ? 'chip-active' : ''}`}
+                onClick={onToggleSlopeContrast}
+              >
+                {slopeContrast ? "Afficher l'ombrage normal" : 'Accentuer le contraste des pentes'}
+              </button>
+              {slopeContrast && (
+                <span className="hint">Les terrains plus pentus apparaissent plus rouges/sombres lors du survol</span>
+              )}
+            </ControlGroup>
+
+            <ControlGroup>
+              <button
+                className={`action-button ${showOverlay ? 'chip-active' : ''}`}
+                onClick={onToggleOverlay}
+                disabled={tourRunning}
+              >
+                {showOverlay ? 'Masquer le contour du domaine' : 'Afficher le contour du domaine'}
+              </button>
+              {showOverlay && (
+                <div className="legend">
+                  <div className="legend-row">
+                    <span className="legend-swatch legend-swatch-boundary" />
+                    Limite du domaine
+                  </div>
+                </div>
+              )}
+            </ControlGroup>
+
+            <ControlGroup label="Couches">
+              <label className="layer-toggle-row">
+                <input type="checkbox" checked={showSpots} onChange={onToggleSpots} />
+                <span>Histoires et lieux importants</span>
+              </label>
+              <label className="layer-toggle-row">
+                <input type="checkbox" checked={showDrawnMap} onChange={onToggleDrawnMap} />
+                <span>Carte dessinée</span>
+              </label>
+              <label className="layer-toggle-row">
+                <input type="checkbox" checked={showNames} onChange={onToggleNames} />
+                <span>Noms</span>
+              </label>
+            </ControlGroup>
+
+            <ControlGroup label="Partager">
+              <div className="button-row">
+                <button className="action-button" onClick={onCaptureView}>
+                  Capturer la vue (PNG)
+                </button>
+                <button className="action-button" onClick={onGenerateShareLink}>
+                  Copier le lien de partage
+                </button>
+              </div>
+              {shareUrl && (
+                <div className="share-result">
+                  <input
+                    className="share-link-input"
+                    type="text"
+                    readOnly
+                    value={shareUrl}
+                    onFocus={(e) => e.currentTarget.select()}
+                  />
+                  {shareCopied ? (
+                    <div className="share-toast">Copié dans le presse-papiers</div>
+                  ) : (
+                    <span className="hint">Copiez le lien ci-dessus</span>
+                  )}
+                </div>
+              )}
+            </ControlGroup>
+          </>
+        )}
+      </div>
     </div>
   )
 }
