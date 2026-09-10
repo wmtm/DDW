@@ -620,23 +620,42 @@
 
 .estate-status {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: stretch;
   gap: 8px;
 }
 
-.weather-readout {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
+.weather-readout,
+.datetime-readout {
+  flex: 1;
+  min-width: 0;
+  background: var(--panel-bg-soft);
+  border-top: 2px solid var(--accent-amber);
+  border-radius: 0 0 6px 6px;
   padding: 8px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 4px;
 }
 
 .weather-main {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+}
+
+.weather-temp {
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent-amber);
+  letter-spacing: 0.02em;
+}
+
+.weather-desc {
+  text-transform: capitalize;
 }
 
 .wind-arrow {
@@ -649,20 +668,23 @@
   transition: transform 0.4s ease;
 }
 
-.datetime-readout {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.weather-source {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  opacity: 0.65;
+}
+
+.weather-source a {
+  color: inherit;
+  text-decoration: underline;
 }
 
 .datetime-clock {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  color: #ffd166;
+  color: var(--accent-amber);
   letter-spacing: 0.02em;
 }
 
@@ -685,6 +707,28 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.area-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.area-chip {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 2px 7px;
+  font-size: 11px;
+  cursor: default;
+}
+
+.boutique-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .clear-button {

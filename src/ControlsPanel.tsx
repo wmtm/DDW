@@ -184,9 +184,9 @@ export default function ControlsPanel({
                         style={{ transform: `rotate(${weather.windDirectionDeg}deg)` }}
                         title={`Vent venant de ${Math.round(weather.windDirectionDeg)}°`}
                       />
-                      <span>{Math.round(weather.temperatureC)}°C</span>
-                      <span className="hint">{weather.description}</span>
+                      <span className="weather-temp">{Math.round(weather.temperatureC)}°C</span>
                     </div>
+                    <span className="hint weather-desc">{weather.description}</span>
                     <span className="hint">
                       Vent {Math.round(weather.windSpeedKmh)} km/h · Précip.{' '}
                       {weather.precipitationMm.toFixed(1)} mm
@@ -200,6 +200,12 @@ export default function ControlsPanel({
               </div>
               <DateTimeWidget />
             </div>
+            <span className="hint weather-source">
+              Source :{' '}
+              <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">
+                Open-Meteo
+              </a>
+            </span>
           </ControlGroup>
         )}
 
@@ -263,7 +269,27 @@ export default function ControlsPanel({
                   {measureClosed ? 'Périmètre' : 'Longueur'} : {formatDistance(measureResult.distanceMeters)}
                 </div>
                 {measureResult.areaSquareMeters !== null && (
-                  <div>Surface : {formatArea(measureResult.areaSquareMeters)}</div>
+                  <div>
+                    <span>Surface : </span>
+                    <div className="area-chip-row">
+                      {(() => {
+                        const units = formatAreaUnits(measureResult.areaSquareMeters)
+                        return (
+                          <>
+                            <span className="area-chip" title="Kilomètres carrés">
+                              {units.km2} km²
+                            </span>
+                            <span className="area-chip" title="Hectares">
+                              {units.ha} ha
+                            </span>
+                            <span className="area-chip" title="Pieds carrés">
+                              {units.ft2} pi²
+                            </span>
+                          </>
+                        )
+                      })()}
+                    </div>
+                  </div>
                 )}
                 <div>
                   Dénivelé :{' '}
@@ -342,7 +368,7 @@ export default function ControlsPanel({
             <div className="hall-of-fame-panel">
               <img src={iconHallOfFame} alt="" className="hall-of-fame-icon" />
               <a className="action-button leaderboard-link" href="#/leaderboard">
-                Voir le classement Gros Cerf 2026
+                Découvrir le tableau d'honneur 2026
               </a>
             </div>
           </ControlGroup>
@@ -431,6 +457,14 @@ export default function ControlsPanel({
               </label>
             </ControlGroup>
 
+            <ControlGroup label="La Boutique">
+              <div className="boutique-info">
+                <span>Lun-Ven : 9h–15h</span>
+                <span>Sam : 9h–11h</span>
+                <span className="hint">Autres informations à venir</span>
+              </div>
+            </ControlGroup>
+
             <ControlGroup label="Partager">
               <div className="button-row">
                 <button className="action-button" onClick={onCaptureView}>
@@ -470,6 +504,13 @@ function formatDistance(meters: number): string {
   return meters >= 1000 ? `${(meters / 1000).toFixed(2)} km` : `${Math.round(meters)} m`
 }
 
-function formatArea(squareMeters: number): string {
-  return `${Math.round(squareMeters).toLocaleString('fr-FR')} m²`
+function formatAreaUnits(squareMeters: number): { km2: string; ha: string; ft2: string } {
+  const km2 = squareMeters / 1_000_000
+  const ha = squareMeters / 10_000
+  const ft2 = squareMeters * 10.7639
+  return {
+    km2: km2.toLocaleString('fr-FR', { maximumFractionDigits: 2 }),
+    ha: ha.toLocaleString('fr-FR', { maximumFractionDigits: 2 }),
+    ft2: Math.round(ft2).toLocaleString('fr-FR'),
+  }
 }
