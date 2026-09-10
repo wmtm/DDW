@@ -14,10 +14,10 @@ import { pois, type Poi } from './poi'
 import { mapStyle } from './mapStyle'
 import { runTour } from './tour'
 import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
-import { estateBoundary, estateBoundingBox } from './boundary'
+import { estateBoundary } from './boundary'
 import { placeNames } from './placeNames'
 import { isUnlocked } from './passcode'
-import drawnMapPlaceholder from './assets/branding/estate-drawn-map-placeholder.png'
+import drawnMapImage from './assets/estate-drawn-map.jpg'
 import { historicalYears, waybackTileUrl, currentImageryTileUrl, type ImagerySelection } from './historicalImagery'
 import {
   basemapOptions,
@@ -58,11 +58,13 @@ const LANDMARK_FADE_START_ZOOM = 13
 const ROTATE_HINT_MIN_ZOOM = 13
 const LANDMARK_FADE_END_ZOOM = 11
 const ESTATE_CENTER = { longitude: 57.368, latitude: -20.302 }
+// Fitted from 4 ground-control points the user marked on the drawn map (image
+// corners -> lng/lat via least-squares affine); the drawing isn't north-up.
 const drawnMapCoordinates: [[number, number], [number, number], [number, number], [number, number]] = [
-  [estateBoundingBox.minLng, estateBoundingBox.maxLat],
-  [estateBoundingBox.maxLng, estateBoundingBox.maxLat],
-  [estateBoundingBox.maxLng, estateBoundingBox.minLat],
-  [estateBoundingBox.minLng, estateBoundingBox.minLat],
+  [57.393771, -20.285574],
+  [57.388169, -20.318561],
+  [57.362021, -20.314259],
+  [57.367623, -20.281272],
 ]
 const BASEMAP_STORAGE_KEY = 'ddw-basemap'
 
@@ -504,7 +506,7 @@ export default function App() {
       )}
 
       {showDrawnMap && (
-        <Source id="drawn-map" type="image" url={drawnMapPlaceholder} coordinates={drawnMapCoordinates}>
+        <Source id="drawn-map" type="image" url={drawnMapImage} coordinates={drawnMapCoordinates}>
           <Layer id="drawn-map-layer" type="raster" paint={{ 'raster-opacity': 0.85 }} />
         </Source>
       )}
