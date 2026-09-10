@@ -1,11 +1,14 @@
-import { useState, type ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { historicalYears, type ImagerySelection } from './historicalImagery'
 import { basemapOptions, usesSatelliteImagery, type BasemapStyle } from './basemap'
 import type { ElevationSample } from './elevation'
 import type { WeatherData } from './weather'
+import type { Landmark } from './landmarks'
 import DateTimeWidget from './DateTimeWidget'
 
 interface Props {
+  landmarks: Landmark[]
+  onSelectLandmark: (landmark: Landmark) => void
   basemap: BasemapStyle
   onBasemapChange: (basemap: BasemapStyle) => void
   tourRunning: boolean
@@ -57,6 +60,8 @@ function PanelSection({ title, children }: { title: string; children: ReactNode 
 }
 
 export default function ControlsPanel({
+  landmarks,
+  onSelectLandmark,
   basemap,
   onBasemapChange,
   tourRunning,
@@ -88,6 +93,15 @@ export default function ControlsPanel({
   onToggleSlopeContrast,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const searchResults = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase()
+    if (!q) return []
+    return landmarks
+      .filter((l) => l.name.toLowerCase().includes(q) || (l.number !== null && String(l.number).includes(q)))
+      .slice(0, 8)
+  }, [landmarks, searchQuery])
 
   return (
     <div className={`controls-panel ${collapsed ? 'controls-panel-collapsed' : ''}`}>
@@ -130,6 +144,39 @@ export default function ControlsPanel({
       <DateTimeWidget />
 
       <PanelSection title="Explore">
+        <div className="control-group">
+          <span className="control-label">Find a chute or landmark</span>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search by name or number…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchResults.length > 0 && (
+            <div className="search-results">
+              {searchResults.map((landmark) => (
+                <button
+                  key={landmark.id}
+                  className="search-result"
+                  onClick={() => {
+                    onSelectLandmark(landmark)
+                    setSearchQuery('')
+                  }}
+                >
+                  {landmark.number !== null && (
+                    <span className="search-result-number">{landmark.number}</span>
+                  )}
+                  {landmark.name}
+                </button>
+              ))}
+            </div>
+          )}
+          {searchQuery.trim() && searchResults.length === 0 && (
+            <span className="hint">No matches</span>
+          )}
+        </div>
+
         <div className="control-group">
           <span className="control-label">Basemap</span>
           <div className="button-row">

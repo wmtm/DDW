@@ -53,7 +53,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
 }
 
 .landmark-pin:hover {
@@ -404,6 +404,65 @@
   display: block;
   text-decoration: none;
   box-sizing: border-box;
+}
+
+.search-input {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  outline: 1px solid var(--accent-blue);
+}
+
+.search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 180px;
+  overflow-y: auto;
+  background: var(--panel-bg-soft);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.search-result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  text-align: left;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.search-result:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.search-result-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  border-radius: 10px;
+  background: var(--accent-amber-strong);
+  color: #1a1a1a;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .hint {

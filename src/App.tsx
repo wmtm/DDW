@@ -49,7 +49,15 @@ const boundaryGeometry: GeoJSON.Feature = {
 const HOVER_THROTTLE_MS = 100
 const ZOOM_THROTTLE_MS = 100
 const LANDMARK_NUMBER_MIN_ZOOM = 16
+const LANDMARK_FADE_START_ZOOM = 13
+const LANDMARK_FADE_END_ZOOM = 11
 const ESTATE_CENTER = { longitude: 57.368, latitude: -20.302 }
+
+function landmarkPinOpacity(zoom: number): number {
+  if (zoom >= LANDMARK_FADE_START_ZOOM) return 1
+  if (zoom <= LANDMARK_FADE_END_ZOOM) return 0
+  return (zoom - LANDMARK_FADE_END_ZOOM) / (LANDMARK_FADE_START_ZOOM - LANDMARK_FADE_END_ZOOM)
+}
 
 export default function App() {
   const mapRef = useRef<MapRef>(null)
@@ -153,6 +161,17 @@ export default function App() {
   const handleExitLandmarkTour = useCallback(() => {
     setLandmarkTourIndex(null)
   }, [])
+
+  const handleSelectLandmark = useCallback(
+    (landmark: Landmark) => {
+      setSelected(null)
+      setSelectedLandmark(landmark)
+      setOpenPopupPhotoIndex(null)
+      setLandmarkTourIndex(null)
+      flyToLandmark(landmark)
+    },
+    [flyToLandmark],
+  )
 
   const handleToggleTour = useCallback(() => {
     const map = mapRef.current?.getMap()
@@ -487,7 +506,11 @@ export default function App() {
         >
           <div
             className={`landmark-pin ${selectedLandmark?.id === landmark.id ? 'landmark-pin-selected' : ''}`}
-            style={{ background: landmarkCategoryColors[landmark.category] }}
+            style={{
+              background: landmarkCategoryColors[landmark.category],
+              opacity: landmarkPinOpacity(zoom),
+              pointerEvents: landmarkPinOpacity(zoom) === 0 ? 'none' : undefined,
+            }}
             title={landmark.name}
           >
             {landmark.number !== null && zoom >= LANDMARK_NUMBER_MIN_ZOOM && (
@@ -600,6 +623,8 @@ export default function App() {
       )}
 
       <ControlsPanel
+        landmarks={landmarks}
+        onSelectLandmark={handleSelectLandmark}
         basemap={basemap}
         onBasemapChange={handleBasemapChange}
         tourRunning={tourRunning}
