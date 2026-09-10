@@ -17,7 +17,7 @@ import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
 import { estateBoundary } from './boundary'
 import { placeNames } from './placeNames'
 import { isUnlocked } from './passcode'
-import drawnMapImage from './assets/estate-drawn-map.jpg'
+import drawnMapImage from './assets/estate-drawn-map.png'
 import { historicalYears, waybackTileUrl, currentImageryTileUrl, type ImagerySelection } from './historicalImagery'
 import {
   basemapOptions,
@@ -522,9 +522,58 @@ export default function App() {
       )}
 
       {showDrawnMap && (
-        <Source id="drawn-map" type="image" url={drawnMapImage} coordinates={drawnMapCoordinates}>
-          <Layer id="drawn-map-layer" type="raster" paint={{ 'raster-opacity': 0.85 }} />
-        </Source>
+        <>
+          <Source id="drawn-map-shadow" type="geojson" data={boundaryGeometry}>
+            <Layer
+              id="drawn-map-shadow-fill"
+              type="fill"
+              paint={{
+                'fill-color': '#0a0a08',
+                'fill-opacity': 0.3,
+                'fill-translate': [5, 7],
+                'fill-translate-anchor': 'viewport',
+              }}
+            />
+            <Layer
+              id="drawn-map-shadow-blur"
+              type="line"
+              paint={{
+                'line-color': '#0a0a08',
+                'line-width': 8,
+                'line-blur': 6,
+                'line-opacity': 0.35,
+                'line-translate': [5, 7],
+                'line-translate-anchor': 'viewport',
+              }}
+            />
+          </Source>
+
+          <Source id="drawn-map" type="image" url={drawnMapImage} coordinates={drawnMapCoordinates}>
+            <Layer id="drawn-map-layer" type="raster" paint={{ 'raster-opacity': 0.92 }} />
+          </Source>
+
+          <Source id="drawn-map-outline" type="geojson" data={boundaryGeometry}>
+            <Layer
+              id="drawn-map-outline-glow"
+              type="line"
+              paint={{
+                'line-color': '#f4a300',
+                'line-width': 8,
+                'line-blur': 5,
+                'line-opacity': 0.4,
+              }}
+            />
+            <Layer
+              id="drawn-map-outline-line"
+              type="line"
+              paint={{
+                'line-color': '#ffd166',
+                'line-width': 2.5,
+                'line-opacity': 0.95,
+              }}
+            />
+          </Source>
+        </>
       )}
 
       {pois.map((poi) => (
