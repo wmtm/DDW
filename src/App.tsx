@@ -36,7 +36,7 @@ import { flyToEstate } from './cameraMotion'
 import { computeDayNight } from './dayNight'
 import { buildWindConeGeoJSON } from './windCone'
 import { landmarks, landmarkCategoryColors, landmarkCategoryLabels, type Landmark } from './landmarks'
-import ControlsPanel from './ControlsPanel'
+import ControlsPanel, { type SectionKey } from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
 import PhotoLightbox from './PhotoLightbox'
 import OnboardingCard from './OnboardingCard'
@@ -139,6 +139,7 @@ export default function App() {
   const [showNames, setShowNames] = useState(true)
   const [showDrawnMap, setShowDrawnMap] = useState(false)
   const [showWindCones, setShowWindCones] = useState(false)
+  const [activeSection, setActiveSection] = useState<SectionKey>('weather')
 
   const chutesVisible = unlocked && showChutes
 
@@ -316,17 +317,19 @@ export default function App() {
 
   const handleRecenter = useCallback(() => {
     const map = mapRef.current?.getMap()
-    if (!map) return
-    flyToEstate(
-      map,
-      {
-        center: [targetView.longitude, targetView.latitude],
-        zoom: targetView.zoom,
-        pitch: targetView.pitch,
-        bearing: targetView.bearing,
-      },
-      1800,
-    )
+    if (map) {
+      flyToEstate(
+        map,
+        {
+          center: [targetView.longitude, targetView.latitude],
+          zoom: targetView.zoom,
+          pitch: targetView.pitch,
+          bearing: targetView.bearing,
+        },
+        1800,
+      )
+    }
+    setActiveSection('weather')
   }, [targetView])
 
   const handleHistoricalYearChange = useCallback((year: ImagerySelection) => {
@@ -852,6 +855,8 @@ export default function App() {
         landmarks={visibleLandmarks}
         onSelectLandmark={handleSelectLandmark}
         onUnlock={handleUnlock}
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
         showChutes={showChutes}
         onToggleChutes={handleToggleChutes}
         showWindCones={showWindCones}

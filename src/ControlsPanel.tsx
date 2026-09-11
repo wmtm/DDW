@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState, type CSSProperties, type ReactNode } from 'react'
 import { historicalYears, type ImagerySelection } from './historicalImagery'
 import { basemapOptions, usesSatelliteImagery, type BasemapStyle } from './basemap'
 import type { ElevationSample } from './elevation'
@@ -15,10 +15,14 @@ import iconMiradors from './assets/branding/icon-miradors.png'
 import iconHallOfFame from './assets/branding/icon-hall-of-fame.png'
 import iconSeeMore from './assets/branding/icon-see-more.png'
 
+export type SectionKey = 'weather' | 'timeTravel' | 'distances' | 'miradors' | 'hallOfFame' | 'more'
+
 interface Props {
   landmarks: Landmark[]
   onSelectLandmark: (landmark: Landmark) => void
   onUnlock: () => void
+  activeSection: SectionKey
+  onSectionChange: (section: SectionKey) => void
   showChutes: boolean
   onToggleChutes: () => void
   showWindCones: boolean
@@ -60,15 +64,13 @@ interface Props {
   onToggleSlopeContrast: () => void
 }
 
-type SectionKey = 'weather' | 'timeTravel' | 'distances' | 'miradors' | 'hallOfFame' | 'more'
-
-const SECTIONS: { key: SectionKey; icon: string; label: string }[] = [
-  { key: 'weather', icon: iconWeather, label: 'Météo' },
-  { key: 'timeTravel', icon: iconTimeTravel, label: 'Voyage dans le temps' },
-  { key: 'distances', icon: iconDistances, label: 'Distances' },
-  { key: 'miradors', icon: iconMiradors, label: 'Miradors' },
-  { key: 'hallOfFame', icon: iconHallOfFame, label: 'Hall of Fame' },
-  { key: 'more', icon: iconSeeMore, label: 'Plus' },
+const SECTIONS: { key: SectionKey; icon: string; label: string; shortLabel: string; color: string }[] = [
+  { key: 'weather', icon: iconWeather, label: 'Météo', shortLabel: 'Météo', color: '#4aa3d8' },
+  { key: 'timeTravel', icon: iconTimeTravel, label: 'Voyage dans le temps', shortLabel: 'Historique', color: '#c4a339' },
+  { key: 'distances', icon: iconDistances, label: 'Distances', shortLabel: 'Distances', color: '#a9713f' },
+  { key: 'miradors', icon: iconMiradors, label: 'Miradors', shortLabel: 'Miradors', color: '#5fae6e' },
+  { key: 'hallOfFame', icon: iconHallOfFame, label: 'Hall of Fame', shortLabel: 'Palmarès', color: '#e0ac2b' },
+  { key: 'more', icon: iconSeeMore, label: 'Plus', shortLabel: 'Plus', color: '#a259c4' },
 ]
 
 function ControlGroup({ label, children }: { label?: string; children: ReactNode }) {
@@ -84,6 +86,8 @@ export default function ControlsPanel({
   landmarks,
   onSelectLandmark,
   onUnlock,
+  activeSection,
+  onSectionChange,
   showChutes,
   onToggleChutes,
   showWindCones,
@@ -126,7 +130,6 @@ export default function ControlsPanel({
 }: Props) {
   const [collapsed, setCollapsed] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [activeSection, setActiveSection] = useState<SectionKey>('weather')
 
   const searchResults = useMemo(() => {
     const q = searchQuery.trim().toLowerCase()
@@ -168,12 +171,14 @@ export default function ControlsPanel({
                 key={section.key}
                 type="button"
                 className={`panel-icon-tab ${activeSection === section.key ? 'panel-icon-tab-active' : ''}`}
-                onClick={() => setActiveSection(section.key)}
+                style={{ '--tab-accent': section.color } as CSSProperties}
+                onClick={() => onSectionChange(section.key)}
                 aria-label={section.label}
                 aria-pressed={activeSection === section.key}
                 title={section.label}
               >
-                <img src={section.icon} alt="" />
+                <img src={section.icon} alt="" className="panel-icon-tab-glyph" />
+                <span className="panel-icon-tab-label">{section.shortLabel}</span>
               </button>
             ))}
           </div>
