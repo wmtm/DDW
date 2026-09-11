@@ -12,6 +12,8 @@ export interface WeatherData {
   weatherCode: number
   description: string
   forecast: HourlyForecast[]
+  sunrise: string
+  sunset: string
 }
 
 const WEATHER_CODE_DESCRIPTIONS: Record<number, string> = {
@@ -45,12 +47,13 @@ export function weatherDescriptionFor(code: number): string {
 const FORECAST_HOURS_AHEAD = [2, 4]
 
 export async function fetchCurrentWeather(lat: number, lon: number): Promise<WeatherData> {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&hourly=temperature_2m,weather_code&timezone=auto`
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&hourly=temperature_2m,weather_code&daily=sunrise,sunset&timezone=auto`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Open-Meteo request failed: ${res.status}`)
   const data = await res.json()
   const current = data.current
   const hourly = data.hourly
+  const daily = data.daily
 
   const forecast: HourlyForecast[] = []
   if (hourly?.time?.length) {
@@ -76,6 +79,11 @@ export async function fetchCurrentWeather(lat: number, lon: number): Promise<Wea
     }
   }
 
+  // Open-Meteo returns daily.sunrise/sunset as local wall-clock ISO strings
+  // (timezone=auto), so slicing out "HH:MM" avoids any extra TZ conversion.
+  const sunrise: string = daily?.sunrise?.[0]?.slice(11, 16) ?? ''
+  const sunset: string = daily?.sunset?.[0]?.slice(11, 16) ?? ''
+
   return {
     temperatureC: current.temperature_2m,
     windSpeedKmh: current.wind_speed_10m,
@@ -84,5 +92,7 @@ export async function fetchCurrentWeather(lat: number, lon: number): Promise<Wea
     weatherCode: current.weather_code,
     description: weatherDescriptionFor(current.weather_code),
     forecast,
+    sunrise,
+    sunset,
   }
 }

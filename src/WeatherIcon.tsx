@@ -88,14 +88,7 @@ const ICONS: Record<WeatherIconCategory, () => ReactElement> = {
   storm: Storm,
 }
 
-interface Props {
-  code: number
-  className?: string
-}
-
-export default function WeatherIcon({ code, className }: Props) {
-  const category = categoryFor(code)
-  const Glyph = ICONS[category]
+function IconSvg({ className, children }: { className?: string; children: ReactElement }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -108,7 +101,48 @@ export default function WeatherIcon({ code, className }: Props) {
       strokeLinejoin="round"
       className={className}
     >
-      <Glyph />
+      {children}
     </svg>
+  )
+}
+
+interface Props {
+  code: number
+  className?: string
+}
+
+export default function WeatherIcon({ code, className }: Props) {
+  const category = categoryFor(code)
+  const Glyph = ICONS[category]
+  return (
+    <IconSvg className={className}>
+      <Glyph />
+    </IconSvg>
+  )
+}
+
+export function SunriseIcon({ className }: { className?: string }) {
+  return (
+    <IconSvg className={className}>
+      <>
+        <path d="M12 2v5" />
+        <path d="M9 5l3-3 3 3" />
+        <path d="M4 17h16" />
+        <path d="M6.5 17a5.5 5.5 0 0 1 11 0" />
+      </>
+    </IconSvg>
+  )
+}
+
+export function SunsetIcon({ className }: { className?: string }) {
+  return (
+    <IconSvg className={className}>
+      <>
+        <path d="M12 2v5" />
+        <path d="M9 4l3 3 3-3" />
+        <path d="M4 17h16" />
+        <path d="M6.5 17a5.5 5.5 0 0 1 11 0" />
+      </>
+    </IconSvg>
   )
 }

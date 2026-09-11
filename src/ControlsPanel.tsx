@@ -6,7 +6,7 @@ import type { WeatherData } from './weather'
 import type { Landmark } from './landmarks'
 import DateTimeWidget from './DateTimeWidget'
 import WindCompass from './WindCompass'
-import WeatherIcon from './WeatherIcon'
+import WeatherIcon, { SunriseIcon, SunsetIcon } from './WeatherIcon'
 import PasscodeGate from './PasscodeGate'
 import logoWolmar from './assets/branding/logo-wolmar-small.png'
 import iconWeather from './assets/branding/icon-weather.png'
@@ -206,15 +206,33 @@ export default function ControlsPanel({
               </div>
               <DateTimeWidget />
             </div>
-            {weather && weather.forecast.length > 0 && (
-              <div className="forecast-row">
-                {weather.forecast.map((f) => (
-                  <div className="forecast-chip" key={f.hoursAhead}>
-                    <span className="forecast-chip-label">+{f.hoursAhead} h</span>
-                    <WeatherIcon code={f.weatherCode} className="forecast-chip-icon" />
-                    <span className="forecast-chip-temp">{Math.round(f.temperatureC)}°</span>
-                  </div>
-                ))}
+            {weather && (
+              <div className="weather-subgrid">
+                <div className="weather-subcolumn">
+                  {weather.forecast.map((f) => (
+                    <div className="forecast-chip" key={f.hoursAhead}>
+                      <span className="forecast-chip-label">+{f.hoursAhead} h</span>
+                      <WeatherIcon code={f.weatherCode} className="forecast-chip-icon" />
+                      <span className="forecast-chip-temp">{Math.round(f.temperatureC)}°</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="weather-subcolumn">
+                  {weather.sunrise && (
+                    <div className="forecast-chip">
+                      <span className="forecast-chip-label">Lever</span>
+                      <SunriseIcon className="forecast-chip-icon" />
+                      <span className="forecast-chip-temp">{weather.sunrise}</span>
+                    </div>
+                  )}
+                  {weather.sunset && (
+                    <div className="forecast-chip">
+                      <span className="forecast-chip-label">Coucher</span>
+                      <SunsetIcon className="forecast-chip-icon" />
+                      <span className="forecast-chip-temp">{weather.sunset}</span>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
             <span className="hint weather-source">

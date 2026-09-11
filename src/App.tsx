@@ -679,6 +679,10 @@ export default function App() {
           anchor="center"
           onClick={(e) => {
             e.originalEvent.stopPropagation()
+            if (selected?.id === poi.id) {
+              setSelected(null)
+              return
+            }
             setSelected(poi)
             const map = mapRef.current?.getMap()
             if (map) {
