@@ -60,15 +60,15 @@ const LANDMARK_FADE_START_ZOOM = 13
 const ROTATE_HINT_MIN_ZOOM = 13
 const LANDMARK_FADE_END_ZOOM = 11
 const ESTATE_CENTER = { longitude: 57.368, latitude: -20.302 }
-// Fitted from 4 ground-control points the user marked on the drawn map (image
-// corners -> lng/lat via least-squares affine); the drawing isn't north-up.
-// Nudged ~1.5% outward from center after the user flagged the artwork edge
-// falling slightly short of the true boundary in a couple of spots.
+// Fitted by tracing the drawn artwork's own outline (from its alpha mask)
+// and running iterative closest-point alignment against the surveyed
+// estateBoundary polygon, converging to ~8m median / ~30m p90 error; the
+// drawing isn't north-up.
 const drawnMapCoordinates: [[number, number], [number, number], [number, number], [number, number]] = [
-  [57.394009, -20.285359],
-  [57.388323, -20.318841],
-  [57.361783, -20.314474],
-  [57.367469, -20.280992],
+  [57.393821, -20.285203],
+  [57.387872, -20.318581],
+  [57.361855, -20.314472],
+  [57.367804, -20.281094],
 ]
 const BASEMAP_STORAGE_KEY = 'ddw-basemap'
 
