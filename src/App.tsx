@@ -62,13 +62,13 @@ const LANDMARK_FADE_END_ZOOM = 11
 const ESTATE_CENTER = { longitude: 57.368, latitude: -20.302 }
 // Fitted by tracing the drawn artwork's own outline (from its alpha mask)
 // and running iterative closest-point alignment against the surveyed
-// estateBoundary polygon, converging to ~8m median / ~30m p90 error; the
+// estateBoundary polygon, converging to ~7m median / ~20m p90 error; the
 // drawing isn't north-up.
 const drawnMapCoordinates: [[number, number], [number, number], [number, number], [number, number]] = [
-  [57.393821, -20.285203],
-  [57.387872, -20.318581],
-  [57.361855, -20.314472],
-  [57.367804, -20.281094],
+  [57.393740, -20.285151],
+  [57.387821, -20.318622],
+  [57.361864, -20.314485],
+  [57.367783, -20.281013],
 ]
 const BASEMAP_STORAGE_KEY = 'ddw-basemap'
 
