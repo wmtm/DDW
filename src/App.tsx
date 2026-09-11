@@ -11,6 +11,7 @@ import Map, {
 } from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { pois, type Poi } from './poi'
+import PoiIcon from './PoiIcon'
 import { mapStyle } from './mapStyle'
 import { runTour } from './tour'
 import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
@@ -675,7 +676,7 @@ export default function App() {
           key={poi.id}
           longitude={poi.longitude}
           latitude={poi.latitude}
-          anchor="bottom"
+          anchor="center"
           onClick={(e) => {
             e.originalEvent.stopPropagation()
             setSelected(poi)
@@ -694,7 +695,7 @@ export default function App() {
             }
           }}
         >
-          <div className="marker-pin" title={poi.name} />
+          <PoiIcon type={poi.icon} title={poi.name} />
         </Marker>
       ))}
 

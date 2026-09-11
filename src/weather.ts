@@ -1,3 +1,9 @@
+export interface HourlyForecast {
+  hoursAhead: number
+  temperatureC: number
+  weatherCode: number
+}
+
 export interface WeatherData {
   temperatureC: number
   windSpeedKmh: number
@@ -5,6 +11,7 @@ export interface WeatherData {
   precipitationMm: number
   weatherCode: number
   description: string
+  forecast: HourlyForecast[]
 }
 
 const WEATHER_CODE_DESCRIPTIONS: Record<number, string> = {
@@ -35,12 +42,39 @@ export function weatherDescriptionFor(code: number): string {
   return WEATHER_CODE_DESCRIPTIONS[code] ?? 'Conditions inconnues'
 }
 
+const FORECAST_HOURS_AHEAD = [2, 4]
+
 export async function fetchCurrentWeather(lat: number, lon: number): Promise<WeatherData> {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&timezone=auto`
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&hourly=temperature_2m,weather_code&timezone=auto`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Open-Meteo request failed: ${res.status}`)
   const data = await res.json()
   const current = data.current
+  const hourly = data.hourly
+
+  const forecast: HourlyForecast[] = []
+  if (hourly?.time?.length) {
+    const currentTime = new Date(current.time).getTime()
+    let nowIndex = 0
+    let minDiff = Infinity
+    for (let i = 0; i < hourly.time.length; i++) {
+      const diff = Math.abs(new Date(hourly.time[i]).getTime() - currentTime)
+      if (diff < minDiff) {
+        minDiff = diff
+        nowIndex = i
+      }
+    }
+    for (const hoursAhead of FORECAST_HOURS_AHEAD) {
+      const idx = nowIndex + hoursAhead
+      if (idx < hourly.time.length) {
+        forecast.push({
+          hoursAhead,
+          temperatureC: hourly.temperature_2m[idx],
+          weatherCode: hourly.weather_code[idx],
+        })
+      }
+    }
+  }
 
   return {
     temperatureC: current.temperature_2m,
@@ -49,5 +83,6 @@ export async function fetchCurrentWeather(lat: number, lon: number): Promise<Wea
     precipitationMm: current.precipitation,
     weatherCode: current.weather_code,
     description: weatherDescriptionFor(current.weather_code),
+    forecast,
   }
 }

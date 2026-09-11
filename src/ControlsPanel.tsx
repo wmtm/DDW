@@ -6,6 +6,7 @@ import type { WeatherData } from './weather'
 import type { Landmark } from './landmarks'
 import DateTimeWidget from './DateTimeWidget'
 import WindCompass from './WindCompass'
+import WeatherIcon from './WeatherIcon'
 import PasscodeGate from './PasscodeGate'
 import logoWolmar from './assets/branding/logo-wolmar-small.png'
 import iconWeather from './assets/branding/icon-weather.png'
@@ -205,6 +206,17 @@ export default function ControlsPanel({
               </div>
               <DateTimeWidget />
             </div>
+            {weather && weather.forecast.length > 0 && (
+              <div className="forecast-row">
+                {weather.forecast.map((f) => (
+                  <div className="forecast-chip" key={f.hoursAhead}>
+                    <span className="forecast-chip-label">+{f.hoursAhead} h</span>
+                    <WeatherIcon code={f.weatherCode} className="forecast-chip-icon" />
+                    <span className="forecast-chip-temp">{Math.round(f.temperatureC)}°</span>
+                  </div>
+                ))}
+              </div>
+            )}
             <span className="hint weather-source">
               Source :{' '}
               <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">
@@ -281,11 +293,8 @@ export default function ControlsPanel({
                         const units = formatAreaUnits(measureResult.areaSquareMeters)
                         return (
                           <>
-                            <span className="area-chip" title="Kilomètres carrés">
-                              {units.km2} km²
-                            </span>
-                            <span className="area-chip" title="Hectares">
-                              {units.ha} ha
+                            <span className="area-chip" title="Perches (Île Maurice, 1 perche ≈ 42,21 m²)">
+                              {units.perches} perches
                             </span>
                             <span className="area-chip" title="Pieds carrés">
                               {units.ft2} pi²
@@ -523,13 +532,14 @@ function formatDistance(meters: number): string {
   return meters >= 1000 ? `${(meters / 1000).toFixed(2)} km` : `${Math.round(meters)} m`
 }
 
-function formatAreaUnits(squareMeters: number): { km2: string; ha: string; ft2: string } {
-  const km2 = squareMeters / 1_000_000
-  const ha = squareMeters / 10_000
+/** 1 arpent (Île Maurice) = 4 221,06 m²; 1 arpent = 100 perches. */
+const MAURITIAN_PERCH_SQUARE_METERS = 42.2106
+
+function formatAreaUnits(squareMeters: number): { perches: string; ft2: string } {
+  const perches = squareMeters / MAURITIAN_PERCH_SQUARE_METERS
   const ft2 = squareMeters * 10.7639
   return {
-    km2: km2.toLocaleString('fr-FR', { maximumFractionDigits: 2 }),
-    ha: ha.toLocaleString('fr-FR', { maximumFractionDigits: 2 }),
+    perches: perches.toLocaleString('fr-FR', { maximumFractionDigits: 2 }),
     ft2: Math.round(ft2).toLocaleString('fr-FR'),
   }
 }
