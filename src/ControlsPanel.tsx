@@ -158,7 +158,9 @@ export default function ControlsPanel({
         </button>
 
         <div className="controls-panel-scroll">
-          <img src={logoWolmar} alt="Domaine de Wolmar" className="panel-logo" />
+          <div className="panel-header">
+            <img src={logoWolmar} alt="Domaine de Wolmar" className="panel-logo" />
+          </div>
 
           <div className="panel-icon-tabs">
             {SECTIONS.map((section) => (

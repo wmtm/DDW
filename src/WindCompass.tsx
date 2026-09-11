@@ -14,7 +14,7 @@ interface Props {
 export default function WindCompass({ directionDeg, speedKmh }: Props) {
   return (
     <div className="wind-compass" title={`Vent venant du ${cardinalLabel(directionDeg)} (${Math.round(directionDeg)}°)`}>
-      <svg viewBox="0 0 64 64" width="52" height="52" className="wind-compass-svg">
+      <svg viewBox="0 0 64 64" width="44" height="44" className="wind-compass-svg">
         <circle cx="32" cy="32" r="29" className="wind-compass-ring" />
         <text x="32" y="12" className="wind-compass-tick wind-compass-tick-main">N</text>
         <text x="55" y="36" className="wind-compass-tick">E</text>

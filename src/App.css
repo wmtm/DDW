@@ -318,11 +318,12 @@
   position: absolute;
   top: 16px;
   left: 16px;
-  width: 280px;
+  width: 300px;
   background: var(--panel-bg);
   backdrop-filter: blur(var(--panel-blur));
   color: var(--text-primary);
   border-radius: var(--panel-radius);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   font-family: var(--font-body);
   font-size: 13px;
   box-shadow: var(--panel-shadow);
@@ -331,7 +332,7 @@
 }
 
 .controls-panel-collapsed {
-  transform: translateX(-320px);
+  transform: translateX(-340px);
   opacity: 0;
   pointer-events: none;
 }
@@ -339,36 +340,38 @@
 .controls-panel-scroll {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 14px;
+  gap: 16px;
+  padding: 16px;
   max-height: calc(100vh - 32px);
   overflow-y: auto;
 }
 
 .panel-edge-toggle {
   position: absolute;
-  top: 100px;
-  left: 296px;
-  width: 22px;
-  height: 56px;
+  top: 96px;
+  left: 316px;
+  width: 20px;
+  height: 64px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--panel-bg);
   backdrop-filter: blur(var(--panel-blur));
-  border: none;
-  border-radius: 0 10px 10px 0;
-  color: #fff;
-  font-size: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: none;
+  border-radius: 0 12px 12px 0;
+  color: var(--text-secondary);
+  font-size: 15px;
   cursor: pointer;
   z-index: 2;
   box-shadow: var(--panel-shadow);
-  transition: left 0.25s ease, color 0.15s ease;
+  transition: left 0.25s ease, color 0.15s ease, background 0.15s ease;
 }
 
 .panel-edge-toggle:hover {
   color: var(--accent-amber);
+  background: var(--panel-bg-solid);
 }
 
 .panel-edge-toggle-collapsed {
@@ -389,52 +392,97 @@
   opacity: 0.75;
 }
 
+.panel-header {
+  position: relative;
+  padding: 2px 6px 12px;
+}
+
+.panel-header::after {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--divider-gold), transparent);
+}
+
 .panel-logo {
   width: 100%;
-  max-width: 220px;
+  max-width: 196px;
   height: auto;
   align-self: center;
   display: block;
+  margin: 0 auto;
 }
 
 .panel-icon-tabs {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
+  gap: 7px;
 }
 
 .panel-icon-tab {
-  padding: 0;
-  border: 2px solid transparent;
-  border-radius: 10px;
-  background: none;
+  position: relative;
+  aspect-ratio: 1;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--surface-card);
   cursor: pointer;
   line-height: 0;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
 .panel-icon-tab img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
   display: block;
-  border-radius: 8px;
 }
 
 .panel-icon-tab:hover {
-  transform: scale(1.06);
+  background: var(--surface-card-hover);
+  transform: translateY(-1px);
 }
 
 .panel-icon-tab-active {
-  border-color: var(--accent-amber);
+  background: rgba(255, 209, 102, 0.12);
+  border-color: var(--divider-gold);
+}
+
+.panel-icon-tab-active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent-amber);
+  transform: translateX(-50%);
 }
 
 .panel-section-content {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  border-top: 1px solid var(--panel-border);
-  padding-top: 12px;
+  gap: 14px;
+  padding-top: 16px;
   animation: panel-section-enter 0.22s ease;
+}
+
+.panel-section-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--divider-soft) 15%, var(--divider-soft) 85%, transparent);
 }
 
 @keyframes panel-section-enter {
@@ -661,52 +709,56 @@
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  gap: 8px;
+  gap: 10px;
 }
 
 .weather-readout,
 .datetime-readout {
   flex: 1;
   min-width: 0;
-  background: var(--panel-bg-soft);
-  border-top: 2px solid var(--accent-amber);
-  border-radius: 0 0 6px 6px;
-  padding: 8px;
+  background: var(--surface-card);
+  border: 1px solid var(--surface-card-border);
+  border-radius: 12px;
+  padding: 12px 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .weather-main {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .weather-temp {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--accent-amber);
-  letter-spacing: 0.02em;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .weather-desc {
-  text-transform: capitalize;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 500;
 }
 
 .wind-compass {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
 }
 
 .wind-compass-ring {
-  fill: rgba(255, 255, 255, 0.06);
-  stroke: var(--panel-border);
+  fill: rgba(255, 255, 255, 0.05);
+  stroke: var(--surface-card-border);
   stroke-width: 1;
 }
 
@@ -747,35 +799,51 @@
 }
 
 .weather-source {
+  position: relative;
   display: block;
-  margin-top: 2px;
+  margin-top: 4px;
+  padding-top: 10px;
   font-size: 10px;
-  opacity: 0.65;
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
+.weather-source::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--divider-soft), transparent);
 }
 
 .weather-source a {
-  color: inherit;
+  color: var(--text-secondary);
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .datetime-clock {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 21px;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--accent-amber);
-  letter-spacing: 0.02em;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .datetime-day {
-  font-size: 12px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.85;
+  letter-spacing: 0.08em;
 }
 
 .datetime-date {
   font-size: 11px;
-  opacity: 0.7;
+  color: var(--text-muted);
 }
 
 .measure-result {
