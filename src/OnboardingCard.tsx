@@ -28,7 +28,7 @@ export default function OnboardingCard() {
 
   return (
     <div className="onboarding-card">
-      <h3>Bienvenue à la Chassée de Wolmar</h3>
+      <h3>Bienvenue au Domaine de Wolmar</h3>
       <ul>
         <li>Cliquez et glissez pour incliner et faire pivoter la vue</li>
         <li>Choisissez un fond de carte — satellite, carte, hybride ou terrain</li>

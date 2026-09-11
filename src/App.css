@@ -697,14 +697,53 @@
   text-transform: capitalize;
 }
 
-.wind-arrow {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 10px solid #6db3ff;
-  transition: transform 0.4s ease;
+.wind-compass {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.wind-compass-ring {
+  fill: rgba(255, 255, 255, 0.06);
+  stroke: var(--panel-border);
+  stroke-width: 1;
+}
+
+.wind-compass-tick {
+  fill: var(--text-muted);
+  font-size: 9px;
+  font-family: var(--font-body);
+  text-anchor: middle;
+}
+
+.wind-compass-tick-main {
+  fill: var(--accent-amber);
+  font-weight: 700;
+}
+
+.wind-compass-needle {
+  transition: transform 0.6s ease;
+}
+
+.wind-compass-needle-head {
+  fill: var(--accent-amber);
+}
+
+.wind-compass-needle-tail {
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.wind-compass-pivot {
+  fill: var(--accent-amber);
+}
+
+.wind-compass-readout {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .weather-source {

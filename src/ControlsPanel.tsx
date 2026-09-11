@@ -5,6 +5,7 @@ import type { ElevationSample } from './elevation'
 import type { WeatherData } from './weather'
 import type { Landmark } from './landmarks'
 import DateTimeWidget from './DateTimeWidget'
+import WindCompass from './WindCompass'
 import PasscodeGate from './PasscodeGate'
 import logoWolmar from './assets/branding/logo-wolmar-small.png'
 import iconWeather from './assets/branding/icon-weather.png'
@@ -183,18 +184,11 @@ export default function ControlsPanel({
                 {weather ? (
                   <>
                     <div className="weather-main">
-                      <span
-                        className="wind-arrow"
-                        style={{ transform: `rotate(${weather.windDirectionDeg}deg)` }}
-                        title={`Vent venant de ${Math.round(weather.windDirectionDeg)}°`}
-                      />
+                      <WindCompass directionDeg={weather.windDirectionDeg} speedKmh={weather.windSpeedKmh} />
                       <span className="weather-temp">{Math.round(weather.temperatureC)}°C</span>
                     </div>
                     <span className="hint weather-desc">{weather.description}</span>
-                    <span className="hint">
-                      Vent {Math.round(weather.windSpeedKmh)} km/h · Précip.{' '}
-                      {weather.precipitationMm.toFixed(1)} mm
-                    </span>
+                    <span className="hint">Précip. {weather.precipitationMm.toFixed(1)} mm</span>
                   </>
                 ) : weatherError ? (
                   <span className="hint">{weatherError}</span>
