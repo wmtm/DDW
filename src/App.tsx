@@ -17,7 +17,8 @@ import { mapStyle } from './mapStyle'
 import { runTour } from './tour'
 import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
 import { estateBoundary } from './boundary'
-import { inverseMaskGeoJSON, cliffRingGeoJSON, ISOLATE_VIEW } from './isolateMode'
+import { inverseMaskGeoJSON, ISOLATE_VIEW } from './isolateMode'
+import { createEstateSlabLayer, ESTATE_SLAB_LAYER_ID } from './estateSlab'
 import { isUnlocked } from './passcode'
 import drawnMapImage from './assets/estate-drawn-map.png'
 import { historicalYears, waybackTileUrl, currentImageryTileUrl, type ImagerySelection } from './historicalImagery'
@@ -457,6 +458,32 @@ export default function App() {
     }
   }, [])
 
+  // The slab is a custom WebGL layer, so it's mounted by hand rather than as a
+  // <Layer>, and re-added after a basemap switch since that rebuilds the style.
+  useEffect(() => {
+    const map = mapRef.current?.getMap()
+    if (!map || !wolmarOnly) return
+
+    const slab = createEstateSlabLayer()
+    const attach = () => {
+      if (map.getLayer(ESTATE_SLAB_LAYER_ID)) return
+      try {
+        map.addLayer(slab)
+      } catch {
+        // Style not parsed yet — a later styledata/load event retries.
+      }
+    }
+
+    attach()
+    map.on('styledata', attach)
+    map.on('load', attach)
+    return () => {
+      map.off('styledata', attach)
+      map.off('load', attach)
+      if (map.getLayer(ESTATE_SLAB_LAYER_ID)) map.removeLayer(ESTATE_SLAB_LAYER_ID)
+    }
+  }, [wolmarOnly])
+
   const handleCaptureView = useCallback(() => {
     const map = mapRef.current?.getMap()
     if (!map) return
@@ -541,7 +568,7 @@ export default function App() {
         pitch: 15,
         bearing: 0,
       }}
-      terrain={{ source: 'terrain-dem', exaggeration: 1.6 }}
+      terrain={{ source: 'terrain-dem', exaggeration: wolmarOnly ? 2.4 : 1.6 }}
       style={{ width: '100%', height: '100%' }}
       mapStyle={mapStyle}
       canvasContextAttributes={{ preserveDrawingBuffer: true }}
@@ -612,61 +639,7 @@ export default function App() {
             <Layer id="wolmar-void-fill" type="fill" paint={{ 'fill-color': '#050810', 'fill-opacity': 1 }} />
           </Source>
 
-          <Source id="wolmar-cliff-ring" type="geojson" data={cliffRingGeoJSON}>
-            {/*
-              fill-extrusion base/height must be >= 0 (absolute meters, not
-              terrain-relative), and the top face isn't depth-hidden unless
-              it stays below the real terrain surface everywhere inside the
-              boundary — otherwise it buries the estate's own terrain/chutes
-              under a flat slab. Kept deliberately short (a visible "cliff"
-              rim rather than a deep drop) so it stays under the real local
-              elevation almost everywhere.
-
-              This is extruded from a thin ring hugging the inside of the
-              boundary (see isolateMode.ts), not the full estate polygon —
-              otherwise the flat colored top face would cover the real map
-              (satellite imagery, terrain, chutes) everywhere inside it
-              instead of leaving it fully visible, with only the rim
-              showing as a "cliff".
-
-              Three bands echo the real geology of this part of Mauritius —
-              a volcanic (basalt) island: dark basalt bedrock at the base,
-              then the reddish, iron-rich lateritic clay ("terres colorées")
-              that basalt weathers into across the island, capped by a
-              thinner topsoil band right under the real satellite surface.
-            */}
-            <Layer
-              id="wolmar-cliff-bedrock"
-              type="fill-extrusion"
-              paint={{
-                'fill-extrusion-color': '#3a3a42',
-                'fill-extrusion-base': 0,
-                'fill-extrusion-height': 5,
-                'fill-extrusion-opacity': 1,
-              }}
-            />
-            <Layer
-              id="wolmar-cliff-subsoil"
-              type="fill-extrusion"
-              paint={{
-                'fill-extrusion-color': '#7a4a30',
-                'fill-extrusion-base': 5,
-                'fill-extrusion-height': 9,
-                'fill-extrusion-opacity': 1,
-              }}
-            />
-            <Layer
-              id="wolmar-cliff-topsoil"
-              type="fill-extrusion"
-              paint={{
-                'fill-extrusion-color': '#9c5233',
-                'fill-extrusion-base': 9,
-                'fill-extrusion-height': 12,
-                'fill-extrusion-opacity': 1,
-              }}
-            />
-          </Source>
-
+          {/* The block of ground itself is drawn by the custom slab layer — see estateSlab.ts. */}
           <Source id="wolmar-cliff-outline" type="geojson" data={boundaryGeometry}>
             <Layer
               id="wolmar-cliff-glow"
