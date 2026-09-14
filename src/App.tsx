@@ -12,11 +12,12 @@ import Map, {
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { pois, type Poi } from './poi'
 import PoiIcon from './PoiIcon'
+import MapCompass from './MapCompass'
 import { mapStyle } from './mapStyle'
 import { runTour } from './tour'
 import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
 import { estateBoundary } from './boundary'
-import { placeNames } from './placeNames'
+import { inverseMaskGeoJSON, ISOLATE_VIEW } from './isolateMode'
 import { isUnlocked } from './passcode'
 import drawnMapImage from './assets/estate-drawn-map.png'
 import { historicalYears, waybackTileUrl, currentImageryTileUrl, type ImagerySelection } from './historicalImagery'
@@ -95,6 +96,7 @@ export default function App() {
 
   const lastHoverRef = useRef(0)
   const lastZoomRef = useRef(0)
+  const lastBearingRef = useRef(0)
   const shareCopiedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const shared = useMemo(() => parseShareStateFromUrl(), [])
@@ -129,6 +131,7 @@ export default function App() {
   const [openPopupPhotoIndex, setOpenPopupPhotoIndex] = useState<number | null>(null)
   const [landmarkTourIndex, setLandmarkTourIndex] = useState<number | null>(null)
   const [zoom, setZoom] = useState(Math.max(targetView.zoom - 3, 5))
+  const [bearing, setBearing] = useState(targetView.bearing)
   const [rotateHintExpired, setRotateHintExpired] = useState(false)
   const rotateHintTimerStarted = useRef(false)
   const rotateHintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -136,17 +139,18 @@ export default function App() {
   const imageryFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [unlocked, setUnlockedState] = useState(isUnlocked())
   const [showChutes, setShowChutes] = useState(true)
-  const [showSpots, setShowSpots] = useState(true)
-  const [showNames, setShowNames] = useState(true)
   const [showDrawnMap, setShowDrawnMap] = useState(false)
   const [showWindCones, setShowWindCones] = useState(false)
+  const [wolmarOnly, setWolmarOnly] = useState(false)
   const [activeSection, setActiveSection] = useState<SectionKey>('weather')
 
   const chutesVisible = unlocked && showChutes
 
+  // "Histoires et lieux importants" and "Noms" layers are disabled for now
+  // (their toggles were removed from the UI) — revisit later.
   const visibleLandmarks = useMemo(
-    () => landmarks.filter((l) => (l.category === 'mirador' ? chutesVisible : showSpots)),
-    [chutesVisible, showSpots],
+    () => landmarks.filter((l) => l.category === 'mirador' && chutesVisible),
+    [chutesVisible],
   )
 
   const chuteLandmarks = useMemo(
@@ -165,8 +169,6 @@ export default function App() {
 
   const handleUnlock = useCallback(() => setUnlockedState(true), [])
   const handleToggleChutes = useCallback(() => setShowChutes((v) => !v), [])
-  const handleToggleSpots = useCallback(() => setShowSpots((v) => !v), [])
-  const handleToggleNames = useCallback(() => setShowNames((v) => !v), [])
   const handleToggleDrawnMap = useCallback(() => setShowDrawnMap((v) => !v), [])
   const handleToggleWindCones = useCallback(() => setShowWindCones((v) => !v), [])
 
@@ -312,6 +314,19 @@ export default function App() {
     if (map) setZoom(map.getZoom())
   }, [])
 
+  const handleMapRotate = useCallback(() => {
+    const now = performance.now()
+    if (now - lastBearingRef.current < ZOOM_THROTTLE_MS) return
+    lastBearingRef.current = now
+    const map = mapRef.current?.getMap()
+    if (map) setBearing(map.getBearing())
+  }, [])
+
+  const handleResetNorth = useCallback(() => {
+    const map = mapRef.current?.getMap()
+    if (map) map.easeTo({ bearing: 0, duration: 500 })
+  }, [])
+
   const handleToggleOverlay = useCallback(() => {
     setShowOverlay((v) => !v)
   }, [])
@@ -331,6 +346,33 @@ export default function App() {
       )
     }
     setActiveSection('weather')
+  }, [targetView])
+
+  const handleToggleWolmarOnly = useCallback(() => {
+    const map = mapRef.current?.getMap()
+    setWolmarOnly((prev) => {
+      const next = !prev
+      if (map) {
+        flyToEstate(
+          map,
+          next
+            ? {
+                center: [ISOLATE_VIEW.longitude, ISOLATE_VIEW.latitude],
+                zoom: ISOLATE_VIEW.zoom,
+                pitch: ISOLATE_VIEW.pitch,
+                bearing: ISOLATE_VIEW.bearing,
+              }
+            : {
+                center: [targetView.longitude, targetView.latitude],
+                zoom: targetView.zoom,
+                pitch: targetView.pitch,
+                bearing: targetView.bearing,
+              },
+          2200,
+        )
+      }
+      return next
+    })
   }, [targetView])
 
   const handleHistoricalYearChange = useCallback((year: ImagerySelection) => {
@@ -507,6 +549,7 @@ export default function App() {
       onMouseMove={handleMapMouseMove}
       onMouseOut={handleMapMouseLeave}
       onZoom={handleMapZoom}
+      onRotate={handleMapRotate}
       onLoad={() => {
         setMapReady(true)
         const map = mapRef.current?.getMap()
@@ -540,6 +583,7 @@ export default function App() {
       >
         ⌂
       </button>
+      <MapCompass bearing={bearing} onReset={handleResetNorth} />
       <OnboardingCard />
 
       {renderedImageryUrl !== null && (
@@ -560,6 +604,65 @@ export default function App() {
             }}
           />
         </Source>
+      )}
+
+      {wolmarOnly && (
+        <>
+          <Source id="wolmar-void-mask" type="geojson" data={inverseMaskGeoJSON}>
+            <Layer id="wolmar-void-fill" type="fill" paint={{ 'fill-color': '#050810', 'fill-opacity': 1 }} />
+          </Source>
+
+          <Source id="wolmar-cliff" type="geojson" data={boundaryGeometry}>
+            {/*
+              fill-extrusion base/height must be >= 0 (absolute meters, not
+              terrain-relative), and the top face isn't depth-hidden unless
+              it stays below the real terrain surface everywhere inside the
+              boundary — otherwise it buries the estate's own terrain/chutes
+              under a flat slab. Kept deliberately short (a visible "cliff"
+              rim rather than a deep drop) so it stays under the real local
+              elevation almost everywhere.
+            */}
+            <Layer
+              id="wolmar-cliff-subsoil"
+              type="fill-extrusion"
+              paint={{
+                'fill-extrusion-color': '#443f3a',
+                'fill-extrusion-base': 0,
+                'fill-extrusion-height': 9,
+                'fill-extrusion-opacity': 1,
+              }}
+            />
+            <Layer
+              id="wolmar-cliff-topsoil"
+              type="fill-extrusion"
+              paint={{
+                'fill-extrusion-color': '#2a2019',
+                'fill-extrusion-base': 9,
+                'fill-extrusion-height': 12,
+                'fill-extrusion-opacity': 1,
+              }}
+            />
+            <Layer
+              id="wolmar-cliff-glow"
+              type="line"
+              paint={{
+                'line-color': '#f4a300',
+                'line-width': 12,
+                'line-blur': 7,
+                'line-opacity': 0.5,
+              }}
+            />
+            <Layer
+              id="wolmar-cliff-rim"
+              type="line"
+              paint={{
+                'line-color': '#ffd166',
+                'line-width': 2.5,
+                'line-opacity': 0.95,
+              }}
+            />
+          </Source>
+        </>
       )}
 
       {showOverlay && (
@@ -745,15 +848,6 @@ export default function App() {
         </Marker>
       ))}
 
-      {showNames &&
-        placeNames
-          .filter((p) => zoom >= p.minZoom)
-          .map((place) => (
-            <Marker key={place.id} longitude={place.longitude} latitude={place.latitude} anchor="center">
-              <span className="place-name-label">{place.name}</span>
-            </Marker>
-          ))}
-
       {selectedLandmark && (
         <Popup
           longitude={selectedLandmark.longitude}
@@ -866,12 +960,10 @@ export default function App() {
         onToggleChutes={handleToggleChutes}
         showWindCones={showWindCones}
         onToggleWindCones={handleToggleWindCones}
-        showSpots={showSpots}
-        onToggleSpots={handleToggleSpots}
-        showNames={showNames}
-        onToggleNames={handleToggleNames}
         showDrawnMap={showDrawnMap}
         onToggleDrawnMap={handleToggleDrawnMap}
+        wolmarOnly={wolmarOnly}
+        onToggleWolmarOnly={handleToggleWolmarOnly}
         basemap={basemap}
         onBasemapChange={handleBasemapChange}
         tourRunning={tourRunning}

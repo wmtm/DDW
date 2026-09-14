@@ -28,12 +28,10 @@ interface Props {
   onToggleChutes: () => void
   showWindCones: boolean
   onToggleWindCones: () => void
-  showSpots: boolean
-  onToggleSpots: () => void
-  showNames: boolean
-  onToggleNames: () => void
   showDrawnMap: boolean
   onToggleDrawnMap: () => void
+  wolmarOnly: boolean
+  onToggleWolmarOnly: () => void
   basemap: BasemapStyle
   onBasemapChange: (basemap: BasemapStyle) => void
   tourRunning: boolean
@@ -93,12 +91,10 @@ export default function ControlsPanel({
   onToggleChutes,
   showWindCones,
   onToggleWindCones,
-  showSpots,
-  onToggleSpots,
-  showNames,
-  onToggleNames,
   showDrawnMap,
   onToggleDrawnMap,
+  wolmarOnly,
+  onToggleWolmarOnly,
   basemap,
   onBasemapChange,
   tourRunning,
@@ -438,6 +434,21 @@ export default function ControlsPanel({
             </ControlGroup>
 
             <ControlGroup>
+              <button
+                className={`action-button wolmar-only-button ${wolmarOnly ? 'chip-active' : ''}`}
+                onClick={onToggleWolmarOnly}
+                disabled={tourRunning || landmarkTourActive}
+              >
+                {wolmarOnly ? 'Quitter la vue plateforme' : 'Isoler le domaine (vue plateforme 3D)'}
+              </button>
+              {wolmarOnly && (
+                <span className="hint">
+                  Le reste de l'île disparaît pour ne laisser que le domaine, en relief.
+                </span>
+              )}
+            </ControlGroup>
+
+            <ControlGroup>
               <button className="action-button" onClick={onToggleTour} disabled={landmarkTourActive}>
                 {tourRunning ? 'Arrêter la visite' : 'Démarrer la visite aérienne'}
               </button>
@@ -490,16 +501,8 @@ export default function ControlsPanel({
 
             <ControlGroup label="Couches">
               <label className="layer-toggle-row">
-                <input type="checkbox" checked={showSpots} onChange={onToggleSpots} />
-                <span>Histoires et lieux importants</span>
-              </label>
-              <label className="layer-toggle-row">
                 <input type="checkbox" checked={showDrawnMap} onChange={onToggleDrawnMap} />
                 <span>Carte dessinée</span>
-              </label>
-              <label className="layer-toggle-row">
-                <input type="checkbox" checked={showNames} onChange={onToggleNames} />
-                <span>Noms</span>
               </label>
             </ControlGroup>
 

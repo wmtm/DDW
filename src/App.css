@@ -343,6 +343,61 @@
   transform: scale(1.06);
 }
 
+.map-compass {
+  position: absolute;
+  bottom: 40px;
+  right: 16px;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel-bg);
+  backdrop-filter: blur(var(--panel-blur));
+  border: 1.5px solid var(--accent-amber);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1;
+  box-shadow: var(--panel-shadow);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.map-compass:hover {
+  transform: scale(1.06);
+  background: var(--panel-bg-solid);
+}
+
+.map-compass-ring {
+  fill: rgba(255, 255, 255, 0.04);
+  stroke: var(--surface-card-border);
+  stroke-width: 1;
+}
+
+.map-compass-needle {
+  transition: transform 0.15s ease;
+}
+
+.map-compass-needle-north {
+  fill: var(--accent-amber);
+}
+
+.map-compass-needle-south {
+  fill: rgba(255, 255, 255, 0.35);
+}
+
+.map-compass-needle-label {
+  fill: var(--panel-bg-solid);
+  font-size: 8px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  text-anchor: middle;
+}
+
+.map-compass-pivot {
+  fill: var(--text-primary);
+}
+
 .controls-panel {
   position: absolute;
   top: 16px;
@@ -605,6 +660,17 @@
 .action-button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.wolmar-only-button {
+  border: 1.5px solid var(--accent-amber);
+  background: linear-gradient(135deg, rgba(255, 209, 102, 0.14), rgba(255, 255, 255, 0.06));
+  font-weight: 500;
+}
+
+.wolmar-only-button.chip-active {
+  background: linear-gradient(135deg, rgba(255, 209, 102, 0.4), rgba(244, 163, 0, 0.25));
+  border-color: var(--accent-amber);
 }
 
 .leaderboard-link {
@@ -1113,6 +1179,12 @@
     bottom: auto;
     top: 16px;
     left: 16px;
+  }
+
+  .map-compass {
+    bottom: auto;
+    top: 210px;
+    right: 16px;
   }
 
   .controls-panel {
