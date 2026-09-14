@@ -170,12 +170,25 @@
   justify-content: center;
   z-index: 10;
   font-family: system-ui, sans-serif;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.lightbox-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 94vw;
+  max-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .lightbox-close {
   position: absolute;
-  top: 16px;
-  right: 20px;
+  top: max(16px, env(safe-area-inset-top, 0px));
+  right: max(20px, env(safe-area-inset-right, 0px));
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: #fff;
@@ -211,28 +224,30 @@
 }
 
 .lightbox-nav-prev {
-  left: 16px;
+  left: max(16px, env(safe-area-inset-left, 0px));
 }
 
 .lightbox-nav-next {
-  right: 16px;
+  right: max(16px, env(safe-area-inset-right, 0px));
 }
 
 .lightbox-frame {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
 .lightbox-image {
   max-width: 90vw;
-  max-height: 75vh;
+  max-height: 65dvh;
   object-fit: contain;
   border-radius: 8px;
 }
 
 .lightbox-frame-panoramic {
-  height: 75vh;
+  height: 65dvh;
   width: 90vw;
   overflow: hidden;
   border-radius: 8px;
@@ -253,19 +268,20 @@
 }
 
 .lightbox-caption {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
   background: rgba(20, 20, 20, 0.75);
   color: #f2f2f2;
   padding: 6px 14px;
   border-radius: 8px;
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 4px 10px;
   align-items: baseline;
+  justify-content: center;
+  text-align: center;
   font-size: 13px;
-  max-width: 80vw;
+  max-width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .photo-thumb-button {
@@ -354,9 +370,10 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
-  max-height: calc(100vh - 32px);
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - 32px - env(safe-area-inset-bottom, 0px));
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .panel-edge-toggle {
@@ -1104,7 +1121,7 @@
     right: 0;
     bottom: 0;
     width: 100%;
-    max-height: 55vh;
+    max-height: 62dvh;
     border-radius: var(--panel-radius) var(--panel-radius) 0 0;
     box-sizing: border-box;
     overflow: hidden;
@@ -1112,6 +1129,7 @@
     opacity: 1;
     pointer-events: auto;
     transition: max-height 0.25s ease;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .controls-panel-collapsed {
@@ -1122,7 +1140,9 @@
   }
 
   .controls-panel-scroll {
-    max-height: calc(55vh - 44px);
+    max-height: calc(62dvh - 44px - env(safe-area-inset-bottom, 0px));
+    padding-bottom: 24px;
+    -webkit-overflow-scrolling: touch;
   }
 
   .controls-panel-toggle {

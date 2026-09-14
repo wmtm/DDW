@@ -11,6 +11,7 @@ interface Props {
 const PANORAMA_ASPECT_THRESHOLD = 2
 const MOMENTUM_DECAY = 0.94
 const MOMENTUM_STOP_VELOCITY = 0.05
+const DRAG_THRESHOLD_PX = 6
 
 export default function PhotoLightbox({ photos, initialIndex, onClose }: Props) {
   const [index, setIndex] = useState(initialIndex)
@@ -30,6 +31,7 @@ export default function PhotoLightbox({ photos, initialIndex, onClose }: Props) 
   } | null>(null)
   const momentumFrameRef = useRef<number | null>(null)
   const aspectRef = useRef(1)
+  const draggedRef = useRef(false)
 
   const photo = photos[index]
 
@@ -108,6 +110,7 @@ export default function PhotoLightbox({ photos, initialIndex, onClose }: Props) 
     (e: React.PointerEvent<HTMLDivElement>) => {
       if (!isPanoramic) return
       stopMomentum()
+      draggedRef.current = false
       ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
       dragRef.current = {
         active: true,
@@ -129,6 +132,9 @@ export default function PhotoLightbox({ photos, initialIndex, onClose }: Props) 
       const dt = Math.max(1, now - drag.lastTime)
       const instantVelocity = ((e.clientX - drag.lastX) / dt) * 16.7
       applyTranslate(drag.startTranslate + (e.clientX - drag.startX))
+      if (Math.abs(e.clientX - drag.startX) > DRAG_THRESHOLD_PX) {
+        draggedRef.current = true
+      }
       drag.velocity = instantVelocity
       drag.lastX = e.clientX
       drag.lastTime = now
@@ -175,23 +181,38 @@ export default function PhotoLightbox({ photos, initialIndex, onClose }: Props) 
         </button>
       )}
 
-      <div
-        ref={frameRef}
-        className={`lightbox-frame ${isPanoramic ? 'lightbox-frame-panoramic' : ''}`}
-        onClick={(e) => e.stopPropagation()}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={endDrag}
-        onPointerCancel={endDrag}
-      >
-        <img
-          ref={imgRef}
-          src={photo.src}
-          alt={photo.caption ?? ''}
-          className={isPanoramic ? 'lightbox-image-panoramic' : 'lightbox-image'}
-          onLoad={handleImageLoad}
-          draggable={false}
-        />
+      <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+        <div
+          ref={frameRef}
+          className={`lightbox-frame ${isPanoramic ? 'lightbox-frame-panoramic' : ''}`}
+          onClick={() => {
+            if (!draggedRef.current) onClose()
+          }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+        >
+          <img
+            ref={imgRef}
+            src={photo.src}
+            alt={photo.caption ?? ''}
+            className={isPanoramic ? 'lightbox-image-panoramic' : 'lightbox-image'}
+            onLoad={handleImageLoad}
+            draggable={false}
+          />
+        </div>
+
+        <div className="lightbox-caption">
+          {photo.caption && <span>{photo.caption}</span>}
+          {photos.length > 1 && (
+            <span className="hint">
+              {index + 1} / {photos.length}
+              {isPanoramic ? ' · glissez pour regarder autour' : ''}
+            </span>
+          )}
+          {photos.length === 1 && isPanoramic && <span className="hint">Glissez pour regarder autour</span>}
+        </div>
       </div>
 
       {photos.length > 1 && index < photos.length - 1 && (
@@ -206,17 +227,6 @@ export default function PhotoLightbox({ photos, initialIndex, onClose }: Props) 
           ›
         </button>
       )}
-
-      <div className="lightbox-caption" onClick={(e) => e.stopPropagation()}>
-        {photo.caption && <span>{photo.caption}</span>}
-        {photos.length > 1 && (
-          <span className="hint">
-            {index + 1} / {photos.length}
-            {isPanoramic ? ' · glissez pour regarder autour' : ''}
-          </span>
-        )}
-        {photos.length === 1 && isPanoramic && <span className="hint">Glissez pour regarder autour</span>}
-      </div>
     </div>,
     document.body,
   )

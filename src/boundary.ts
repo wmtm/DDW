@@ -1,5 +1,5 @@
 /**
- * Real outline of the Chassée de Wolmar estate, traced in Google My Maps
+ * Real outline of the Chasse de Wolmar estate, traced in Google My Maps
  * and exported as WKT/CSV (refined re-trace, 88 vertices).
  */
 export const estateBoundary: [number, number][] = [

@@ -18,7 +18,7 @@ export default function LeaderboardPage() {
 
         <div className="leaderboard-hero">
           <span className="leaderboard-badge">Saison {leaderboardSeason}</span>
-          <h1>Chassée de Wolmar</h1>
+          <h1>Chasse de Wolmar</h1>
           <h2>Classement Gros Cerf</h2>
         </div>
 
