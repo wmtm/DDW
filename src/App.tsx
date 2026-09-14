@@ -839,7 +839,7 @@ export default function App() {
               opacity: landmarkPinOpacity(zoom),
               pointerEvents: landmarkPinOpacity(zoom) === 0 ? 'none' : undefined,
             }}
-            title={landmark.name}
+            title={landmark.name || (landmark.number !== null ? `Chute ${landmark.number}` : undefined)}
           >
             {landmark.number !== null && zoom >= LANDMARK_NUMBER_MIN_ZOOM && (
               <span className="landmark-pin-number">{landmark.number}</span>
@@ -860,8 +860,9 @@ export default function App() {
           closeOnClick={false}
         >
           <strong>
-            {selectedLandmark.number !== null ? `Chute ${selectedLandmark.number} — ` : ''}
-            {selectedLandmark.name}
+            {selectedLandmark.number !== null
+              ? `Chute ${selectedLandmark.number}${selectedLandmark.name ? ` — ${selectedLandmark.name}` : ''}`
+              : selectedLandmark.name}
           </strong>
           <p>{landmarkCategoryLabels[selectedLandmark.category]}</p>
           <p>{selectedLandmark.description}</p>
@@ -870,12 +871,12 @@ export default function App() {
               key={i}
               className="photo-thumb-button"
               onClick={() => setOpenPopupPhotoIndex(i)}
-              aria-label={`Voir la photo : ${photo.caption ?? selectedLandmark.name}`}
+              aria-label={`Voir la photo : ${photo.caption ?? selectedLandmark.name ?? `Chute ${selectedLandmark.number}`}`}
             >
               <img
                 className="landmark-popup-photo"
                 src={photo.src}
-                alt={photo.caption ?? selectedLandmark.name}
+                alt={photo.caption ?? selectedLandmark.name ?? `Chute ${selectedLandmark.number}`}
                 title={photo.caption}
               />
             </button>

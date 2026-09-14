@@ -18,8 +18,9 @@ export default function LandmarkTourCard({ landmark, index, total, onNext, onPre
     <div className="landmark-tour-card">
       <div className="landmark-tour-header">
         <h3>
-          {landmark.number !== null ? `Chute ${landmark.number} — ` : ''}
-          {landmark.name}
+          {landmark.number !== null
+            ? `Chute ${landmark.number}${landmark.name ? ` — ${landmark.name}` : ''}`
+            : landmark.name}
         </h3>
         <span className="hint">
           {index + 1} / {total}
@@ -34,9 +35,9 @@ export default function LandmarkTourCard({ landmark, index, total, onNext, onPre
               key={i}
               className="photo-thumb-button"
               onClick={() => setOpenPhotoIndex(i)}
-              aria-label={`Voir la photo : ${photo.caption ?? landmark.name}`}
+              aria-label={`Voir la photo : ${photo.caption ?? landmark.name ?? `Chute ${landmark.number}`}`}
             >
-              <img src={photo.src} alt={photo.caption ?? landmark.name} title={photo.caption} />
+              <img src={photo.src} alt={photo.caption ?? landmark.name ?? `Chute ${landmark.number}`} title={photo.caption} />
             </button>
           ))}
         </div>

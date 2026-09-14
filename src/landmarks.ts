@@ -15,6 +15,9 @@
 import { dmsToDecimal } from './geo'
 import pontMimiStructure from './assets/landmarks/chute-123-pont-mimi/01-structure.jpg'
 import pontMimiTerrain from './assets/landmarks/chute-123-pont-mimi/02-terrain.jpg'
+import chute0Structure from './assets/landmarks/chute-0/01-structure.jpg'
+import chute0Terrain from './assets/landmarks/chute-0/02-terrain.jpg'
+import chute0Vue from './assets/landmarks/chute-0/03-vue.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other'
 
@@ -50,6 +53,21 @@ export const landmarkCategoryColors: Record<LandmarkCategory, string> = {
 }
 
 export const landmarks: Landmark[] = [
+  {
+    id: 'chute-0',
+    number: 0,
+    name: '',
+    category: 'mirador',
+    description: 'Mirador construit dans un arbre isolé, avec une échelle d\'accès, surplombant une clairière ouverte.',
+    // DMS: 20°17'27.5"S 57°22'04.7"E
+    latitude: dmsToDecimal(20, 17, 27.5, 'S'),
+    longitude: dmsToDecimal(57, 22, 4.7, 'E'),
+    photos: [
+      { src: chute0Structure, caption: 'Structure du mirador' },
+      { src: chute0Terrain, caption: 'Terrain environnant' },
+      { src: chute0Vue, caption: 'Vue depuis le mirador' },
+    ],
+  },
   {
     id: 'chute-123-pont-mimi',
     number: 123,

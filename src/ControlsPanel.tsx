@@ -357,7 +357,7 @@ export default function ControlsPanel({
                       {landmark.number !== null && (
                         <span className="search-result-number">{landmark.number}</span>
                       )}
-                      {landmark.name}
+                      {landmark.name || (landmark.number !== null ? `Chute ${landmark.number}` : '')}
                     </button>
                   ))}
                 </div>
