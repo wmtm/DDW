@@ -1137,11 +1137,29 @@
   backdrop-filter: blur(var(--panel-blur));
   border: 1px solid var(--panel-border);
   border-radius: var(--panel-radius);
-  padding: 20px 22px;
+  overflow: hidden;
   color: var(--text-primary);
   font-family: var(--font-body);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
   z-index: 5;
+}
+
+.onboarding-card-banner {
+  height: 120px;
+  background-size: cover;
+  background-position: center 65%;
+  position: relative;
+}
+
+.onboarding-card-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 9, 7, 0.15) 0%, var(--panel-bg-solid) 96%);
+}
+
+.onboarding-card-body {
+  padding: 16px 22px 20px;
 }
 
 .onboarding-card h3 {

@@ -18,6 +18,9 @@ import pontMimiTerrain from './assets/landmarks/chute-123-pont-mimi/02-terrain.j
 import chute0Structure from './assets/landmarks/chute-0/01-structure.jpg'
 import chute0Terrain from './assets/landmarks/chute-0/02-terrain.jpg'
 import chute0Vue from './assets/landmarks/chute-0/03-vue.jpg'
+import chute2Structure from './assets/landmarks/chute-2/01-structure.jpg'
+import chute2Terrain from './assets/landmarks/chute-2/02-terrain.jpg'
+import chute2Vue from './assets/landmarks/chute-2/03-vue.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other'
 
@@ -53,6 +56,21 @@ export const landmarkCategoryColors: Record<LandmarkCategory, string> = {
 }
 
 export const landmarks: Landmark[] = [
+  {
+    id: 'chute-2',
+    number: 2,
+    name: '',
+    category: 'mirador',
+    description: 'Mirador construit sur un affleurement rocheux, entouré de végétation, avec accès par échelle en bois.',
+    // DMS: 20°17'23.0"S 57°22'14.1"E
+    latitude: dmsToDecimal(20, 17, 23.0, 'S'),
+    longitude: dmsToDecimal(57, 22, 14.1, 'E'),
+    photos: [
+      { src: chute2Structure, caption: 'Structure du mirador' },
+      { src: chute2Terrain, caption: 'Terrain environnant' },
+      { src: chute2Vue, caption: 'Vue depuis le mirador' },
+    ],
+  },
   {
     id: 'chute-0',
     number: 0,
