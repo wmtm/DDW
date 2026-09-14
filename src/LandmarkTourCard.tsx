@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { landmarkCategoryLabels, type Landmark } from './landmarks'
+import type { Landmark } from './landmarks'
 import PhotoLightbox from './PhotoLightbox'
 
 interface Props {
@@ -26,8 +26,6 @@ export default function LandmarkTourCard({ landmark, index, total, onNext, onPre
           {index + 1} / {total}
         </span>
       </div>
-      <span className="hint">{landmarkCategoryLabels[landmark.category]}</span>
-      <p>{landmark.description}</p>
       {landmark.photos.length > 0 && (
         <div className="landmark-tour-photos">
           {landmark.photos.map((photo, i) => (

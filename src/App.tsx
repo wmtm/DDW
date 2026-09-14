@@ -17,7 +17,7 @@ import { mapStyle } from './mapStyle'
 import { runTour } from './tour'
 import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
 import { estateBoundary } from './boundary'
-import { inverseMaskGeoJSON, ISOLATE_VIEW } from './isolateMode'
+import { inverseMaskGeoJSON, cliffRingGeoJSON, ISOLATE_VIEW } from './isolateMode'
 import { isUnlocked } from './passcode'
 import drawnMapImage from './assets/estate-drawn-map.png'
 import { historicalYears, waybackTileUrl, currentImageryTileUrl, type ImagerySelection } from './historicalImagery'
@@ -37,7 +37,7 @@ import { buildShareUrl, parseShareStateFromUrl } from './shareState'
 import { flyToEstate } from './cameraMotion'
 import { computeDayNight } from './dayNight'
 import { buildWindConeGeoJSON } from './windCone'
-import { landmarks, landmarkCategoryColors, landmarkCategoryLabels, type Landmark } from './landmarks'
+import { landmarks, landmarkCategoryColors, type Landmark } from './landmarks'
 import ControlsPanel, { type SectionKey } from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
 import PhotoLightbox from './PhotoLightbox'
@@ -612,7 +612,7 @@ export default function App() {
             <Layer id="wolmar-void-fill" type="fill" paint={{ 'fill-color': '#050810', 'fill-opacity': 1 }} />
           </Source>
 
-          <Source id="wolmar-cliff" type="geojson" data={boundaryGeometry}>
+          <Source id="wolmar-cliff-ring" type="geojson" data={cliffRingGeoJSON}>
             {/*
               fill-extrusion base/height must be >= 0 (absolute meters, not
               terrain-relative), and the top face isn't depth-hidden unless
@@ -621,13 +621,36 @@ export default function App() {
               under a flat slab. Kept deliberately short (a visible "cliff"
               rim rather than a deep drop) so it stays under the real local
               elevation almost everywhere.
+
+              This is extruded from a thin ring hugging the inside of the
+              boundary (see isolateMode.ts), not the full estate polygon —
+              otherwise the flat colored top face would cover the real map
+              (satellite imagery, terrain, chutes) everywhere inside it
+              instead of leaving it fully visible, with only the rim
+              showing as a "cliff".
+
+              Three bands echo the real geology of this part of Mauritius —
+              a volcanic (basalt) island: dark basalt bedrock at the base,
+              then the reddish, iron-rich lateritic clay ("terres colorées")
+              that basalt weathers into across the island, capped by a
+              thinner topsoil band right under the real satellite surface.
             */}
+            <Layer
+              id="wolmar-cliff-bedrock"
+              type="fill-extrusion"
+              paint={{
+                'fill-extrusion-color': '#3a3a42',
+                'fill-extrusion-base': 0,
+                'fill-extrusion-height': 5,
+                'fill-extrusion-opacity': 1,
+              }}
+            />
             <Layer
               id="wolmar-cliff-subsoil"
               type="fill-extrusion"
               paint={{
-                'fill-extrusion-color': '#443f3a',
-                'fill-extrusion-base': 0,
+                'fill-extrusion-color': '#7a4a30',
+                'fill-extrusion-base': 5,
                 'fill-extrusion-height': 9,
                 'fill-extrusion-opacity': 1,
               }}
@@ -636,12 +659,15 @@ export default function App() {
               id="wolmar-cliff-topsoil"
               type="fill-extrusion"
               paint={{
-                'fill-extrusion-color': '#2a2019',
+                'fill-extrusion-color': '#9c5233',
                 'fill-extrusion-base': 9,
                 'fill-extrusion-height': 12,
                 'fill-extrusion-opacity': 1,
               }}
             />
+          </Source>
+
+          <Source id="wolmar-cliff-outline" type="geojson" data={boundaryGeometry}>
             <Layer
               id="wolmar-cliff-glow"
               type="line"
@@ -864,8 +890,6 @@ export default function App() {
               ? `Chute ${selectedLandmark.number}${selectedLandmark.name ? ` — ${selectedLandmark.name}` : ''}`
               : selectedLandmark.name}
           </strong>
-          <p>{landmarkCategoryLabels[selectedLandmark.category]}</p>
-          <p>{selectedLandmark.description}</p>
           {selectedLandmark.photos.map((photo, i) => (
             <button
               key={i}
