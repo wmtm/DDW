@@ -21,6 +21,9 @@ import chute0Vue from './assets/landmarks/chute-0/03-vue.jpg'
 import chute2Structure from './assets/landmarks/chute-2/01-structure.jpg'
 import chute2Terrain from './assets/landmarks/chute-2/02-terrain.jpg'
 import chute2Vue from './assets/landmarks/chute-2/03-vue.jpg'
+import chute3Structure from './assets/landmarks/chute-3/01-structure.jpg'
+import chute3Terrain from './assets/landmarks/chute-3/02-terrain.jpg'
+import chute3Vue from './assets/landmarks/chute-3/03-vue.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other'
 
@@ -39,6 +42,8 @@ export interface Landmark {
   longitude: number
   latitude: number
   photos: LandmarkPhoto[]
+  /** Flagged in red on the map while its number/name is still pending confirmation with the board. */
+  needsReview?: boolean
 }
 
 export const landmarkCategoryLabels: Record<LandmarkCategory, string> = {
@@ -56,6 +61,22 @@ export const landmarkCategoryColors: Record<LandmarkCategory, string> = {
 }
 
 export const landmarks: Landmark[] = [
+  {
+    id: 'chute-3',
+    number: 3,
+    name: '',
+    category: 'mirador',
+    description: 'Mirador construit au sommet d\'un enchevêtrement d\'arbustes et de branchages.',
+    // DMS: 20°17'18.5"S 57°22'04.4"E
+    latitude: dmsToDecimal(20, 17, 18.5, 'S'),
+    longitude: dmsToDecimal(57, 22, 4.4, 'E'),
+    needsReview: true,
+    photos: [
+      { src: chute3Structure, caption: 'Structure du mirador' },
+      { src: chute3Terrain, caption: 'Terrain environnant' },
+      { src: chute3Vue, caption: 'Vue depuis le mirador' },
+    ],
+  },
   {
     id: 'chute-2',
     number: 2,

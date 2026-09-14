@@ -59,6 +59,8 @@ const boundaryGeometry: GeoJSON.Feature = {
 const HOVER_THROTTLE_MS = 100
 const ZOOM_THROTTLE_MS = 100
 const LANDMARK_NUMBER_MIN_ZOOM = 16
+/** Pin color for a chute whose number/name still needs the board's sign-off. */
+const LANDMARK_REVIEW_COLOR = '#e5484d'
 const LANDMARK_FADE_START_ZOOM = 13
 const ROTATE_HINT_MIN_ZOOM = 13
 const LANDMARK_FADE_END_ZOOM = 11
@@ -834,11 +836,14 @@ export default function App() {
           <div
             className={`landmark-pin ${selectedLandmark?.id === landmark.id ? 'landmark-pin-selected' : ''}`}
             style={{
-              background: landmarkCategoryColors[landmark.category],
+              background: landmark.needsReview ? LANDMARK_REVIEW_COLOR : landmarkCategoryColors[landmark.category],
               opacity: landmarkPinOpacity(zoom),
               pointerEvents: landmarkPinOpacity(zoom) === 0 ? 'none' : undefined,
             }}
-            title={landmark.name || (landmark.number !== null ? `Chute ${landmark.number}` : undefined)}
+            title={
+              (landmark.name || (landmark.number !== null ? `Chute ${landmark.number}` : '')) +
+              (landmark.needsReview ? ' (à confirmer)' : '')
+            }
           >
             {landmark.number !== null && zoom >= LANDMARK_NUMBER_MIN_ZOOM && (
               <span className="landmark-pin-number">{landmark.number}</span>
@@ -863,6 +868,9 @@ export default function App() {
               ? `Chute ${selectedLandmark.number}${selectedLandmark.name ? ` — ${selectedLandmark.name}` : ''}`
               : selectedLandmark.name}
           </strong>
+          {selectedLandmark.needsReview && (
+            <p className="landmark-review-note">Nom et numéro à confirmer avec le comité</p>
+          )}
           {selectedLandmark.photos.map((photo, i) => (
             <button
               key={i}

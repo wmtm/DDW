@@ -26,6 +26,7 @@ export default function LandmarkTourCard({ landmark, index, total, onNext, onPre
           {index + 1} / {total}
         </span>
       </div>
+      {landmark.needsReview && <p className="landmark-review-note">Nom et numéro à confirmer avec le comité</p>}
       {landmark.photos.length > 0 && (
         <div className="landmark-tour-photos">
           {landmark.photos.map((photo, i) => (
