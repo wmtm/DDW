@@ -30,6 +30,9 @@ import chute1Structure from './assets/landmarks/chute-1/01-structure.jpg'
 import chute12Structure from './assets/landmarks/chute-12/01-structure.jpg'
 import chute12Terrain from './assets/landmarks/chute-12/02-terrain.jpg'
 import chute12Vue from './assets/landmarks/chute-12/03-vue.jpg'
+import chute3BisStructure from './assets/landmarks/chute-3-bis/01-structure.jpg'
+import chute3BisTerrain from './assets/landmarks/chute-3-bis/02-terrain.jpg'
+import chute3BisVue from './assets/landmarks/chute-3-bis/03-vue.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other'
 
@@ -108,15 +111,30 @@ export const landmarks: Landmark[] = [
     ],
   },
   {
-    id: 'chute-3',
+    id: 'chute-3-bis',
     number: 3,
     name: '',
+    category: 'mirador',
+    description: 'Mirador construit dans un arbre isolé en clairière, structure sur pieds tripode/croisillons.',
+    // DMS: 20°17'15.7"S 57°22'09.6"E
+    latitude: dmsToDecimal(20, 17, 15.7, 'S'),
+    longitude: dmsToDecimal(57, 22, 9.6, 'E'),
+    needsReview: true,
+    photos: [
+      { src: chute3BisStructure, caption: 'Structure du mirador' },
+      { src: chute3BisTerrain, caption: 'Terrain environnant' },
+      { src: chute3BisVue, caption: 'Vue depuis le mirador' },
+    ],
+  },
+  {
+    id: 'chute-3',
+    number: 3,
+    name: 'Momo',
     category: 'mirador',
     description: 'Mirador construit au sommet d\'un enchevêtrement d\'arbustes et de branchages.',
     // DMS: 20°17'18.5"S 57°22'04.4"E
     latitude: dmsToDecimal(20, 17, 18.5, 'S'),
     longitude: dmsToDecimal(57, 22, 4.4, 'E'),
-    needsReview: true,
     photos: [
       { src: chute3Structure, caption: 'Structure du mirador' },
       { src: chute3Terrain, caption: 'Terrain environnant' },
