@@ -303,6 +303,61 @@
   flex-shrink: 0;
 }
 
+/*
+ * Redesigned popup close button: MapLibre's default is a plain "×"
+ * glyph flush in the corner — small, low-contrast, and easy to miss.
+ * This replaces it with a floating circular badge that pokes slightly
+ * outside the popup card, drawn with two rotated bars instead of the
+ * font glyph so the X stays crisp and perfectly centered at any size.
+ */
+.maplibregl-popup-close-button {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  border-radius: 50%;
+  background: var(--panel-bg-solid);
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  z-index: 10;
+}
+
+.maplibregl-popup-close-button::before,
+.maplibregl-popup-close-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 13px;
+  height: 2px;
+  border-radius: 1px;
+  background: #fff;
+}
+
+.maplibregl-popup-close-button::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.maplibregl-popup-close-button::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.maplibregl-popup-close-button:hover {
+  background-color: var(--accent-amber-strong);
+  transform: scale(1.1);
+}
+
+.maplibregl-popup-close-button:active {
+  transform: scale(0.95);
+}
+
 .rotate-hint {
   position: absolute;
   top: 160px;
