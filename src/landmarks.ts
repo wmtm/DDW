@@ -33,6 +33,8 @@ import chute12Vue from './assets/landmarks/chute-12/03-vue.jpg'
 import chute3BisStructure from './assets/landmarks/chute-3-bis/01-structure.jpg'
 import chute3BisTerrain from './assets/landmarks/chute-3-bis/02-terrain.jpg'
 import chute3BisVue from './assets/landmarks/chute-3-bis/03-vue.jpg'
+import chute148Structure from './assets/landmarks/chute-148/01-structure.jpg'
+import chute149Structure from './assets/landmarks/chute-149/01-structure.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other'
 
@@ -70,6 +72,28 @@ export const landmarkCategoryColors: Record<LandmarkCategory, string> = {
 }
 
 export const landmarks: Landmark[] = [
+  {
+    id: 'chute-148',
+    number: 148,
+    name: '',
+    category: 'mirador',
+    description: 'Mirador construit dans un arbre, entre plusieurs troncs.',
+    // DMS: 20°17'57.0"S 57°23'04.1"E
+    latitude: dmsToDecimal(20, 17, 57.0, 'S'),
+    longitude: dmsToDecimal(57, 23, 4.1, 'E'),
+    photos: [{ src: chute148Structure, caption: 'Structure du mirador' }],
+  },
+  {
+    id: 'chute-149',
+    number: 149,
+    name: '',
+    category: 'mirador',
+    description: 'Mirador construit à la base d\'un grand arbre aux racines apparentes.',
+    // DMS: 20°18'00.0"S 57°23'03.3"E
+    latitude: dmsToDecimal(20, 18, 0.0, 'S'),
+    longitude: dmsToDecimal(57, 23, 3.3, 'E'),
+    photos: [{ src: chute149Structure, caption: 'Structure du mirador' }],
+  },
   {
     id: 'chute-12',
     number: 12,
