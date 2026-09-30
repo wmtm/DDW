@@ -26,6 +26,7 @@ import chute3Terrain from './assets/landmarks/chute-3/02-terrain.jpg'
 import chute3Vue from './assets/landmarks/chute-3/03-vue.jpg'
 import chute4Structure from './assets/landmarks/chute-4-grosse-roche/01-structure.jpg'
 import chute4Vue from './assets/landmarks/chute-4-grosse-roche/02-vue.jpg'
+import chute1Structure from './assets/landmarks/chute-1/01-structure.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other'
 
@@ -63,6 +64,17 @@ export const landmarkCategoryColors: Record<LandmarkCategory, string> = {
 }
 
 export const landmarks: Landmark[] = [
+  {
+    id: 'chute-1',
+    number: 1,
+    name: '',
+    category: 'mirador',
+    description: 'Mirador construit dans un grand arbre touffu, en bordure d\'un chemin de terre.',
+    // DMS: 20°17'31.2"S 57°22'08.8"E
+    latitude: dmsToDecimal(20, 17, 31.2, 'S'),
+    longitude: dmsToDecimal(57, 22, 8.8, 'E'),
+    photos: [{ src: chute1Structure, caption: 'Structure du mirador' }],
+  },
   {
     id: 'chute-4-grosse-roche',
     number: 4,
