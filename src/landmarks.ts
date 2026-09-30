@@ -27,6 +27,9 @@ import chute3Vue from './assets/landmarks/chute-3/03-vue.jpg'
 import chute4Structure from './assets/landmarks/chute-4-grosse-roche/01-structure.jpg'
 import chute4Vue from './assets/landmarks/chute-4-grosse-roche/02-vue.jpg'
 import chute1Structure from './assets/landmarks/chute-1/01-structure.jpg'
+import chute12Structure from './assets/landmarks/chute-12/01-structure.jpg'
+import chute12Terrain from './assets/landmarks/chute-12/02-terrain.jpg'
+import chute12Vue from './assets/landmarks/chute-12/03-vue.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other'
 
@@ -64,6 +67,21 @@ export const landmarkCategoryColors: Record<LandmarkCategory, string> = {
 }
 
 export const landmarks: Landmark[] = [
+  {
+    id: 'chute-12',
+    number: 12,
+    name: '',
+    category: 'mirador',
+    description: 'Mirador construit dans un arbre en bordure d\'un chemin de terre, avec échelle en bambou.',
+    // DMS: 20°17'39.7"S 57°22'17.4"E
+    latitude: dmsToDecimal(20, 17, 39.7, 'S'),
+    longitude: dmsToDecimal(57, 22, 17.4, 'E'),
+    photos: [
+      { src: chute12Structure, caption: 'Structure du mirador' },
+      { src: chute12Terrain, caption: 'Terrain environnant' },
+      { src: chute12Vue, caption: 'Vue depuis le mirador' },
+    ],
+  },
   {
     id: 'chute-1',
     number: 1,
