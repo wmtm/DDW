@@ -124,6 +124,7 @@ export default function App() {
   const [historicalYear, setHistoricalYear] = useState<ImagerySelection>(shared.historicalYear ?? null)
   const [hoverElevation, setHoverElevation] = useState<ElevationSample | null>(null)
   const [mapReady, setMapReady] = useState(false)
+  const [mapLoadError, setMapLoadError] = useState(false)
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [weatherError, setWeatherError] = useState<string | null>(null)
   const [shareUrl, setShareUrl] = useState<string | null>(null)
@@ -579,6 +580,13 @@ export default function App() {
       onMouseOut={handleMapMouseLeave}
       onZoom={handleMapZoom}
       onRotate={handleMapRotate}
+      onError={(e) => {
+        // Cancelled tile requests (panning away mid-fetch) fire as errors too
+        // and are completely normal — only a failure before the map has ever
+        // finished loading is worth telling the visitor about.
+        if (e.error?.name === 'AbortError') return
+        if (!mapReady) setMapLoadError(true)
+      }}
       onLoad={() => {
         setMapReady(true)
         const map = mapRef.current?.getMap()
@@ -602,6 +610,27 @@ export default function App() {
       <NavigationControl position="top-right" visualizePitch />
       {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && (
         <div className="rotate-hint">Cliquez et glissez pour incliner/pivoter</div>
+      )}
+      {!mapReady && (
+        <div className="map-loading-overlay">
+          {mapLoadError ? (
+            <>
+              <div className="map-loading-icon map-loading-icon-warning">!</div>
+              <p>
+                Le chargement prend plus de temps que prévu — un service de carte est peut-être
+                temporairement indisponible.
+              </p>
+              <button className="action-button" onClick={() => window.location.reload()}>
+                Réessayer
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="map-loading-spinner" />
+              <p>Chargement de la carte…</p>
+            </>
+          )}
+        </div>
       )}
       <button
         type="button"
