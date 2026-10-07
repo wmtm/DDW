@@ -30,6 +30,8 @@ interface Props {
   onToggleWindCones: () => void
   showDrawnMap: boolean
   onToggleDrawnMap: () => void
+  showSitePois: boolean
+  onToggleSitePois: () => void
   wolmarOnly: boolean
   onToggleWolmarOnly: () => void
   basemap: BasemapStyle
@@ -93,6 +95,8 @@ export default function ControlsPanel({
   onToggleWindCones,
   showDrawnMap,
   onToggleDrawnMap,
+  showSitePois,
+  onToggleSitePois,
   wolmarOnly,
   onToggleWolmarOnly,
   basemap,
@@ -503,6 +507,10 @@ export default function ControlsPanel({
               <label className="layer-toggle-row">
                 <input type="checkbox" checked={showDrawnMap} onChange={onToggleDrawnMap} />
                 <span>Carte dessinée</span>
+              </label>
+              <label className="layer-toggle-row">
+                <input type="checkbox" checked={showSitePois} onChange={onToggleSitePois} />
+                <span>Lieux remarquables &amp; coraux</span>
               </label>
             </ControlGroup>
 

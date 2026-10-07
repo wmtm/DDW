@@ -38,7 +38,13 @@ import { buildShareUrl, parseShareStateFromUrl } from './shareState'
 import { flyToEstate } from './cameraMotion'
 import { computeDayNight } from './dayNight'
 import { buildWindConeGeoJSON } from './windCone'
-import { landmarks, landmarkCategoryColors, type Landmark } from './landmarks'
+import {
+  landmarks,
+  landmarkCategoryColors,
+  landmarkCategoryIcons,
+  landmarkNumberSortKey,
+  type Landmark,
+} from './landmarks'
 import ControlsPanel, { type SectionKey } from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
 import PhotoLightbox from './PhotoLightbox'
@@ -145,6 +151,7 @@ export default function App() {
   const [showChutes, setShowChutes] = useState(true)
   const [showDrawnMap, setShowDrawnMap] = useState(false)
   const [showWindCones, setShowWindCones] = useState(false)
+  const [showSitePois, setShowSitePois] = useState(true)
   const [wolmarOnly, setWolmarOnly] = useState(false)
   const [activeSection, setActiveSection] = useState<SectionKey>('weather')
 
@@ -153,14 +160,21 @@ export default function App() {
   // "Histoires et lieux importants" and "Noms" layers are disabled for now
   // (their toggles were removed from the UI) — revisit later.
   const visibleLandmarks = useMemo(
-    () => landmarks.filter((l) => l.category === 'mirador' && chutesVisible),
-    [chutesVisible],
+    () =>
+      landmarks.filter(
+        (l) =>
+          (l.category === 'mirador' && chutesVisible) ||
+          ((l.category === 'special-spot' || l.category === 'coral-reef') && showSitePois),
+      ),
+    [chutesVisible, showSitePois],
   )
 
   const chuteLandmarks = useMemo(
     () =>
       chutesVisible
-        ? landmarks.filter((l) => l.category === 'mirador').sort((a, b) => (a.number ?? 0) - (b.number ?? 0))
+        ? landmarks
+            .filter((l) => l.category === 'mirador')
+            .sort((a, b) => landmarkNumberSortKey(a.number) - landmarkNumberSortKey(b.number))
         : [],
     [chutesVisible],
   )
@@ -175,6 +189,7 @@ export default function App() {
   const handleToggleChutes = useCallback(() => setShowChutes((v) => !v), [])
   const handleToggleDrawnMap = useCallback(() => setShowDrawnMap((v) => !v), [])
   const handleToggleWindCones = useCallback(() => setShowWindCones((v) => !v), [])
+  const handleToggleSitePois = useCallback(() => setShowSitePois((v) => !v), [])
 
   const handleBasemapChange = useCallback((next: BasemapStyle) => {
     setBasemap(next)
@@ -866,8 +881,8 @@ export default function App() {
             className={`landmark-pin ${selectedLandmark?.id === landmark.id ? 'landmark-pin-selected' : ''}`}
             style={{
               background: landmark.needsReview ? LANDMARK_REVIEW_COLOR : landmarkCategoryColors[landmark.category],
-              opacity: landmarkPinOpacity(zoom),
-              pointerEvents: landmarkPinOpacity(zoom) === 0 ? 'none' : undefined,
+              opacity: landmark.category === 'mirador' ? landmarkPinOpacity(zoom) : 1,
+              pointerEvents: landmark.category === 'mirador' && landmarkPinOpacity(zoom) === 0 ? 'none' : undefined,
             }}
             title={
               (landmark.name || (landmark.number !== null ? `Chute ${landmark.number}` : '')) +
@@ -876,6 +891,9 @@ export default function App() {
           >
             {landmark.number !== null && zoom >= LANDMARK_NUMBER_MIN_ZOOM && (
               <span className="landmark-pin-number">{landmark.number}</span>
+            )}
+            {landmarkCategoryIcons[landmark.category] && (
+              <span className="landmark-pin-icon">{landmarkCategoryIcons[landmark.category]}</span>
             )}
           </div>
         </Marker>
@@ -900,6 +918,10 @@ export default function App() {
           {selectedLandmark.needsReview && (
             <p className="landmark-review-note">Nom et numéro à confirmer avec le comité</p>
           )}
+          {selectedLandmark.size && (
+            <p className="landmark-size-badge">{selectedLandmark.size === 'large' ? 'Grande chute' : 'Petite chute'}</p>
+          )}
+          {selectedLandmark.photos.length === 0 && <p className="landmark-photos-pending">Photos à venir</p>}
           {selectedLandmark.photos.map((photo, i) => (
             <button
               key={i}
@@ -997,6 +1019,8 @@ export default function App() {
         onToggleWindCones={handleToggleWindCones}
         showDrawnMap={showDrawnMap}
         onToggleDrawnMap={handleToggleDrawnMap}
+        showSitePois={showSitePois}
+        onToggleSitePois={handleToggleSitePois}
         wolmarOnly={wolmarOnly}
         onToggleWolmarOnly={handleToggleWolmarOnly}
         basemap={basemap}

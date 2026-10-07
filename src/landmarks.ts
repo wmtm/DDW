@@ -1,9 +1,10 @@
 /**
- * Real, site-visited landmarks on the estate — numbered chutes/miradors
- * (hunting hides/stations) and other named features, sent in one at a time
- * as they're visited and photographed.
+ * Real landmarks on the estate — numbered chutes/miradors (hunting hides/
+ * stations) and other named features. Entries can arrive with just a
+ * number/name/location (`photos: []`) ahead of a site visit, with photos
+ * added later once they're taken.
  *
- * To add the next one:
+ * To add a new one with photos already in hand:
  * 1. Convert its photos from HEIC to JPEG, correcting EXIF orientation and
  *    resizing to a max dimension of ~1600px (keeps the repo from bloating).
  * 2. Put them in a new `src/assets/landmarks/<slug>/` folder, named by role
@@ -11,6 +12,8 @@
  * 3. Import them below and add one entry to `landmarks`, converting its
  *    GPS coordinates with `dmsToDecimal` (see geo.ts) and keeping a
  *    `// DMS: ...` comment for traceability.
+ * To add one without photos yet, same thing but with `photos: []` — once
+ * its photos arrive, add them the same way and update that entry in place.
  */
 import { dmsToDecimal } from './geo'
 import pontMimiStructure from './assets/landmarks/chute-123-pont-mimi/01-structure.jpg'
@@ -36,17 +39,23 @@ import chute3BisVue from './assets/landmarks/chute-3-bis/03-vue.jpg'
 import chute148Structure from './assets/landmarks/chute-148/01-structure.jpg'
 import chute149Structure from './assets/landmarks/chute-149/01-structure.jpg'
 
-export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other'
+export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
 export interface LandmarkPhoto {
   src: string
   caption?: string
 }
 
+export type LandmarkSize = 'small' | 'large'
+
 export interface Landmark {
   id: string
-  /** The hunt's station number, where the category has one (e.g. miradors). Null otherwise. */
-  number: number | null
+  /**
+   * The hunt's station number, where the category has one (e.g. miradors).
+   * Usually numeric, but a few stations are labeled instead (e.g. "F1",
+   * "TBC") — kept as a string in those cases. Null otherwise.
+   */
+  number: number | string | null
   name: string
   category: LandmarkCategory
   description: string
@@ -55,6 +64,13 @@ export interface Landmark {
   photos: LandmarkPhoto[]
   /** Flagged in red on the map while its number/name is still pending confirmation with the board. */
   needsReview?: boolean
+  /** Rough size estimate, where known. */
+  size?: LandmarkSize
+}
+
+/** Sort key for `number`: real numbers first in order, labels (e.g. "F1") after, in array order. */
+export function landmarkNumberSortKey(number: Landmark['number']): number {
+  return typeof number === 'number' ? number : Infinity
 }
 
 export const landmarkCategoryLabels: Record<LandmarkCategory, string> = {
@@ -62,6 +78,8 @@ export const landmarkCategoryLabels: Record<LandmarkCategory, string> = {
   'water-point': "Point d'eau",
   'historic-marker': 'Repère historique',
   other: 'Autre élément',
+  'special-spot': 'Lieu remarquable',
+  'coral-reef': 'Corail & récif ancien',
 }
 
 export const landmarkCategoryColors: Record<LandmarkCategory, string> = {
@@ -69,9 +87,222 @@ export const landmarkCategoryColors: Record<LandmarkCategory, string> = {
   'water-point': '#4a90d9',
   'historic-marker': '#a3785c',
   other: '#9b59b6',
+  'special-spot': '#2a9d8f',
+  'coral-reef': '#ff6f59',
+}
+
+/** Small glyph shown inside the pin for categories that aren't numbered chutes. */
+export const landmarkCategoryIcons: Partial<Record<LandmarkCategory, string>> = {
+  'special-spot': '🚩',
+  'coral-reef': '🪸',
 }
 
 export const landmarks: Landmark[] = [
+  {
+    id: 'kiosk-vert',
+    number: null,
+    name: 'Kiosk Vert',
+    category: 'special-spot',
+    description: 'Kiosque vert, point de rencontre sur le domaine.',
+    // DMS: 20°18'18.4"S 57°22'14.9"E
+    latitude: dmsToDecimal(20, 18, 18.4, 'S'),
+    longitude: dmsToDecimal(57, 22, 14.9, 'E'),
+    photos: [],
+  },
+  {
+    id: 'shooting-range',
+    number: null,
+    name: 'Shooting range',
+    category: 'special-spot',
+    description: 'Pas de tir du domaine.',
+    // DMS: 20°18'30.7"S 57°22'10.3"E
+    latitude: dmsToDecimal(20, 18, 30.7, 'S'),
+    longitude: dmsToDecimal(57, 22, 10.3, 'E'),
+    photos: [],
+  },
+  {
+    id: 'ancien-gate-2',
+    number: null,
+    name: 'Ancien gate 2',
+    category: 'special-spot',
+    description: 'Ancien portail du domaine.',
+    // DMS: 20°18'32.8"S 57°22'09.5"E
+    latitude: dmsToDecimal(20, 18, 32.8, 'S'),
+    longitude: dmsToDecimal(57, 22, 9.5, 'E'),
+    photos: [],
+  },
+  {
+    id: 'ancien-gate-1-mangeoire',
+    number: null,
+    name: 'Ancien gate 1 and Vieille mangeoire',
+    category: 'special-spot',
+    description: 'Ancien portail et ancienne mangeoire du domaine.',
+    // DMS: 20°18'35.1"S 57°22'13.3"E
+    latitude: dmsToDecimal(20, 18, 35.1, 'S'),
+    longitude: dmsToDecimal(57, 22, 13.3, 'E'),
+    photos: [],
+  },
+  {
+    id: 'the-yard',
+    number: null,
+    name: 'The Yard',
+    category: 'special-spot',
+    description: 'Zone de rassemblement du domaine.',
+    // DMS: 20°18'42.9"S 57°22'13.3"E
+    latitude: dmsToDecimal(20, 18, 42.9, 'S'),
+    longitude: dmsToDecimal(57, 22, 13.3, 'E'),
+    photos: [],
+  },
+  {
+    id: 'large-coral-1',
+    number: null,
+    name: 'Large coral 1',
+    category: 'coral-reef',
+    description: 'Grand corail, vestige d\'un ancien récif corallien.',
+    // DMS: 20°18'38.4"S 57°22'17.6"E
+    latitude: dmsToDecimal(20, 18, 38.4, 'S'),
+    longitude: dmsToDecimal(57, 22, 17.6, 'E'),
+    photos: [],
+  },
+  {
+    id: 'chute-59',
+    number: 59,
+    name: 'Rattle Snake',
+    category: 'mirador',
+    description: 'Chute recensée, en attente de visite et de photos.',
+    // DMS: 20°18'18.9"S 57°22'09.0"E
+    latitude: dmsToDecimal(20, 18, 18.9, 'S'),
+    longitude: dmsToDecimal(57, 22, 9.0, 'E'),
+    size: 'small',
+    photos: [],
+  },
+  {
+    id: 'chute-60',
+    number: 60,
+    name: '',
+    category: 'mirador',
+    description: 'Chute recensée, en attente de visite et de photos.',
+    // DMS: 20°18'18.1"S 57°22'17.8"E
+    latitude: dmsToDecimal(20, 18, 18.1, 'S'),
+    longitude: dmsToDecimal(57, 22, 17.8, 'E'),
+    size: 'large',
+    photos: [],
+  },
+  {
+    id: 'chute-61',
+    number: 61,
+    name: '',
+    category: 'mirador',
+    description: 'Chute recensée, en attente de visite et de photos.',
+    // DMS: 20°18'18.7"S 57°22'23.9"E
+    latitude: dmsToDecimal(20, 18, 18.7, 'S'),
+    longitude: dmsToDecimal(57, 22, 23.9, 'E'),
+    photos: [],
+  },
+  {
+    id: 'chute-72',
+    number: 72,
+    name: '',
+    category: 'mirador',
+    description: 'Chute recensée, en attente de visite et de photos.',
+    // DMS: 20°18'24.0"S 57°22'31.9"E
+    latitude: dmsToDecimal(20, 18, 24.0, 'S'),
+    longitude: dmsToDecimal(57, 22, 31.9, 'E'),
+    photos: [],
+  },
+  {
+    id: 'chute-73',
+    number: 73,
+    name: '',
+    category: 'mirador',
+    description: 'Chute recensée, en attente de visite et de photos.',
+    // DMS: 20°18'28.6"S 57°22'31.7"E
+    latitude: dmsToDecimal(20, 18, 28.6, 'S'),
+    longitude: dmsToDecimal(57, 22, 31.7, 'E'),
+    photos: [],
+  },
+  {
+    id: 'chute-176',
+    number: 176,
+    name: '',
+    category: 'mirador',
+    description: 'Chute recensée, en attente de visite et de photos.',
+    // DMS: 20°18'40.0"S 57°22'12.9"E
+    latitude: dmsToDecimal(20, 18, 40.0, 'S'),
+    longitude: dmsToDecimal(57, 22, 12.9, 'E'),
+    size: 'large',
+    photos: [],
+  },
+  {
+    id: 'chute-177',
+    number: 177,
+    name: '',
+    category: 'mirador',
+    description: 'Chute recensée, en attente de visite et de photos.',
+    // DMS: 20°18'35.3"S 57°22'17.8"E
+    latitude: dmsToDecimal(20, 18, 35.3, 'S'),
+    longitude: dmsToDecimal(57, 22, 17.8, 'E'),
+    size: 'large',
+    photos: [],
+  },
+  {
+    id: 'chute-178',
+    number: 178,
+    name: '',
+    category: 'mirador',
+    description: 'Chute recensée, en attente de visite et de photos.',
+    // DMS: 20°18'32.9"S 57°22'23.9"E
+    latitude: dmsToDecimal(20, 18, 32.9, 'S'),
+    longitude: dmsToDecimal(57, 22, 23.9, 'E'),
+    photos: [],
+  },
+  {
+    id: 'chute-179',
+    number: 179,
+    name: '',
+    category: 'mirador',
+    description: 'Chute recensée, en attente de visite et de photos.',
+    // DMS: 20°18'29.1"S 57°22'23.9"E
+    latitude: dmsToDecimal(20, 18, 29.1, 'S'),
+    longitude: dmsToDecimal(57, 22, 23.9, 'E'),
+    photos: [],
+  },
+  {
+    id: 'chute-f1',
+    number: 'F1',
+    name: '',
+    category: 'mirador',
+    description: 'Chute recensée, en attente de visite et de photos.',
+    // DMS: 20°18'33.0"S 57°22'10.8"E
+    latitude: dmsToDecimal(20, 18, 33.0, 'S'),
+    longitude: dmsToDecimal(57, 22, 10.8, 'E'),
+    photos: [],
+  },
+  {
+    id: 'chute-f2',
+    number: 'F2',
+    name: '',
+    category: 'mirador',
+    description: 'Chute recensée, en attente de visite et de photos.',
+    // DMS: 20°18'28.5"S 57°22'09.4"E
+    latitude: dmsToDecimal(20, 18, 28.5, 'S'),
+    longitude: dmsToDecimal(57, 22, 9.4, 'E'),
+    size: 'small',
+    photos: [],
+  },
+  {
+    id: 'chute-tbc',
+    number: 'TBC',
+    name: '',
+    category: 'mirador',
+    description: 'Chute recensée, numéro et nom à confirmer avec le comité.',
+    // DMS: 20°18'31.3"S 57°22'13.1"E
+    latitude: dmsToDecimal(20, 18, 31.3, 'S'),
+    longitude: dmsToDecimal(57, 22, 13.1, 'E'),
+    size: 'large',
+    needsReview: true,
+    photos: [],
+  },
   {
     id: 'chute-148',
     number: 148,

@@ -27,6 +27,10 @@ export default function LandmarkTourCard({ landmark, index, total, onNext, onPre
         </span>
       </div>
       {landmark.needsReview && <p className="landmark-review-note">Nom et numéro à confirmer avec le comité</p>}
+      {landmark.size && (
+        <p className="landmark-size-badge">{landmark.size === 'large' ? 'Grande chute' : 'Petite chute'}</p>
+      )}
+      {landmark.photos.length === 0 && <p className="landmark-photos-pending">Photos à venir</p>}
       {landmark.photos.length > 0 && (
         <div className="landmark-tour-photos">
           {landmark.photos.map((photo, i) => (
