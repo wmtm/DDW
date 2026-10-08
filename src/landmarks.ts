@@ -83,6 +83,14 @@ import mangeoireVue1 from './assets/landmarks/ancien-gate-1-mangeoire/01-vue.jpg
 import mangeoireVue1Thumb from './assets/landmarks/ancien-gate-1-mangeoire/01-vue-thumb.jpg'
 import mangeoireVue2 from './assets/landmarks/ancien-gate-1-mangeoire/02-vue.jpg'
 import mangeoireVue2Thumb from './assets/landmarks/ancien-gate-1-mangeoire/02-vue-thumb.jpg'
+import chute61Structure from './assets/landmarks/chute-61/01-structure.jpg'
+import chute61StructureThumb from './assets/landmarks/chute-61/01-structure-thumb.jpg'
+import chute61StructureProche from './assets/landmarks/chute-61/02-structure-proche.jpg'
+import chute61StructureProcheThumb from './assets/landmarks/chute-61/02-structure-proche-thumb.jpg'
+import chute72Structure from './assets/landmarks/chute-72/01-structure.jpg'
+import chute72StructureThumb from './assets/landmarks/chute-72/01-structure-thumb.jpg'
+import chuteF2Structure from './assets/landmarks/chute-f2/01-structure.jpg'
+import chuteF2StructureThumb from './assets/landmarks/chute-f2/01-structure-thumb.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
@@ -253,22 +261,25 @@ export const landmarks: Landmark[] = [
     number: 61,
     name: '',
     category: 'mirador',
-    description: 'Chute recensée, en attente de visite et de photos.',
+    description: 'Mirador construit dans un arbre touffu, en bordure d\'une zone rocheuse dégagée.',
     // DMS: 20°18'18.7"S 57°22'23.9"E
     latitude: dmsToDecimal(20, 18, 18.7, 'S'),
     longitude: dmsToDecimal(57, 22, 23.9, 'E'),
-    photos: [],
+    photos: [
+      { src: chute61Structure, thumb: chute61StructureThumb, caption: 'Vue d\'ensemble du mirador' },
+      { src: chute61StructureProche, thumb: chute61StructureProcheThumb, caption: 'Structure du mirador' },
+    ],
   },
   {
     id: 'chute-72',
     number: 72,
     name: 'Bonhomme Baissac',
     category: 'mirador',
-    description: 'Chute recensée, en attente de visite et de photos.',
+    description: 'Mirador construit dans un arbre, en bordure d\'une zone boisée.',
     // DMS: 20°18'24.0"S 57°22'31.9"E
     latitude: dmsToDecimal(20, 18, 24.0, 'S'),
     longitude: dmsToDecimal(57, 22, 31.9, 'E'),
-    photos: [],
+    photos: [{ src: chute72Structure, thumb: chute72StructureThumb, caption: 'Structure du mirador' }],
   },
   {
     id: 'chute-73',
@@ -343,12 +354,12 @@ export const landmarks: Landmark[] = [
     number: 'F2',
     name: '',
     category: 'mirador',
-    description: 'Chute recensée, en attente de visite et de photos.',
+    description: 'Mirador construit dans un arbre, en bordure d\'un champ dégagé.',
     // DMS: 20°18'28.5"S 57°22'09.4"E
     latitude: dmsToDecimal(20, 18, 28.5, 'S'),
     longitude: dmsToDecimal(57, 22, 9.4, 'E'),
     size: 'small',
-    photos: [],
+    photos: [{ src: chuteF2Structure, thumb: chuteF2StructureThumb, caption: 'Structure du mirador' }],
   },
   {
     id: 'chute-tbc',
