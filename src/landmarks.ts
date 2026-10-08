@@ -117,6 +117,16 @@ import chuteF1Panorama2 from './assets/landmarks/chute-f1/03-panorama-2.jpg'
 import chuteF1Panorama2Thumb from './assets/landmarks/chute-f1/03-panorama-2-thumb.jpg'
 import chute60Panorama from './assets/landmarks/chute-60/01-panorama.jpg'
 import chute60PanoramaThumb from './assets/landmarks/chute-60/01-panorama-thumb.jpg'
+import chute178Panorama from './assets/landmarks/chute-178/02-panorama.jpg'
+import chute178PanoramaThumb from './assets/landmarks/chute-178/02-panorama-thumb.jpg'
+import chute73Panorama from './assets/landmarks/chute-73/01-panorama.jpg'
+import chute73PanoramaThumb from './assets/landmarks/chute-73/01-panorama-thumb.jpg'
+import chute72Panorama from './assets/landmarks/chute-72/02-panorama.jpg'
+import chute72PanoramaThumb from './assets/landmarks/chute-72/02-panorama-thumb.jpg'
+import chute179Panorama from './assets/landmarks/chute-179/01-panorama.jpg'
+import chute179PanoramaThumb from './assets/landmarks/chute-179/01-panorama-thumb.jpg'
+import chute177Panorama from './assets/landmarks/chute-177/02-panorama.jpg'
+import chute177PanoramaThumb from './assets/landmarks/chute-177/02-panorama-thumb.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
@@ -305,18 +315,21 @@ export const landmarks: Landmark[] = [
     // DMS: 20°18'24.0"S 57°22'31.9"E
     latitude: dmsToDecimal(20, 18, 24.0, 'S'),
     longitude: dmsToDecimal(57, 22, 31.9, 'E'),
-    photos: [{ src: chute72Structure, thumb: chute72StructureThumb, caption: 'Structure du mirador' }],
+    photos: [
+      { src: chute72Structure, thumb: chute72StructureThumb, caption: 'Structure du mirador' },
+      { src: chute72Panorama, thumb: chute72PanoramaThumb, caption: 'Panorama depuis le mirador' },
+    ],
   },
   {
     id: 'chute-73',
     number: 73,
     name: '',
     category: 'mirador',
-    description: 'Chute recensée, en attente de visite et de photos.',
+    description: 'Chute recensée, en attente de visite.',
     // DMS: 20°18'28.6"S 57°22'31.7"E
     latitude: dmsToDecimal(20, 18, 28.6, 'S'),
     longitude: dmsToDecimal(57, 22, 31.7, 'E'),
-    photos: [],
+    photos: [{ src: chute73Panorama, thumb: chute73PanoramaThumb, caption: 'Panorama depuis le mirador' }],
   },
   {
     id: 'chute-176',
@@ -344,7 +357,10 @@ export const landmarks: Landmark[] = [
     latitude: dmsToDecimal(20, 18, 35.3, 'S'),
     longitude: dmsToDecimal(57, 22, 17.8, 'E'),
     size: 'large',
-    photos: [{ src: chute177Structure, thumb: chute177StructureThumb, caption: 'Structure du mirador' }],
+    photos: [
+      { src: chute177Structure, thumb: chute177StructureThumb, caption: 'Structure du mirador' },
+      { src: chute177Panorama, thumb: chute177PanoramaThumb, caption: 'Panorama depuis le mirador' },
+    ],
   },
   {
     id: 'chute-178',
@@ -355,18 +371,21 @@ export const landmarks: Landmark[] = [
     // DMS: 20°18'32.9"S 57°22'23.9"E
     latitude: dmsToDecimal(20, 18, 32.9, 'S'),
     longitude: dmsToDecimal(57, 22, 23.9, 'E'),
-    photos: [{ src: chute178Vue, thumb: chute178VueThumb, caption: 'Vue depuis le mirador' }],
+    photos: [
+      { src: chute178Vue, thumb: chute178VueThumb, caption: 'Vue depuis le mirador' },
+      { src: chute178Panorama, thumb: chute178PanoramaThumb, caption: 'Panorama depuis le mirador' },
+    ],
   },
   {
     id: 'chute-179',
     number: 179,
     name: '',
     category: 'mirador',
-    description: 'Chute recensée, en attente de visite et de photos.',
+    description: 'Chute recensée, en attente de visite.',
     // DMS: 20°18'29.1"S 57°22'23.9"E
     latitude: dmsToDecimal(20, 18, 29.1, 'S'),
     longitude: dmsToDecimal(57, 22, 23.9, 'E'),
-    photos: [],
+    photos: [{ src: chute179Panorama, thumb: chute179PanoramaThumb, caption: 'Panorama depuis le mirador' }],
   },
   {
     id: 'chute-f1',
