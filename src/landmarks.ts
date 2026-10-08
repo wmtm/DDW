@@ -115,6 +115,8 @@ import chuteF1Panorama from './assets/landmarks/chute-f1/02-panorama.jpg'
 import chuteF1PanoramaThumb from './assets/landmarks/chute-f1/02-panorama-thumb.jpg'
 import chuteF1Panorama2 from './assets/landmarks/chute-f1/03-panorama-2.jpg'
 import chuteF1Panorama2Thumb from './assets/landmarks/chute-f1/03-panorama-2-thumb.jpg'
+import chute60Panorama from './assets/landmarks/chute-60/01-panorama.jpg'
+import chute60PanoramaThumb from './assets/landmarks/chute-60/01-panorama-thumb.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
@@ -273,12 +275,12 @@ export const landmarks: Landmark[] = [
     number: 60,
     name: '',
     category: 'mirador',
-    description: 'Chute recensée, en attente de visite et de photos.',
+    description: 'Mirador avec vue sur un champ parsemé de roches volcaniques.',
     // DMS: 20°18'18.1"S 57°22'17.8"E
     latitude: dmsToDecimal(20, 18, 18.1, 'S'),
     longitude: dmsToDecimal(57, 22, 17.8, 'E'),
     size: 'large',
-    photos: [],
+    photos: [{ src: chute60Panorama, thumb: chute60PanoramaThumb, caption: 'Panorama depuis le mirador' }],
   },
   {
     id: 'chute-61',
