@@ -8,41 +8,70 @@
  * 1. Convert its photos from HEIC to JPEG, correcting EXIF orientation and
  *    resizing to a max dimension of ~1600px (keeps the repo from bloating).
  * 2. Put them in a new `src/assets/landmarks/<slug>/` folder, named by role
- *    (e.g. `01-structure.jpg`, `02-terrain.jpg`).
- * 3. Import them below and add one entry to `landmarks`, converting its
- *    GPS coordinates with `dmsToDecimal` (see geo.ts) and keeping a
+ *    (e.g. `01-structure.jpg`, `02-terrain.jpg`), and generate a matching
+ *    `<role>-thumb.jpg` next to each one (~440px max dimension, quality 72 —
+ *    see the thumbnail generation one-liner in git history) for the popup/
+ *    tour-card thumbnail; the full-res file is only used by the lightbox.
+ * 3. Import both files below and add one entry to `landmarks`, converting
+ *    its GPS coordinates with `dmsToDecimal` (see geo.ts) and keeping a
  *    `// DMS: ...` comment for traceability.
  * To add one without photos yet, same thing but with `photos: []` — once
  * its photos arrive, add them the same way and update that entry in place.
  */
 import { dmsToDecimal } from './geo'
 import pontMimiStructure from './assets/landmarks/chute-123-pont-mimi/01-structure.jpg'
+import pontMimiStructureThumb from './assets/landmarks/chute-123-pont-mimi/01-structure-thumb.jpg'
 import pontMimiTerrain from './assets/landmarks/chute-123-pont-mimi/02-terrain.jpg'
+import pontMimiTerrainThumb from './assets/landmarks/chute-123-pont-mimi/02-terrain-thumb.jpg'
 import chute0Structure from './assets/landmarks/chute-0/01-structure.jpg'
+import chute0StructureThumb from './assets/landmarks/chute-0/01-structure-thumb.jpg'
 import chute0Terrain from './assets/landmarks/chute-0/02-terrain.jpg'
+import chute0TerrainThumb from './assets/landmarks/chute-0/02-terrain-thumb.jpg'
 import chute0Vue from './assets/landmarks/chute-0/03-vue.jpg'
+import chute0VueThumb from './assets/landmarks/chute-0/03-vue-thumb.jpg'
 import chute2Structure from './assets/landmarks/chute-2/01-structure.jpg'
+import chute2StructureThumb from './assets/landmarks/chute-2/01-structure-thumb.jpg'
 import chute2Terrain from './assets/landmarks/chute-2/02-terrain.jpg'
+import chute2TerrainThumb from './assets/landmarks/chute-2/02-terrain-thumb.jpg'
 import chute2Vue from './assets/landmarks/chute-2/03-vue.jpg'
+import chute2VueThumb from './assets/landmarks/chute-2/03-vue-thumb.jpg'
 import chute3Structure from './assets/landmarks/chute-3/01-structure.jpg'
+import chute3StructureThumb from './assets/landmarks/chute-3/01-structure-thumb.jpg'
 import chute3Terrain from './assets/landmarks/chute-3/02-terrain.jpg'
+import chute3TerrainThumb from './assets/landmarks/chute-3/02-terrain-thumb.jpg'
 import chute3Vue from './assets/landmarks/chute-3/03-vue.jpg'
+import chute3VueThumb from './assets/landmarks/chute-3/03-vue-thumb.jpg'
 import chute4Structure from './assets/landmarks/chute-4-grosse-roche/01-structure.jpg'
+import chute4StructureThumb from './assets/landmarks/chute-4-grosse-roche/01-structure-thumb.jpg'
 import chute4Vue from './assets/landmarks/chute-4-grosse-roche/02-vue.jpg'
+import chute4VueThumb from './assets/landmarks/chute-4-grosse-roche/02-vue-thumb.jpg'
 import chute1Structure from './assets/landmarks/chute-1/01-structure.jpg'
+import chute1StructureThumb from './assets/landmarks/chute-1/01-structure-thumb.jpg'
 import chute12Structure from './assets/landmarks/chute-12/01-structure.jpg'
+import chute12StructureThumb from './assets/landmarks/chute-12/01-structure-thumb.jpg'
 import chute12Terrain from './assets/landmarks/chute-12/02-terrain.jpg'
+import chute12TerrainThumb from './assets/landmarks/chute-12/02-terrain-thumb.jpg'
 import chute12Vue from './assets/landmarks/chute-12/03-vue.jpg'
+import chute12VueThumb from './assets/landmarks/chute-12/03-vue-thumb.jpg'
 import chute3BisStructure from './assets/landmarks/chute-3-bis/01-structure.jpg'
+import chute3BisStructureThumb from './assets/landmarks/chute-3-bis/01-structure-thumb.jpg'
 import chute3BisTerrain from './assets/landmarks/chute-3-bis/02-terrain.jpg'
+import chute3BisTerrainThumb from './assets/landmarks/chute-3-bis/02-terrain-thumb.jpg'
 import chute3BisVue from './assets/landmarks/chute-3-bis/03-vue.jpg'
+import chute3BisVueThumb from './assets/landmarks/chute-3-bis/03-vue-thumb.jpg'
 import chute148Structure from './assets/landmarks/chute-148/01-structure.jpg'
+import chute148StructureThumb from './assets/landmarks/chute-148/01-structure-thumb.jpg'
 import chute149Structure from './assets/landmarks/chute-149/01-structure.jpg'
+import chute149StructureThumb from './assets/landmarks/chute-149/01-structure-thumb.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
 export interface LandmarkPhoto {
+  /** Full-resolution image, used by the lightbox. */
   src: string
+  /** Small (~440px) variant for the popup/tour-card thumbnail, so opening a
+   * pin doesn't download the full photo just to show it shrunk to 220px. */
+  thumb: string
   caption?: string
 }
 
@@ -312,7 +341,7 @@ export const landmarks: Landmark[] = [
     // DMS: 20°17'57.0"S 57°23'04.1"E
     latitude: dmsToDecimal(20, 17, 57.0, 'S'),
     longitude: dmsToDecimal(57, 23, 4.1, 'E'),
-    photos: [{ src: chute148Structure, caption: 'Structure du mirador' }],
+    photos: [{ src: chute148Structure, thumb: chute148StructureThumb, caption: 'Structure du mirador' }],
   },
   {
     id: 'chute-149',
@@ -323,7 +352,7 @@ export const landmarks: Landmark[] = [
     // DMS: 20°18'00.0"S 57°23'03.3"E
     latitude: dmsToDecimal(20, 18, 0.0, 'S'),
     longitude: dmsToDecimal(57, 23, 3.3, 'E'),
-    photos: [{ src: chute149Structure, caption: 'Structure du mirador' }],
+    photos: [{ src: chute149Structure, thumb: chute149StructureThumb, caption: 'Structure du mirador' }],
   },
   {
     id: 'chute-12',
@@ -335,9 +364,9 @@ export const landmarks: Landmark[] = [
     latitude: dmsToDecimal(20, 17, 39.7, 'S'),
     longitude: dmsToDecimal(57, 22, 17.4, 'E'),
     photos: [
-      { src: chute12Structure, caption: 'Structure du mirador' },
-      { src: chute12Terrain, caption: 'Terrain environnant' },
-      { src: chute12Vue, caption: 'Vue depuis le mirador' },
+      { src: chute12Structure, thumb: chute12StructureThumb, caption: 'Structure du mirador' },
+      { src: chute12Terrain, thumb: chute12TerrainThumb, caption: 'Terrain environnant' },
+      { src: chute12Vue, thumb: chute12VueThumb, caption: 'Vue depuis le mirador' },
     ],
   },
   {
@@ -349,7 +378,7 @@ export const landmarks: Landmark[] = [
     // DMS: 20°17'31.2"S 57°22'08.8"E
     latitude: dmsToDecimal(20, 17, 31.2, 'S'),
     longitude: dmsToDecimal(57, 22, 8.8, 'E'),
-    photos: [{ src: chute1Structure, caption: 'Structure du mirador' }],
+    photos: [{ src: chute1Structure, thumb: chute1StructureThumb, caption: 'Structure du mirador' }],
   },
   {
     id: 'chute-4-grosse-roche',
@@ -361,8 +390,8 @@ export const landmarks: Landmark[] = [
     latitude: dmsToDecimal(20, 17, 16.9, 'S'),
     longitude: dmsToDecimal(57, 22, 16.1, 'E'),
     photos: [
-      { src: chute4Structure, caption: 'Structure du mirador' },
-      { src: chute4Vue, caption: 'Vue depuis le mirador' },
+      { src: chute4Structure, thumb: chute4StructureThumb, caption: 'Structure du mirador' },
+      { src: chute4Vue, thumb: chute4VueThumb, caption: 'Vue depuis le mirador' },
     ],
   },
   {
@@ -376,9 +405,9 @@ export const landmarks: Landmark[] = [
     longitude: dmsToDecimal(57, 22, 9.6, 'E'),
     needsReview: true,
     photos: [
-      { src: chute3BisStructure, caption: 'Structure du mirador' },
-      { src: chute3BisTerrain, caption: 'Terrain environnant' },
-      { src: chute3BisVue, caption: 'Vue depuis le mirador' },
+      { src: chute3BisStructure, thumb: chute3BisStructureThumb, caption: 'Structure du mirador' },
+      { src: chute3BisTerrain, thumb: chute3BisTerrainThumb, caption: 'Terrain environnant' },
+      { src: chute3BisVue, thumb: chute3BisVueThumb, caption: 'Vue depuis le mirador' },
     ],
   },
   {
@@ -391,9 +420,9 @@ export const landmarks: Landmark[] = [
     latitude: dmsToDecimal(20, 17, 18.5, 'S'),
     longitude: dmsToDecimal(57, 22, 4.4, 'E'),
     photos: [
-      { src: chute3Structure, caption: 'Structure du mirador' },
-      { src: chute3Terrain, caption: 'Terrain environnant' },
-      { src: chute3Vue, caption: 'Vue depuis le mirador' },
+      { src: chute3Structure, thumb: chute3StructureThumb, caption: 'Structure du mirador' },
+      { src: chute3Terrain, thumb: chute3TerrainThumb, caption: 'Terrain environnant' },
+      { src: chute3Vue, thumb: chute3VueThumb, caption: 'Vue depuis le mirador' },
     ],
   },
   {
@@ -406,9 +435,9 @@ export const landmarks: Landmark[] = [
     latitude: dmsToDecimal(20, 17, 23.0, 'S'),
     longitude: dmsToDecimal(57, 22, 14.1, 'E'),
     photos: [
-      { src: chute2Structure, caption: 'Structure du mirador' },
-      { src: chute2Terrain, caption: 'Terrain environnant' },
-      { src: chute2Vue, caption: 'Vue depuis le mirador' },
+      { src: chute2Structure, thumb: chute2StructureThumb, caption: 'Structure du mirador' },
+      { src: chute2Terrain, thumb: chute2TerrainThumb, caption: 'Terrain environnant' },
+      { src: chute2Vue, thumb: chute2VueThumb, caption: 'Vue depuis le mirador' },
     ],
   },
   {
@@ -421,9 +450,9 @@ export const landmarks: Landmark[] = [
     latitude: dmsToDecimal(20, 17, 27.5, 'S'),
     longitude: dmsToDecimal(57, 22, 4.7, 'E'),
     photos: [
-      { src: chute0Structure, caption: 'Structure du mirador' },
-      { src: chute0Terrain, caption: 'Terrain environnant' },
-      { src: chute0Vue, caption: 'Vue depuis le mirador' },
+      { src: chute0Structure, thumb: chute0StructureThumb, caption: 'Structure du mirador' },
+      { src: chute0Terrain, thumb: chute0TerrainThumb, caption: 'Terrain environnant' },
+      { src: chute0Vue, thumb: chute0VueThumb, caption: 'Vue depuis le mirador' },
     ],
   },
   {
@@ -436,8 +465,8 @@ export const landmarks: Landmark[] = [
     latitude: dmsToDecimal(20, 18, 8.8, 'S'),
     longitude: dmsToDecimal(57, 22, 54.9, 'E'),
     photos: [
-      { src: pontMimiStructure, caption: 'Structure du mirador' },
-      { src: pontMimiTerrain, caption: 'Terrain environnant' },
+      { src: pontMimiStructure, thumb: pontMimiStructureThumb, caption: 'Structure du mirador' },
+      { src: pontMimiTerrain, thumb: pontMimiTerrainThumb, caption: 'Terrain environnant' },
     ],
   },
 ]

@@ -9,7 +9,16 @@ import Map, {
   type MapRef,
   type MapLayerMouseEvent,
 } from 'react-map-gl/maplibre'
+import { setWorkerUrl } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
+
+// MapLibre GL JS ships its tile-parsing worker as standalone files
+// (maplibre-gl-worker.mjs + maplibre-gl-shared.mjs, copied into public/ by
+// scripts/copy-maplibre-worker.mjs) rather than inlining them; without this,
+// vector tiles never load even though raster tiles still work. Set here
+// (rather than in main.tsx) so the leaderboard route — which never touches
+// the map — doesn't pull all of maplibre-gl into its bundle just for this.
+setWorkerUrl(`${import.meta.env.BASE_URL}maplibre-gl-worker.mjs`)
 import { pois, type Poi } from './poi'
 import PoiIcon from './PoiIcon'
 import MapCompass from './MapCompass'
@@ -931,9 +940,11 @@ export default function App() {
             >
               <img
                 className="landmark-popup-photo"
-                src={photo.src}
+                src={photo.thumb}
                 alt={photo.caption ?? selectedLandmark.name ?? `Chute ${selectedLandmark.number}`}
                 title={photo.caption}
+                loading="lazy"
+                decoding="async"
               />
             </button>
           ))}

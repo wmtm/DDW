@@ -10,6 +10,16 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
+    <!--
+      The map's tile sources (see mapStyle.ts / historicalImagery.ts) — the
+      default satellite basemap, the vector basemap, and the terrain DEM all
+      start fetching the moment the map mounts, so getting the DNS/TLS
+      handshake with each host out of the way early shaves real time off
+      the first tiles painting.
+    -->
+    <link rel="preconnect" href="https://server.arcgisonline.com" />
+    <link rel="preconnect" href="https://tiles.openfreemap.org" />
+    <link rel="preconnect" href="https://s3.amazonaws.com" />
   </head>
   <body>
     <div id="root"></div>

@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { Suspense, lazy, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { setWorkerUrl } from 'maplibre-gl'
-import App from './App'
-import LeaderboardPage from './LeaderboardPage'
 import './index.css'
 
-// MapLibre GL JS ships its tile-parsing worker as standalone files
-// (maplibre-gl-worker.mjs + maplibre-gl-shared.mjs, copied into public/ by
-// scripts/copy-maplibre-worker.mjs) rather than inlining them; without this,
-// vector tiles never load even though raster tiles still work.
-setWorkerUrl(`${import.meta.env.BASE_URL}maplibre-gl-worker.mjs`)
+// Code-split so each route only pays for what it needs: the leaderboard is a
+// plain scoreboard with no map dependency, so it shouldn't have to download
+// and parse the entire map bundle (MapLibre alone is >500kB) just to render,
+// and the map shouldn't have to wait on leaderboard code it'll never use.
+const App = lazy(() => import('./App'))
+const LeaderboardPage = lazy(() => import('./LeaderboardPage'))
+
+const fallback = <div style={{ position: 'fixed', inset: 0, background: '#14100c' }} />
 
 function Root() {
   const [hash, setHash] = useState(() => window.location.hash)
@@ -20,7 +20,7 @@ function Root() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
-  return hash === '#/leaderboard' ? <LeaderboardPage /> : <App />
+  return <Suspense fallback={fallback}>{hash === '#/leaderboard' ? <LeaderboardPage /> : <App />}</Suspense>
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

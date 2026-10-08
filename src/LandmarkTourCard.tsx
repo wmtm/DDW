@@ -40,7 +40,13 @@ export default function LandmarkTourCard({ landmark, index, total, onNext, onPre
               onClick={() => setOpenPhotoIndex(i)}
               aria-label={`Voir la photo : ${photo.caption ?? landmark.name ?? `Chute ${landmark.number}`}`}
             >
-              <img src={photo.src} alt={photo.caption ?? landmark.name ?? `Chute ${landmark.number}`} title={photo.caption} />
+              <img
+                src={photo.thumb}
+                alt={photo.caption ?? landmark.name ?? `Chute ${landmark.number}`}
+                title={photo.caption}
+                loading="lazy"
+                decoding="async"
+              />
             </button>
           ))}
         </div>

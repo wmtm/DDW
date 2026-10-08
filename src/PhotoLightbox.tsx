@@ -200,6 +200,7 @@ export default function PhotoLightbox({ photos, initialIndex, onClose }: Props) 
             className={isPanoramic ? 'lightbox-image-panoramic' : 'lightbox-image'}
             onLoad={handleImageLoad}
             draggable={false}
+            decoding="async"
           />
         </div>
 
