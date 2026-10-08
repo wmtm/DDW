@@ -107,6 +107,12 @@ import chute176VueCerfs from './assets/landmarks/chute-176/02-vue-cerfs.jpg'
 import chute176VueCerfsThumb from './assets/landmarks/chute-176/02-vue-cerfs-thumb.jpg'
 import chute177Structure from './assets/landmarks/chute-177/01-structure.jpg'
 import chute177StructureThumb from './assets/landmarks/chute-177/01-structure-thumb.jpg'
+import chute176Panorama from './assets/landmarks/chute-176/03-panorama.jpg'
+import chute176PanoramaThumb from './assets/landmarks/chute-176/03-panorama-thumb.jpg'
+import chuteF1Structure from './assets/landmarks/chute-f1/01-structure.jpg'
+import chuteF1StructureThumb from './assets/landmarks/chute-f1/01-structure-thumb.jpg'
+import chuteF1Panorama from './assets/landmarks/chute-f1/02-panorama.jpg'
+import chuteF1PanoramaThumb from './assets/landmarks/chute-f1/02-panorama-thumb.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
@@ -321,6 +327,7 @@ export const landmarks: Landmark[] = [
     photos: [
       { src: chute176Structure, thumb: chute176StructureThumb, caption: 'Structure du mirador' },
       { src: chute176VueCerfs, thumb: chute176VueCerfsThumb, caption: 'Vue sur la clairière, cerfs visibles' },
+      { src: chute176Panorama, thumb: chute176PanoramaThumb, caption: 'Panorama depuis le mirador' },
     ],
   },
   {
@@ -362,11 +369,14 @@ export const landmarks: Landmark[] = [
     number: 'F1',
     name: '',
     category: 'mirador',
-    description: 'Chute recensée, en attente de visite et de photos.',
+    description: 'Mirador construit dans un arbre, en bordure d\'un champ dégagé avec vue sur la montagne.',
     // DMS: 20°18'33.0"S 57°22'10.8"E
     latitude: dmsToDecimal(20, 18, 33.0, 'S'),
     longitude: dmsToDecimal(57, 22, 10.8, 'E'),
-    photos: [],
+    photos: [
+      { src: chuteF1Structure, thumb: chuteF1StructureThumb, caption: 'Structure du mirador' },
+      { src: chuteF1Panorama, thumb: chuteF1PanoramaThumb, caption: 'Panorama depuis le mirador' },
+    ],
   },
   {
     id: 'chute-f2',
