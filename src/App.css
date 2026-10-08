@@ -570,6 +570,22 @@
   opacity: 0.75;
 }
 
+.control-label-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.imagery-loading-spinner {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--panel-border);
+  border-top-color: var(--accent-amber);
+  animation: map-loading-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
 .panel-header {
   position: relative;
   padding: 2px 6px 12px;

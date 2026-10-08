@@ -55,6 +55,7 @@ interface Props {
   hoverElevation: ElevationSample | null
   historicalYear: ImagerySelection
   onHistoricalYearChange: (year: ImagerySelection) => void
+  imageryLoading: boolean
   weather: WeatherData | null
   weatherError: string | null
   onCaptureView: () => void
@@ -120,6 +121,7 @@ export default function ControlsPanel({
   hoverElevation,
   historicalYear,
   onHistoricalYearChange,
+  imageryLoading,
   weather,
   weatherError,
   onCaptureView,
@@ -245,7 +247,13 @@ export default function ControlsPanel({
         )}
 
         {activeSection === 'timeTravel' && (
-          <ControlGroup label="Année de l'imagerie satellite">
+          <ControlGroup>
+            <span className="control-label control-label-row">
+              Année de l'imagerie satellite
+              {imageryLoading && usesSatelliteImagery(basemap) && (
+                <span className="imagery-loading-spinner" aria-label="Chargement de l'imagerie…" title="Chargement de l'imagerie…" />
+              )}
+            </span>
             {usesSatelliteImagery(basemap) ? (
               <div className="button-row">
                 <button

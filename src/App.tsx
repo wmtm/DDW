@@ -9,7 +9,7 @@ import Map, {
   type MapRef,
   type MapLayerMouseEvent,
 } from 'react-map-gl/maplibre'
-import { setWorkerUrl } from 'maplibre-gl'
+import { setWorkerUrl, type MapSourceDataEvent } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 // MapLibre GL JS ships its tile-parsing worker as standalone files
@@ -156,6 +156,8 @@ export default function App() {
   const rotateHintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [renderedImageryUrl, setRenderedImageryUrl] = useState<string | null>(null)
   const imageryFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [imageryLoading, setImageryLoading] = useState(false)
+  const imageryLoadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [unlocked, setUnlockedState] = useState(isUnlocked())
   const [showChutes, setShowChutes] = useState(true)
   const [showDrawnMap, setShowDrawnMap] = useState(false)
@@ -568,6 +570,48 @@ export default function App() {
       imageryFadeTimerRef.current = setTimeout(() => setRenderedImageryUrl(null), 400)
     }
   }, [imageryTileUrl])
+
+  // Historical/satellite tiles can take a moment to fetch, so flip a loading
+  // flag on right away when a year is picked (for instant feedback) and off
+  // again once MapLibre reports the source fully loaded (or errors out). A
+  // bounded safety timeout also clears it, in case a tile failure never
+  // raises a clean 'error'/'sourcedata' signal (e.g. an empty 404 response).
+  useEffect(() => {
+    if (imageryLoadingTimeoutRef.current) {
+      clearTimeout(imageryLoadingTimeoutRef.current)
+      imageryLoadingTimeoutRef.current = null
+    }
+    setImageryLoading(imageryTileUrl !== null)
+    if (imageryTileUrl !== null) {
+      imageryLoadingTimeoutRef.current = setTimeout(() => setImageryLoading(false), 8000)
+    }
+  }, [imageryTileUrl])
+
+  useEffect(() => {
+    const map = mapRef.current?.getMap()
+    if (!map || !mapReady) return
+
+    const clearImageryLoading = () => {
+      if (imageryLoadingTimeoutRef.current) {
+        clearTimeout(imageryLoadingTimeoutRef.current)
+        imageryLoadingTimeoutRef.current = null
+      }
+      setImageryLoading(false)
+    }
+    const handleSourceData = (e: MapSourceDataEvent) => {
+      if (e.sourceId === 'historical-imagery' && e.isSourceLoaded) {
+        clearImageryLoading()
+      }
+    }
+    const handleError = () => clearImageryLoading()
+
+    map.on('sourcedata', handleSourceData)
+    map.on('error', handleError)
+    return () => {
+      map.off('sourcedata', handleSourceData)
+      map.off('error', handleError)
+    }
+  }, [mapReady])
 
   const measureCoords = measurePoints.map((p) => p.lngLat)
   const measureIsClosedLoop = measureClosed && measureCoords.length >= 3
@@ -1055,6 +1099,7 @@ export default function App() {
         hoverElevation={hoverElevation}
         historicalYear={historicalYear}
         onHistoricalYearChange={handleHistoricalYearChange}
+        imageryLoading={imageryLoading}
         weather={weather}
         weatherError={weatherError}
         onCaptureView={handleCaptureView}
