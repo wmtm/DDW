@@ -63,6 +63,26 @@ import chute148Structure from './assets/landmarks/chute-148/01-structure.jpg'
 import chute148StructureThumb from './assets/landmarks/chute-148/01-structure-thumb.jpg'
 import chute149Structure from './assets/landmarks/chute-149/01-structure.jpg'
 import chute149StructureThumb from './assets/landmarks/chute-149/01-structure-thumb.jpg'
+import largeCoral1Vue from './assets/landmarks/large-coral-1/01-vue.jpg'
+import largeCoral1VueThumb from './assets/landmarks/large-coral-1/01-vue-thumb.jpg'
+import shootingRangeVue1 from './assets/landmarks/shooting-range/01-vue.jpg'
+import shootingRangeVue1Thumb from './assets/landmarks/shooting-range/01-vue-thumb.jpg'
+import shootingRangeVue2 from './assets/landmarks/shooting-range/02-vue.jpg'
+import shootingRangeVue2Thumb from './assets/landmarks/shooting-range/02-vue-thumb.jpg'
+import shootingRangeVue3 from './assets/landmarks/shooting-range/03-vue.jpg'
+import shootingRangeVue3Thumb from './assets/landmarks/shooting-range/03-vue-thumb.jpg'
+import theYardVue from './assets/landmarks/the-yard/01-vue.jpg'
+import theYardVueThumb from './assets/landmarks/the-yard/01-vue-thumb.jpg'
+import theYardExterieur from './assets/landmarks/the-yard/02-exterieur.jpg'
+import theYardExterieurThumb from './assets/landmarks/the-yard/02-exterieur-thumb.jpg'
+import theYardInterieur from './assets/landmarks/the-yard/03-interieur.jpg'
+import theYardInterieurThumb from './assets/landmarks/the-yard/03-interieur-thumb.jpg'
+import ancienGate2Vue from './assets/landmarks/ancien-gate-2/01-vue.jpg'
+import ancienGate2VueThumb from './assets/landmarks/ancien-gate-2/01-vue-thumb.jpg'
+import mangeoireVue1 from './assets/landmarks/ancien-gate-1-mangeoire/01-vue.jpg'
+import mangeoireVue1Thumb from './assets/landmarks/ancien-gate-1-mangeoire/01-vue-thumb.jpg'
+import mangeoireVue2 from './assets/landmarks/ancien-gate-1-mangeoire/02-vue.jpg'
+import mangeoireVue2Thumb from './assets/landmarks/ancien-gate-1-mangeoire/02-vue-thumb.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
@@ -147,7 +167,11 @@ export const landmarks: Landmark[] = [
     // DMS: 20°18'30.7"S 57°22'10.3"E
     latitude: dmsToDecimal(20, 18, 30.7, 'S'),
     longitude: dmsToDecimal(57, 22, 10.3, 'E'),
-    photos: [],
+    photos: [
+      { src: shootingRangeVue1, thumb: shootingRangeVue1Thumb, caption: 'Vue du pas de tir' },
+      { src: shootingRangeVue2, thumb: shootingRangeVue2Thumb, caption: 'Pas de tir' },
+      { src: shootingRangeVue3, thumb: shootingRangeVue3Thumb, caption: 'Pas de tir, autre angle' },
+    ],
   },
   {
     id: 'ancien-gate-2',
@@ -158,7 +182,7 @@ export const landmarks: Landmark[] = [
     // DMS: 20°18'32.8"S 57°22'09.5"E
     latitude: dmsToDecimal(20, 18, 32.8, 'S'),
     longitude: dmsToDecimal(57, 22, 9.5, 'E'),
-    photos: [],
+    photos: [{ src: ancienGate2Vue, thumb: ancienGate2VueThumb, caption: 'Ancien portail' }],
   },
   {
     id: 'ancien-gate-1-mangeoire',
@@ -169,7 +193,10 @@ export const landmarks: Landmark[] = [
     // DMS: 20°18'35.1"S 57°22'13.3"E
     latitude: dmsToDecimal(20, 18, 35.1, 'S'),
     longitude: dmsToDecimal(57, 22, 13.3, 'E'),
-    photos: [],
+    photos: [
+      { src: mangeoireVue1, thumb: mangeoireVue1Thumb, caption: 'Vieille mangeoire' },
+      { src: mangeoireVue2, thumb: mangeoireVue2Thumb, caption: 'Vieille mangeoire, autre angle' },
+    ],
   },
   {
     id: 'the-yard',
@@ -180,7 +207,11 @@ export const landmarks: Landmark[] = [
     // DMS: 20°18'42.9"S 57°22'13.3"E
     latitude: dmsToDecimal(20, 18, 42.9, 'S'),
     longitude: dmsToDecimal(57, 22, 13.3, 'E'),
-    photos: [],
+    photos: [
+      { src: theYardVue, thumb: theYardVueThumb, caption: 'Vue d\'ensemble' },
+      { src: theYardExterieur, thumb: theYardExterieurThumb, caption: 'Vue extérieure' },
+      { src: theYardInterieur, thumb: theYardInterieurThumb, caption: 'Vue intérieure' },
+    ],
   },
   {
     id: 'large-coral-1',
@@ -191,7 +222,7 @@ export const landmarks: Landmark[] = [
     // DMS: 20°18'38.4"S 57°22'17.6"E
     latitude: dmsToDecimal(20, 18, 38.4, 'S'),
     longitude: dmsToDecimal(57, 22, 17.6, 'E'),
-    photos: [],
+    photos: [{ src: largeCoral1Vue, thumb: largeCoral1VueThumb, caption: 'Vue du corail' }],
   },
   {
     id: 'chute-59',
@@ -231,7 +262,7 @@ export const landmarks: Landmark[] = [
   {
     id: 'chute-72',
     number: 72,
-    name: '',
+    name: 'Bonhomme Baissac',
     category: 'mirador',
     description: 'Chute recensée, en attente de visite et de photos.',
     // DMS: 20°18'24.0"S 57°22'31.9"E
@@ -277,7 +308,7 @@ export const landmarks: Landmark[] = [
   {
     id: 'chute-178',
     number: 178,
-    name: '',
+    name: 'Tekoma',
     category: 'mirador',
     description: 'Chute recensée, en attente de visite et de photos.',
     // DMS: 20°18'32.9"S 57°22'23.9"E
