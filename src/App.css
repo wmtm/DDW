@@ -157,15 +157,37 @@
   border-radius: 999px;
 }
 
-.landmark-size-badge {
-  margin: 4px 4px 0 0;
-  padding: 3px 8px;
-  display: inline-block;
+.landmark-size-tag {
+  /* Informative, not a focal point: no fill/border, just a small muted dot
+     + label trailing the title. Shown on both the white popup and the dark
+     tour card, so this uses the same fixed neutral grey as
+     .landmark-photos-pending rather than a themed text token. */
+  margin: 3px 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 11px;
-  font-weight: 600;
-  color: #1a1407;
-  background: var(--accent-amber);
-  border-radius: 999px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #767676;
+}
+
+.landmark-size-dot {
+  display: inline-block;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.65;
+}
+
+.landmark-size-dot-large {
+  width: 7px;
+  height: 7px;
+}
+
+.landmark-size-dot-small {
+  width: 4px;
+  height: 4px;
 }
 
 .landmark-photos-pending {

@@ -972,7 +972,10 @@ export default function App() {
             <p className="landmark-review-note">Nom et numéro à confirmer avec le comité</p>
           )}
           {selectedLandmark.size && (
-            <p className="landmark-size-badge">{selectedLandmark.size === 'large' ? 'Grande chute' : 'Petite chute'}</p>
+            <p className="landmark-size-tag">
+              <span className={`landmark-size-dot landmark-size-dot-${selectedLandmark.size}`} />
+              {selectedLandmark.size === 'large' ? 'Grand mirador' : 'Petit mirador'}
+            </p>
           )}
           {selectedLandmark.photos.length === 0 && <p className="landmark-photos-pending">Photos à venir</p>}
           {selectedLandmark.photos.map((photo, i) => (
