@@ -136,7 +136,7 @@ export default function ControlsPanel({
     const q = searchQuery.trim().toLowerCase()
     if (!q) return []
     return landmarks
-      .filter((l) => l.name.toLowerCase().includes(q) || (l.number !== null && String(l.number).includes(q)))
+      .filter((l) => l.name.toLowerCase().includes(q) || (l.number !== null && String(l.number).toLowerCase().includes(q)))
       .slice(0, 8)
   }, [landmarks, searchQuery])
 
