@@ -95,6 +95,12 @@ import chuteTbcStructure from './assets/landmarks/chute-tbc/01-structure.jpg'
 import chuteTbcStructureThumb from './assets/landmarks/chute-tbc/01-structure-thumb.jpg'
 import chuteTbcMarqueLezard from './assets/landmarks/chute-tbc/02-marque-lezard.jpg'
 import chuteTbcMarqueLezardThumb from './assets/landmarks/chute-tbc/02-marque-lezard-thumb.jpg'
+import chute178Vue from './assets/landmarks/chute-178/01-vue.jpg'
+import chute178VueThumb from './assets/landmarks/chute-178/01-vue-thumb.jpg'
+import chuteF2Vue2 from './assets/landmarks/chute-f2/02-vue.jpg'
+import chuteF2Vue2Thumb from './assets/landmarks/chute-f2/02-vue-thumb.jpg'
+import chuteF2Vue3 from './assets/landmarks/chute-f2/03-vue.jpg'
+import chuteF2Vue3Thumb from './assets/landmarks/chute-f2/03-vue-thumb.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
@@ -325,11 +331,11 @@ export const landmarks: Landmark[] = [
     number: 178,
     name: 'Tekoma',
     category: 'mirador',
-    description: 'Chute recensée, en attente de visite et de photos.',
+    description: 'Mirador construit dans un arbre, en lisière d\'une zone dégagée, avec vue sur la montagne.',
     // DMS: 20°18'32.9"S 57°22'23.9"E
     latitude: dmsToDecimal(20, 18, 32.9, 'S'),
     longitude: dmsToDecimal(57, 22, 23.9, 'E'),
-    photos: [],
+    photos: [{ src: chute178Vue, thumb: chute178VueThumb, caption: 'Vue depuis le mirador' }],
   },
   {
     id: 'chute-179',
@@ -363,7 +369,11 @@ export const landmarks: Landmark[] = [
     latitude: dmsToDecimal(20, 18, 28.5, 'S'),
     longitude: dmsToDecimal(57, 22, 9.4, 'E'),
     size: 'small',
-    photos: [{ src: chuteF2Structure, thumb: chuteF2StructureThumb, caption: 'Structure du mirador' }],
+    photos: [
+      { src: chuteF2Structure, thumb: chuteF2StructureThumb, caption: 'Structure du mirador' },
+      { src: chuteF2Vue2, thumb: chuteF2Vue2Thumb, caption: 'Vue depuis le mirador' },
+      { src: chuteF2Vue3, thumb: chuteF2Vue3Thumb, caption: 'Vue depuis le mirador, autre angle' },
+    ],
   },
   {
     id: 'chute-tbc',
