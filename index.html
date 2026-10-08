@@ -12,13 +12,14 @@
     />
     <!--
       The map's tile sources (see mapStyle.ts / historicalImagery.ts) — the
-      default satellite basemap, the vector basemap, and the terrain DEM all
-      start fetching the moment the map mounts, so getting the DNS/TLS
-      handshake with each host out of the way early shaves real time off
-      the first tiles painting.
+      default satellite basemap and the vector basemap (both MapTiler) and
+      the terrain DEM (AWS) all start fetching the moment the map mounts, so
+      getting the DNS/TLS handshake with each host out of the way early
+      shaves real time off the first tiles painting. The Esri Wayback host
+      used for historical-year imagery isn't preconnected since it's a
+      secondary feature, not on the default-load critical path.
     -->
-    <link rel="preconnect" href="https://server.arcgisonline.com" />
-    <link rel="preconnect" href="https://tiles.openfreemap.org" />
+    <link rel="preconnect" href="https://api.maptiler.com" />
     <link rel="preconnect" href="https://s3.amazonaws.com" />
   </head>
   <body>

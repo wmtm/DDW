@@ -1,15 +1,19 @@
 import type { StyleSpecification } from 'maplibre-gl'
+import { MAPTILER_KEY } from './maptiler'
 
 /**
- * Free, keyless tile sources — no account or billing required.
- * - Basemap: OpenFreeMap "openmaptiles" vector tiles, restyled with an estate
- *   palette (lagoon water, tropical greens, sandy paths) instead of their
- *   default colors.
- * - Terrain elevation: AWS Terrain Tiles (Terrarium encoding). Two separate
- *   sources point at the same tiles — one dedicated to 3D terrain (applied
- *   imperatively via the Map component's `terrain` prop), one dedicated to
- *   hillshade — so MapLibre doesn't warn about sharing a single source
- *   between a hillshade layer and 3D terrain.
+ * - Basemap: MapTiler's "v4" Planet vector tiles (OpenMapTiles schema),
+ *   restyled with an estate palette (lagoon water, tropical greens, sandy
+ *   paths) instead of their default colors. Previously pointed at
+ *   OpenFreeMap, a free service with no uptime guarantee that was a common
+ *   source of load failures — MapTiler maintains the OpenMapTiles schema
+ *   itself, so this source-layer names below didn't need to change.
+ * - Terrain elevation: AWS Terrain Tiles (Terrarium encoding), still free and
+ *   keyless — not the source reliability reports pointed at, so left as-is.
+ *   Two separate sources point at the same tiles — one dedicated to 3D
+ *   terrain (applied imperatively via the Map component's `terrain` prop),
+ *   one dedicated to hillshade — so MapLibre doesn't warn about sharing a
+ *   single source between a hillshade layer and 3D terrain.
  */
 
 const TERRARIUM_TILES = ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png']
@@ -31,7 +35,7 @@ export const mapStyle: StyleSpecification = {
   sources: {
     openmaptiles: {
       type: 'vector',
-      url: 'https://tiles.openfreemap.org/planet',
+      url: `https://api.maptiler.com/tiles/v4/tiles.json?key=${MAPTILER_KEY}`,
     },
     'terrain-dem': {
       type: 'raster-dem',
