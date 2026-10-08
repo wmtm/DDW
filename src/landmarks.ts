@@ -113,6 +113,8 @@ import chuteF1Structure from './assets/landmarks/chute-f1/01-structure.jpg'
 import chuteF1StructureThumb from './assets/landmarks/chute-f1/01-structure-thumb.jpg'
 import chuteF1Panorama from './assets/landmarks/chute-f1/02-panorama.jpg'
 import chuteF1PanoramaThumb from './assets/landmarks/chute-f1/02-panorama-thumb.jpg'
+import chuteF1Panorama2 from './assets/landmarks/chute-f1/03-panorama-2.jpg'
+import chuteF1Panorama2Thumb from './assets/landmarks/chute-f1/03-panorama-2-thumb.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
@@ -376,6 +378,7 @@ export const landmarks: Landmark[] = [
     photos: [
       { src: chuteF1Structure, thumb: chuteF1StructureThumb, caption: 'Structure du mirador' },
       { src: chuteF1Panorama, thumb: chuteF1PanoramaThumb, caption: 'Panorama depuis le mirador' },
+      { src: chuteF1Panorama2, thumb: chuteF1Panorama2Thumb, caption: 'Panorama depuis le mirador, autre angle' },
     ],
   },
   {
