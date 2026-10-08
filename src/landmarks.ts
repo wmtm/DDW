@@ -101,6 +101,12 @@ import chuteF2Vue2 from './assets/landmarks/chute-f2/02-vue.jpg'
 import chuteF2Vue2Thumb from './assets/landmarks/chute-f2/02-vue-thumb.jpg'
 import chuteF2Vue3 from './assets/landmarks/chute-f2/03-vue.jpg'
 import chuteF2Vue3Thumb from './assets/landmarks/chute-f2/03-vue-thumb.jpg'
+import chute176Structure from './assets/landmarks/chute-176/01-structure.jpg'
+import chute176StructureThumb from './assets/landmarks/chute-176/01-structure-thumb.jpg'
+import chute176VueCerfs from './assets/landmarks/chute-176/02-vue-cerfs.jpg'
+import chute176VueCerfsThumb from './assets/landmarks/chute-176/02-vue-cerfs-thumb.jpg'
+import chute177Structure from './assets/landmarks/chute-177/01-structure.jpg'
+import chute177StructureThumb from './assets/landmarks/chute-177/01-structure-thumb.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
@@ -307,12 +313,15 @@ export const landmarks: Landmark[] = [
     number: 176,
     name: '',
     category: 'mirador',
-    description: 'Chute recensée, en attente de visite et de photos.',
+    description: 'Mirador construit dans un grand arbre, avec vue sur une clairière fréquentée par des cerfs.',
     // DMS: 20°18'40.0"S 57°22'12.9"E
     latitude: dmsToDecimal(20, 18, 40.0, 'S'),
     longitude: dmsToDecimal(57, 22, 12.9, 'E'),
     size: 'large',
-    photos: [],
+    photos: [
+      { src: chute176Structure, thumb: chute176StructureThumb, caption: 'Structure du mirador' },
+      { src: chute176VueCerfs, thumb: chute176VueCerfsThumb, caption: 'Vue sur la clairière, cerfs visibles' },
+    ],
   },
   {
     id: 'chute-177',
@@ -324,7 +333,7 @@ export const landmarks: Landmark[] = [
     latitude: dmsToDecimal(20, 18, 35.3, 'S'),
     longitude: dmsToDecimal(57, 22, 17.8, 'E'),
     size: 'large',
-    photos: [],
+    photos: [{ src: chute177Structure, thumb: chute177StructureThumb, caption: 'Structure du mirador' }],
   },
   {
     id: 'chute-178',
