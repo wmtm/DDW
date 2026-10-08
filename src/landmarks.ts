@@ -91,6 +91,10 @@ import chute72Structure from './assets/landmarks/chute-72/01-structure.jpg'
 import chute72StructureThumb from './assets/landmarks/chute-72/01-structure-thumb.jpg'
 import chuteF2Structure from './assets/landmarks/chute-f2/01-structure.jpg'
 import chuteF2StructureThumb from './assets/landmarks/chute-f2/01-structure-thumb.jpg'
+import chuteTbcStructure from './assets/landmarks/chute-tbc/01-structure.jpg'
+import chuteTbcStructureThumb from './assets/landmarks/chute-tbc/01-structure-thumb.jpg'
+import chuteTbcMarqueLezard from './assets/landmarks/chute-tbc/02-marque-lezard.jpg'
+import chuteTbcMarqueLezardThumb from './assets/landmarks/chute-tbc/02-marque-lezard-thumb.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
@@ -366,13 +370,16 @@ export const landmarks: Landmark[] = [
     number: 'TBC',
     name: '',
     category: 'mirador',
-    description: 'Chute recensée, numéro et nom à confirmer avec le comité.',
+    description: 'Chute recensée, numéro et nom à confirmer avec le comité — un lézard est peint sur un poteau à proximité.',
     // DMS: 20°18'31.3"S 57°22'13.1"E
     latitude: dmsToDecimal(20, 18, 31.3, 'S'),
     longitude: dmsToDecimal(57, 22, 13.1, 'E'),
     size: 'large',
     needsReview: true,
-    photos: [],
+    photos: [
+      { src: chuteTbcStructure, thumb: chuteTbcStructureThumb, caption: 'Structure du mirador' },
+      { src: chuteTbcMarqueLezard, thumb: chuteTbcMarqueLezardThumb, caption: 'Lézard peint sur un poteau à proximité' },
+    ],
   },
   {
     id: 'chute-148',
