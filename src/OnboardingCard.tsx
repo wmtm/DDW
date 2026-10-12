@@ -42,6 +42,7 @@ export default function OnboardingCard() {
           <li>Choisissez un fond de carte — satellite, carte, hybride ou terrain</li>
           <li>Mesurez des distances et des surfaces avec l'outil de mesure</li>
           <li>Visitez les chutes grâce à une visite guidée</li>
+          <li>Isolez le domaine en vue plateforme 3D avec le bouton cube</li>
         </ul>
         <button className="action-button onboarding-dismiss" onClick={dismiss}>
           Compris

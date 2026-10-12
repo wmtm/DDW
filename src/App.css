@@ -525,6 +525,55 @@
   transform: scale(1.06);
 }
 
+/*
+ * The 3D "Isoler le domaine" platform view was previously only reachable
+ * by digging into the catch-all "Plus" tab — easy to miss entirely. This
+ * puts a persistent, always-visible toggle right on the map alongside the
+ * other camera controls, the same treatment as the recenter button.
+ */
+.isolate-3d-button {
+  position: absolute;
+  bottom: 76px;
+  left: 16px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel-bg);
+  backdrop-filter: blur(var(--panel-blur));
+  border: 1.5px solid var(--accent-amber);
+  border-radius: 50%;
+  color: var(--text-primary);
+  cursor: pointer;
+  z-index: 1;
+  box-shadow: var(--panel-shadow);
+  transition: color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+}
+
+.isolate-3d-button:hover:not(:disabled) {
+  transform: scale(1.06);
+}
+
+/* Only tint the icon amber on hover when inactive — when active, the
+   background is already amber, so this must not win over the active
+   state's dark icon color below or the icon disappears into its own
+   background (a real bug, not just a hover-in-test artifact: the active
+   button is naturally where the pointer sits right after clicking it). */
+.isolate-3d-button:hover:not(:disabled):not(.isolate-3d-button-active) {
+  color: var(--accent-amber);
+}
+
+.isolate-3d-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.isolate-3d-button-active {
+  background: var(--accent-amber);
+  color: #1a1407;
+}
+
 .map-compass {
   position: absolute;
   bottom: 40px;
@@ -1498,6 +1547,12 @@
   .recenter-button {
     bottom: auto;
     top: 16px;
+    left: 16px;
+  }
+
+  .isolate-3d-button {
+    bottom: auto;
+    top: 58px;
     left: 16px;
   }
 
