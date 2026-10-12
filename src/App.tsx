@@ -146,6 +146,8 @@ export default function App() {
   const [shareCopied, setShareCopied] = useState(false)
   const [slopeContrast, setSlopeContrast] = useState(false)
   const [basemap, setBasemap] = useState<BasemapStyle>(shared.basemap ?? readStoredBasemap() ?? 'satellite')
+  const [basemapTransitioning, setBasemapTransitioning] = useState(false)
+  const basemapMountedRef = useRef(false)
   const [selectedLandmark, setSelectedLandmark] = useState<Landmark | null>(null)
   const [openPopupPhotoIndex, setOpenPopupPhotoIndex] = useState<number | null>(null)
   const [landmarkTourIndex, setLandmarkTourIndex] = useState<number | null>(null)
@@ -436,6 +438,20 @@ export default function App() {
     for (const id of buildingLayerIds) map.setLayoutProperty(id, 'visibility', visibility.buildings)
   }, [basemap, mapReady])
 
+  // Layer visibility above is toggled instantly (MapLibre can't transition
+  // the 'visibility' layout property), which otherwise reads as an abrupt
+  // pop of roads/water/buildings. A brief veil masks that swap instead of
+  // reworking the layers into paint-opacity transitions.
+  useEffect(() => {
+    if (!basemapMountedRef.current) {
+      basemapMountedRef.current = true
+      return
+    }
+    setBasemapTransitioning(true)
+    const timer = setTimeout(() => setBasemapTransitioning(false), 320)
+    return () => clearTimeout(timer)
+  }, [basemap])
+
   useEffect(() => {
     const map = mapRef.current?.getMap()
     if (!map || !mapReady) return
@@ -679,6 +695,7 @@ export default function App() {
       {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && (
         <div className="rotate-hint">Cliquez et glissez pour incliner/pivoter</div>
       )}
+      {basemapTransitioning && <div className="basemap-transition-veil" />}
       {!mapReady && (
         <div className="map-loading-overlay">
           {mapLoadError ? (
