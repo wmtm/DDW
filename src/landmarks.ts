@@ -133,6 +133,10 @@ import shootingRangeDouilles from './assets/landmarks/shooting-range/04-douilles
 import shootingRangeDouillesThumb from './assets/landmarks/shooting-range/04-douilles-thumb.jpg'
 import shootingRangeAbri from './assets/landmarks/shooting-range/05-abri.jpg'
 import shootingRangeAbriThumb from './assets/landmarks/shooting-range/05-abri-thumb.jpg'
+import chute59Structure from './assets/landmarks/chute-59/01-structure.jpg'
+import chute59StructureThumb from './assets/landmarks/chute-59/01-structure-thumb.jpg'
+import chute59Panorama from './assets/landmarks/chute-59/02-panorama.jpg'
+import chute59PanoramaThumb from './assets/landmarks/chute-59/02-panorama-thumb.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
@@ -281,12 +285,15 @@ export const landmarks: Landmark[] = [
     number: 59,
     name: 'Rattle Snake',
     category: 'mirador',
-    description: 'Chute recensée, en attente de visite et de photos.',
+    description: 'Mirador construit dans un arbre, en bordure d\'un champ dégagé.',
     // DMS: 20°18'18.9"S 57°22'09.0"E
     latitude: dmsToDecimal(20, 18, 18.9, 'S'),
     longitude: dmsToDecimal(57, 22, 9.0, 'E'),
     size: 'small',
-    photos: [],
+    photos: [
+      { src: chute59Structure, thumb: chute59StructureThumb, caption: 'Structure du mirador' },
+      { src: chute59Panorama, thumb: chute59PanoramaThumb, caption: 'Panorama depuis le mirador' },
+    ],
   },
   {
     id: 'chute-60',
