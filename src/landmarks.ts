@@ -127,6 +127,12 @@ import chute179Panorama from './assets/landmarks/chute-179/01-panorama.jpg'
 import chute179PanoramaThumb from './assets/landmarks/chute-179/01-panorama-thumb.jpg'
 import chute177Panorama from './assets/landmarks/chute-177/02-panorama.jpg'
 import chute177PanoramaThumb from './assets/landmarks/chute-177/02-panorama-thumb.jpg'
+import kioskVertVue from './assets/landmarks/kiosk-vert/01-vue.jpg'
+import kioskVertVueThumb from './assets/landmarks/kiosk-vert/01-vue-thumb.jpg'
+import shootingRangeDouilles from './assets/landmarks/shooting-range/04-douilles.jpg'
+import shootingRangeDouillesThumb from './assets/landmarks/shooting-range/04-douilles-thumb.jpg'
+import shootingRangeAbri from './assets/landmarks/shooting-range/05-abri.jpg'
+import shootingRangeAbriThumb from './assets/landmarks/shooting-range/05-abri-thumb.jpg'
 
 export type LandmarkCategory = 'mirador' | 'water-point' | 'historic-marker' | 'other' | 'special-spot' | 'coral-reef'
 
@@ -200,7 +206,7 @@ export const landmarks: Landmark[] = [
     // DMS: 20°18'18.4"S 57°22'14.9"E
     latitude: dmsToDecimal(20, 18, 18.4, 'S'),
     longitude: dmsToDecimal(57, 22, 14.9, 'E'),
-    photos: [],
+    photos: [{ src: kioskVertVue, thumb: kioskVertVueThumb, caption: 'Le kiosque' }],
   },
   {
     id: 'shooting-range',
@@ -215,6 +221,8 @@ export const landmarks: Landmark[] = [
       { src: shootingRangeVue1, thumb: shootingRangeVue1Thumb, caption: 'Vue du pas de tir' },
       { src: shootingRangeVue2, thumb: shootingRangeVue2Thumb, caption: 'Pas de tir' },
       { src: shootingRangeVue3, thumb: shootingRangeVue3Thumb, caption: 'Pas de tir, autre angle' },
+      { src: shootingRangeDouilles, thumb: shootingRangeDouillesThumb, caption: 'Douilles trouvées sur place' },
+      { src: shootingRangeAbri, thumb: shootingRangeAbriThumb, caption: 'Abri du pas de tir' },
     ],
   },
   {
