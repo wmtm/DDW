@@ -39,7 +39,7 @@ export default function OnboardingCard() {
         <h3>Bienvenue au Domaine de Wolmar</h3>
         <ul>
           <li>Cliquez et glissez pour incliner et faire pivoter la vue</li>
-          <li>Choisissez un fond de carte — satellite, carte, hybride ou terrain</li>
+          <li>Choisissez un fond de carte : satellite, carte, hybride ou terrain</li>
           <li>Mesurez des distances et des surfaces avec l'outil de mesure</li>
           <li>Visitez les chutes grâce à une visite guidée</li>
           <li>Isolez le domaine en vue plateforme 3D avec le bouton cube</li>

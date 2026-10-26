@@ -32,8 +32,6 @@ interface Props {
   onToggleDrawnMap: () => void
   showSitePois: boolean
   onToggleSitePois: () => void
-  wolmarOnly: boolean
-  onToggleWolmarOnly: () => void
   basemap: BasemapStyle
   onBasemapChange: (basemap: BasemapStyle) => void
   tourRunning: boolean
@@ -98,8 +96,6 @@ export default function ControlsPanel({
   onToggleDrawnMap,
   showSitePois,
   onToggleSitePois,
-  wolmarOnly,
-  onToggleWolmarOnly,
   basemap,
   onBasemapChange,
   tourRunning,
@@ -409,7 +405,7 @@ export default function ControlsPanel({
                 </label>
                 {showWindCones && showChutes && (
                   <span className="hint">
-                    Cône indicatif dans le sens où porte le vent actuel — pas une garantie.
+                    Cône indicatif dans le sens où porte le vent actuel, pas une garantie.
                   </span>
                 )}
               </PasscodeGate>
@@ -443,21 +439,6 @@ export default function ControlsPanel({
                   </button>
                 ))}
               </div>
-            </ControlGroup>
-
-            <ControlGroup>
-              <button
-                className={`action-button wolmar-only-button ${wolmarOnly ? 'chip-active' : ''}`}
-                onClick={onToggleWolmarOnly}
-                disabled={tourRunning || landmarkTourActive}
-              >
-                {wolmarOnly ? 'Quitter la vue plateforme' : 'Isoler le domaine (vue plateforme 3D)'}
-              </button>
-              {wolmarOnly && (
-                <span className="hint">
-                  Le reste de l'île disparaît pour ne laisser que le domaine, en relief.
-                </span>
-              )}
             </ControlGroup>
 
             <ControlGroup>

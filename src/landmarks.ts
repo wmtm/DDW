@@ -438,7 +438,7 @@ export const landmarks: Landmark[] = [
     number: 'TBC',
     name: '',
     category: 'mirador',
-    description: 'Chute recensée, numéro et nom à confirmer avec le comité — un lézard est peint sur un poteau à proximité.',
+    description: 'Chute recensée, numéro et nom à confirmer avec le comité : un lézard est peint sur un poteau à proximité.',
     // DMS: 20°18'31.3"S 57°22'13.1"E
     latitude: dmsToDecimal(20, 18, 31.3, 'S'),
     longitude: dmsToDecimal(57, 22, 13.1, 'E'),

@@ -79,6 +79,20 @@ const LANDMARK_REVIEW_COLOR = '#e5484d'
 const LANDMARK_FADE_START_ZOOM = 13
 const ROTATE_HINT_MIN_ZOOM = 13
 const LANDMARK_FADE_END_ZOOM = 11
+
+/**
+ * A custom cursor for the idle map (replacing the plain 'grab' hand) —
+ * a small orbit/rotate glyph that signals "drag to tilt and rotate this
+ * 3D view" more clearly than a generic grab icon. Falls back to 'grab'
+ * if the browser can't load the data-URI cursor image.
+ */
+const ORBIT_CURSOR_SVG =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">' +
+  '<circle cx="16" cy="16" r="14" fill="rgba(20,20,20,0.55)" stroke="white" stroke-width="1"/>' +
+  '<path d="M22.5 11.5a8 8 0 1 0 1.8 8.2" fill="none" stroke="#ffd166" stroke-width="2.5" stroke-linecap="round"/>' +
+  '<path d="M25 7.5v5.5h-5.5" fill="none" stroke="#ffd166" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+  '</svg>'
+const ORBIT_CURSOR = `url("data:image/svg+xml,${encodeURIComponent(ORBIT_CURSOR_SVG)}") 16 16, grab`
 const ESTATE_CENTER = { longitude: 57.368, latitude: -20.302 }
 // Fitted by tracing the drawn artwork's own outline (from its alpha mask)
 // and running iterative closest-point alignment against the surveyed
@@ -156,6 +170,8 @@ export default function App() {
   const [rotateHintExpired, setRotateHintExpired] = useState(false)
   const rotateHintTimerStarted = useRef(false)
   const rotateHintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [isolate3dHintDismissed, setIsolate3dHintDismissed] = useState(false)
+  const [mapDragging, setMapDragging] = useState(false)
   const [renderedImageryUrl, setRenderedImageryUrl] = useState<string | null>(null)
   const imageryFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [imageryLoading, setImageryLoading] = useState(false)
@@ -479,6 +495,18 @@ export default function App() {
     }
   }, [])
 
+  // The persistent 3D-view button is new, so a brief one-time callout points
+  // visitors at it — dismissed either once they've tried it or after a
+  // while, whichever comes first.
+  useEffect(() => {
+    const timer = setTimeout(() => setIsolate3dHintDismissed(true), 9000)
+    return () => clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    if (wolmarOnly) setIsolate3dHintDismissed(true)
+  }, [wolmarOnly])
+
   useEffect(() => {
     let cancelled = false
 
@@ -664,6 +692,8 @@ export default function App() {
       onMouseOut={handleMapMouseLeave}
       onZoom={handleMapZoom}
       onRotate={handleMapRotate}
+      onDragStart={() => setMapDragging(true)}
+      onDragEnd={() => setMapDragging(false)}
       onError={(e) => {
         // Cancelled tile requests (panning away mid-fetch) fire as errors too
         // and are completely normal — only a failure before the map has ever
@@ -688,7 +718,7 @@ export default function App() {
           )
         }
       }}
-      cursor={measureActive ? 'crosshair' : 'grab'}
+      cursor={measureActive ? 'crosshair' : mapDragging ? 'grabbing' : ORBIT_CURSOR}
     >
       <FullscreenControl position="top-right" />
       <NavigationControl position="top-right" visualizePitch />
@@ -702,7 +732,7 @@ export default function App() {
             <>
               <div className="map-loading-icon map-loading-icon-warning">!</div>
               <p>
-                Le chargement prend plus de temps que prévu — un service de carte est peut-être
+                Le chargement prend plus de temps que prévu : un service de carte est peut-être
                 temporairement indisponible.
               </p>
               <button className="action-button" onClick={() => window.location.reload()}>
@@ -740,6 +770,9 @@ export default function App() {
           <line x1="12" y1="22.08" x2="12" y2="12" />
         </svg>
       </button>
+      {!isolate3dHintDismissed && !wolmarOnly && (
+        <div className="isolate-3d-hint">Cliquez pour une vue 3D isolée</div>
+      )}
       <MapCompass bearing={bearing} onReset={handleResetNorth} />
       <OnboardingCard />
 
@@ -996,7 +1029,7 @@ export default function App() {
         >
           <strong>
             {selectedLandmark.number !== null
-              ? `Chute ${selectedLandmark.number}${selectedLandmark.name ? ` — ${selectedLandmark.name}` : ''}`
+              ? `Chute ${selectedLandmark.number}${selectedLandmark.name ? ` · ${selectedLandmark.name}` : ''}`
               : selectedLandmark.name}
           </strong>
           {selectedLandmark.needsReview && (
@@ -1110,8 +1143,6 @@ export default function App() {
         onToggleDrawnMap={handleToggleDrawnMap}
         showSitePois={showSitePois}
         onToggleSitePois={handleToggleSitePois}
-        wolmarOnly={wolmarOnly}
-        onToggleWolmarOnly={handleToggleWolmarOnly}
         basemap={basemap}
         onBasemapChange={handleBasemapChange}
         tourRunning={tourRunning}

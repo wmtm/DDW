@@ -574,6 +574,24 @@
   color: #1a1407;
 }
 
+/* One-time callout pointing at the new persistent 3D toggle, same visual
+   language as .rotate-hint. Dismissed automatically — see App.tsx. */
+.isolate-3d-hint {
+  position: absolute;
+  bottom: 83px;
+  left: 58px;
+  background: rgba(20, 20, 20, 0.7);
+  border: 1.5px solid var(--accent-amber);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 11px;
+  white-space: nowrap;
+  padding: 3px 8px;
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .map-compass {
   position: absolute;
   bottom: 40px;
@@ -909,17 +927,6 @@
 .action-button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-}
-
-.wolmar-only-button {
-  border: 1.5px solid var(--accent-amber);
-  background: linear-gradient(135deg, rgba(255, 209, 102, 0.14), rgba(255, 255, 255, 0.06));
-  font-weight: 500;
-}
-
-.wolmar-only-button.chip-active {
-  background: linear-gradient(135deg, rgba(255, 209, 102, 0.4), rgba(244, 163, 0, 0.25));
-  border-color: var(--accent-amber);
 }
 
 .leaderboard-link {
@@ -1554,6 +1561,12 @@
     bottom: auto;
     top: 58px;
     left: 16px;
+  }
+
+  .isolate-3d-hint {
+    bottom: auto;
+    top: 65px;
+    left: 58px;
   }
 
   .map-compass {

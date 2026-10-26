@@ -19,7 +19,7 @@ export default function LandmarkTourCard({ landmark, index, total, onNext, onPre
       <div className="landmark-tour-header">
         <h3>
           {landmark.number !== null
-            ? `Chute ${landmark.number}${landmark.name ? ` — ${landmark.name}` : ''}`
+            ? `Chute ${landmark.number}${landmark.name ? ` · ${landmark.name}` : ''}`
             : landmark.name}
         </h3>
         <span className="hint">
