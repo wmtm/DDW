@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Map, {
   Marker,
   Popup,
@@ -26,8 +26,7 @@ import { mapStyle } from './mapStyle'
 import { runTour } from './tour'
 import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
 import { estateBoundary } from './boundary'
-import { inverseMaskGeoJSON, ISOLATE_VIEW } from './isolateMode'
-import { createEstateSlabLayer, ESTATE_SLAB_LAYER_ID } from './estateSlab'
+import { ISOLATE_VIEW } from './isolateMode'
 import { isUnlocked } from './passcode'
 import drawnMapImage from './assets/estate-drawn-map.png'
 import { historicalYears, waybackTileUrl, currentImageryTileUrl, type ImagerySelection } from './historicalImagery'
@@ -59,6 +58,10 @@ import LandmarkTourCard from './LandmarkTourCard'
 import PhotoLightbox from './PhotoLightbox'
 import OnboardingCard from './OnboardingCard'
 import './App.css'
+
+// Lazy-loaded so the ~hundreds of kB Three.js/postprocessing stack is only
+// ever downloaded by visitors who actually open the 3D platform view.
+const Isolate3DView = lazy(() => import('./Isolate3DView'))
 
 interface MeasurePoint {
   lngLat: [number, number]
@@ -531,31 +534,6 @@ export default function App() {
     }
   }, [])
 
-  // The slab is a custom WebGL layer, so it's mounted by hand rather than as a
-  // <Layer>, and re-added after a basemap switch since that rebuilds the style.
-  useEffect(() => {
-    const map = mapRef.current?.getMap()
-    if (!map || !wolmarOnly) return
-
-    const slab = createEstateSlabLayer()
-    const attach = () => {
-      if (map.getLayer(ESTATE_SLAB_LAYER_ID)) return
-      try {
-        map.addLayer(slab)
-      } catch {
-        // Style not parsed yet — a later styledata/load event retries.
-      }
-    }
-
-    attach()
-    map.on('styledata', attach)
-    map.on('load', attach)
-    return () => {
-      map.off('styledata', attach)
-      map.off('load', attach)
-      if (map.getLayer(ESTATE_SLAB_LAYER_ID)) map.removeLayer(ESTATE_SLAB_LAYER_ID)
-    }
-  }, [wolmarOnly])
 
   const handleCaptureView = useCallback(() => {
     const map = mapRef.current?.getMap()
@@ -683,7 +661,7 @@ export default function App() {
         pitch: 15,
         bearing: 0,
       }}
-      terrain={{ source: 'terrain-dem', exaggeration: wolmarOnly ? 2.4 : 1.6 }}
+      terrain={{ source: 'terrain-dem', exaggeration: 1.6 }}
       style={{ width: '100%', height: '100%' }}
       mapStyle={mapStyle}
       canvasContextAttributes={{ preserveDrawingBuffer: true }}
@@ -794,37 +772,6 @@ export default function App() {
             }}
           />
         </Source>
-      )}
-
-      {wolmarOnly && (
-        <>
-          <Source id="wolmar-void-mask" type="geojson" data={inverseMaskGeoJSON}>
-            <Layer id="wolmar-void-fill" type="fill" paint={{ 'fill-color': '#050810', 'fill-opacity': 1 }} />
-          </Source>
-
-          {/* The block of ground itself is drawn by the custom slab layer — see estateSlab.ts. */}
-          <Source id="wolmar-cliff-outline" type="geojson" data={boundaryGeometry}>
-            <Layer
-              id="wolmar-cliff-glow"
-              type="line"
-              paint={{
-                'line-color': '#f4a300',
-                'line-width': 12,
-                'line-blur': 7,
-                'line-opacity': 0.5,
-              }}
-            />
-            <Layer
-              id="wolmar-cliff-rim"
-              type="line"
-              paint={{
-                'line-color': '#ffd166',
-                'line-width': 2.5,
-                'line-opacity': 0.95,
-              }}
-            />
-          </Source>
-        </>
       )}
 
       {showOverlay && (
@@ -1174,6 +1121,11 @@ export default function App() {
         slopeContrast={slopeContrast}
         onToggleSlopeContrast={handleToggleSlopeContrast}
       />
+      {wolmarOnly && (
+        <Suspense fallback={null}>
+          <Isolate3DView onClose={handleToggleWolmarOnly} onSelectLandmark={handleSelectLandmark} />
+        </Suspense>
+      )}
     </Map>
   )
 }

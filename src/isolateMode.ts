@@ -1,29 +1,6 @@
-import { estateBoundary, estateBoundingBox } from './boundary'
+import { estateBoundingBox } from './boundary'
 
-const MASK_PADDING_DEG = 0.5
-
-/**
- * A polygon covering a wide area around the estate with the estate boundary
- * cut out as a hole — filling it hides everything outside the property.
- */
-export const inverseMaskGeoJSON: GeoJSON.Feature = {
-  type: 'Feature',
-  properties: {},
-  geometry: {
-    type: 'Polygon',
-    coordinates: [
-      [
-        [estateBoundingBox.minLng - MASK_PADDING_DEG, estateBoundingBox.minLat - MASK_PADDING_DEG],
-        [estateBoundingBox.maxLng + MASK_PADDING_DEG, estateBoundingBox.minLat - MASK_PADDING_DEG],
-        [estateBoundingBox.maxLng + MASK_PADDING_DEG, estateBoundingBox.maxLat + MASK_PADDING_DEG],
-        [estateBoundingBox.minLng - MASK_PADDING_DEG, estateBoundingBox.maxLat + MASK_PADDING_DEG],
-        [estateBoundingBox.minLng - MASK_PADDING_DEG, estateBoundingBox.minLat - MASK_PADDING_DEG],
-      ],
-      estateBoundary,
-    ],
-  },
-}
-
+/** Camera framing MapLibre flies to while the 3D platform view (Isolate3DView) is open or opening. */
 export const ISOLATE_VIEW = {
   longitude: (estateBoundingBox.minLng + estateBoundingBox.maxLng) / 2,
   latitude: (estateBoundingBox.minLat + estateBoundingBox.maxLat) / 2,
