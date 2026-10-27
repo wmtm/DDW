@@ -4,6 +4,15 @@ export interface HourlyForecast {
   weatherCode: number
 }
 
+export interface HourlyWind {
+  hoursAhead: number
+  /** Local "HH:MM" wall-clock label, same slicing convention as sunrise/sunset below. */
+  timeLabel: string
+  windSpeedKmh: number
+  windGustKmh: number
+  windDirectionDeg: number
+}
+
 export interface WeatherData {
   temperatureC: number
   windSpeedKmh: number
@@ -12,6 +21,8 @@ export interface WeatherData {
   weatherCode: number
   description: string
   forecast: HourlyForecast[]
+  /** Next WIND_FORECAST_HOURS consecutive hours of wind, for the wind-specific chart. */
+  windForecast: HourlyWind[]
   sunrise: string
   sunset: string
 }
@@ -45,9 +56,10 @@ export function weatherDescriptionFor(code: number): string {
 }
 
 const FORECAST_HOURS_AHEAD = [2, 4]
+const WIND_FORECAST_HOURS = 6
 
 export async function fetchCurrentWeather(lat: number, lon: number): Promise<WeatherData> {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&hourly=temperature_2m,weather_code&daily=sunrise,sunset&timezone=auto`
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&hourly=temperature_2m,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m&daily=sunrise,sunset&timezone=auto`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Open-Meteo request failed: ${res.status}`)
   const data = await res.json()
@@ -56,6 +68,7 @@ export async function fetchCurrentWeather(lat: number, lon: number): Promise<Wea
   const daily = data.daily
 
   const forecast: HourlyForecast[] = []
+  const windForecast: HourlyWind[] = []
   if (hourly?.time?.length) {
     const currentTime = new Date(current.time).getTime()
     let nowIndex = 0
@@ -77,6 +90,19 @@ export async function fetchCurrentWeather(lat: number, lon: number): Promise<Wea
         })
       }
     }
+
+    for (let hoursAhead = 1; hoursAhead <= WIND_FORECAST_HOURS; hoursAhead++) {
+      const idx = nowIndex + hoursAhead
+      if (idx < hourly.time.length) {
+        windForecast.push({
+          hoursAhead,
+          timeLabel: hourly.time[idx].slice(11, 16),
+          windSpeedKmh: hourly.wind_speed_10m[idx],
+          windGustKmh: hourly.wind_gusts_10m[idx],
+          windDirectionDeg: hourly.wind_direction_10m[idx],
+        })
+      }
+    }
   }
 
   // Open-Meteo returns daily.sunrise/sunset as local wall-clock ISO strings
@@ -92,6 +118,7 @@ export async function fetchCurrentWeather(lat: number, lon: number): Promise<Wea
     weatherCode: current.weather_code,
     description: weatherDescriptionFor(current.weather_code),
     forecast,
+    windForecast,
     sunrise,
     sunset,
   }
