@@ -83,19 +83,6 @@ const LANDMARK_FADE_START_ZOOM = 13
 const ROTATE_HINT_MIN_ZOOM = 13
 const LANDMARK_FADE_END_ZOOM = 11
 
-/**
- * A custom cursor for the idle map (replacing the plain 'grab' hand) —
- * a small orbit/rotate glyph that signals "drag to tilt and rotate this
- * 3D view" more clearly than a generic grab icon. Falls back to 'grab'
- * if the browser can't load the data-URI cursor image.
- */
-const ORBIT_CURSOR_SVG =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">' +
-  '<circle cx="16" cy="16" r="14" fill="rgba(20,20,20,0.55)" stroke="white" stroke-width="1"/>' +
-  '<path d="M22.5 11.5a8 8 0 1 0 1.8 8.2" fill="none" stroke="#ffd166" stroke-width="2.5" stroke-linecap="round"/>' +
-  '<path d="M25 7.5v5.5h-5.5" fill="none" stroke="#ffd166" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>' +
-  '</svg>'
-const ORBIT_CURSOR = `url("data:image/svg+xml,${encodeURIComponent(ORBIT_CURSOR_SVG)}") 16 16, grab`
 const ESTATE_CENTER = { longitude: 57.368, latitude: -20.302 }
 // Fitted by tracing the drawn artwork's own outline (from its alpha mask)
 // and running iterative closest-point alignment against the surveyed
@@ -696,7 +683,7 @@ export default function App() {
           )
         }
       }}
-      cursor={measureActive ? 'crosshair' : mapDragging ? 'grabbing' : ORBIT_CURSOR}
+      cursor={measureActive ? 'crosshair' : mapDragging ? 'grabbing' : 'grab'}
     >
       <FullscreenControl position="top-right" />
       <NavigationControl position="top-right" visualizePitch />
