@@ -3,34 +3,43 @@ import { extend } from '@react-three/fiber'
 import { shaderMaterial } from '@react-three/drei'
 
 /**
- * Procedural stratified soil for the cutaway walls: bands keyed off world-
- * space Y (so they stay level regardless of the wall's local slope), with
- * their boundaries perturbed by a little noise so they read as real,
- * slightly uneven soil layers rather than a flat painted ruler. Colors
- * loosely follow the same basalt → laterite story as the old MapLibre
- * cutaway in estateSlab.ts: dark basalt at depth, warming through clay and
- * ironstone to the red laterite topsoil exposed in west-coast road cuttings.
+ * Procedural stratified soil for the cutaway walls: bands keyed off depth
+ * below *that vertex's own local terrain surface* (not a single shared
+ * world-space Y), so every segment shows the same compact basalt→laterite
+ * sequence at the same thickness, whether it's cutting through a low or a
+ * high part of the property. Computed in object-local space (position.y
+ * against the aLocalTop attribute) so it's unaffected by the scene's
+ * exaggeration scale — world-space Y would be inflated by that scale while
+ * a world-space depth constant wouldn't be, throwing the bands off.
+ * Boundaries are perturbed by a little noise so they read as real, slightly
+ * uneven soil layers rather than a flat painted ruler. Colors loosely
+ * follow the same basalt → laterite story as the old MapLibre cutaway in
+ * estateSlab.ts: dark basalt at depth, warming through clay and ironstone
+ * to the red laterite topsoil exposed in west-coast road cuttings.
  */
 
 const VERTEX = /* glsl */ `
+  attribute float aLocalTop;
   varying vec3 vWorldPos;
   varying vec3 vNormal;
+  varying float vLocalDepth;
   void main() {
     vec4 worldPos = modelMatrix * vec4(position, 1.0);
     vWorldPos = worldPos.xyz;
     vNormal = normalize(normalMatrix * normal);
+    vLocalDepth = aLocalTop - position.y;
     gl_Position = projectionMatrix * viewMatrix * worldPos;
   }
 `
 
 const FRAGMENT = /* glsl */ `
-  uniform float uTopY;
-  uniform float uBottomY;
+  uniform float uDepth;
   uniform vec3 uLightDir;
   uniform vec3 uLightColor;
   uniform float uAmbient;
   varying vec3 vWorldPos;
   varying vec3 vNormal;
+  varying float vLocalDepth;
 
   // Classic value-noise (not simplex — cheap and plenty for a subtle band wobble).
   float hash(vec2 p) {
@@ -48,8 +57,9 @@ const FRAGMENT = /* glsl */ `
   }
 
   void main() {
-    float span = max(uTopY - uBottomY, 1.0);
-    float t = clamp((vWorldPos.y - uBottomY) / span, 0.0, 1.0);
+    // vLocalDepth is 0 at the surface and grows going down; band 0 (basalt)
+    // is bedrock at depth and band 1 (laterite) is the surface, so invert.
+    float t = 1.0 - clamp(vLocalDepth / max(uDepth, 0.5), 0.0, 1.0);
 
     // Horizontal wobble so band edges waver instead of sitting dead flat.
     float wobble = (noise(vWorldPos.xz * 0.06) - 0.5) * 0.05;
@@ -86,8 +96,7 @@ const FRAGMENT = /* glsl */ `
 
 const CutawaySoilMaterialImpl = shaderMaterial(
   {
-    uTopY: 0,
-    uBottomY: -100,
+    uDepth: 10,
     uLightDir: new THREE.Vector3(0.4, 0.8, 0.3).normalize(),
     uLightColor: new THREE.Color(1, 0.98, 0.92),
     uAmbient: 0.45,

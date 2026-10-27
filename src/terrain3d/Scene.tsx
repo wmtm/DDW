@@ -6,7 +6,7 @@ import TerrainMesh from './TerrainMesh'
 import CutawayWalls, { CUTAWAY_DISPLAY_DEPTH } from './CutawayWalls'
 import Markers from './Markers'
 import CameraRig from './CameraRig'
-import { BOUNDARY_LOCAL_BOUNDS } from './terrainContext'
+import { BOUNDARY_LOCAL, BOUNDARY_LOCAL_BOUNDS } from './terrainContext'
 import type { TerrainContext } from './terrainContext'
 import type { TerrainTextures } from './satelliteTexture'
 import type { Landmark } from '../landmarks'
@@ -31,6 +31,16 @@ export default function Scene({ terrain, textures, exaggeration, sunAzimuthDeg, 
     BOUNDARY_LOCAL_BOUNDS.maxZ - BOUNDARY_LOCAL_BOUNDS.minZ,
   )
   const midHeight = ((terrain.grid.minElevation + terrain.grid.maxElevation) / 2) * exaggeration
+
+  // The lowest point ON THE PROPERTY BOUNDARY itself, not the padded DEM
+  // grid's own min (which can dip toward sea level outside the property
+  // line) — see the note on CUTAWAY_DISPLAY_DEPTH in CutawayWalls.tsx.
+  // Shared between the cutaway wall and the contact shadow so they stay
+  // anchored to the same ground plane.
+  const boundaryMinElevation = useMemo(
+    () => Math.min(...BOUNDARY_LOCAL.map(([x, z]) => terrain.heightAtLocal(x, z))),
+    [terrain],
+  )
 
   const target = useMemo(() => new THREE.Vector3(centerX, midHeight, centerZ), [centerX, centerZ, midHeight])
 
@@ -115,7 +125,7 @@ export default function Scene({ terrain, textures, exaggeration, sunAzimuthDeg, 
       </group>
 
       <ContactShadows
-        position={[centerX, terrain.grid.minElevation * exaggeration - CUTAWAY_DISPLAY_DEPTH - 2, centerZ]}
+        position={[centerX, boundaryMinElevation * exaggeration - CUTAWAY_DISPLAY_DEPTH - 2, centerZ]}
         opacity={0.45}
         scale={footprintSize * 2.2}
         blur={2.4}
