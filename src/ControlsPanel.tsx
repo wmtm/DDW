@@ -7,7 +7,7 @@ import type { Landmark } from './landmarks'
 import DateTimeWidget from './DateTimeWidget'
 import WindCompass from './WindCompass'
 import WeatherIcon, { SunriseIcon, SunsetIcon } from './WeatherIcon'
-import WindguruWidget from './WindguruWidget'
+import WindForecastChart from './WindForecastChart'
 import PasscodeGate from './PasscodeGate'
 import logoWolmar from './assets/branding/logo-wolmar-small.png'
 import iconWeather from './assets/branding/icon-weather.png'
@@ -241,21 +241,7 @@ export default function ControlsPanel({
               </a>
             </span>
 
-            <div className="windguru-card">
-              <div className="windguru-card-header">
-                <span className="windguru-card-title">Vent à Flic en Flac</span>
-                <span className="windguru-card-badge">Windguru</span>
-              </div>
-              <WindguruWidget spotId={154574} modelId={3} />
-              <a
-                className="windguru-card-link"
-                href="https://wap2.windguru.cz/view.php?&sc=154574&m=3&n=&from=search&start=0&full=1"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Prévision complète sur Windguru →
-              </a>
-            </div>
+            {weather && <WindForecastChart windForecast={weather.windForecast} />}
           </ControlGroup>
         )}
 
