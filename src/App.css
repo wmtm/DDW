@@ -1288,13 +1288,26 @@
   white-space: nowrap;
 }
 
+/*
+ * Windguru's widget renders on its own white background we don't control,
+ * which reads as a glitch if it just floats bare on the dark panel. Framing
+ * it as a deliberate light inset card (padding, rounded corners, shadow)
+ * instead of trying to force an invisible blend that isn't possible.
+ */
+.windguru-widget-mount {
+  background: #fff;
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
 .windguru-widget-frame {
   width: 100%;
   border: none;
-  border-radius: 8px;
-  overflow: hidden;
   display: block;
-  background: rgba(255, 255, 255, 0.03);
+  background: #fff;
 }
 
 .windguru-card-link {
