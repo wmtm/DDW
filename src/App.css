@@ -487,7 +487,9 @@
   padding: 3px 8px;
   border-radius: 12px;
   pointer-events: none;
-  z-index: 1;
+  /* Above .controls-panel (z-index: 1), same as the other floating
+     camera-control chrome below, so it isn't swallowed where it overlaps. */
+  z-index: 2;
   transition: opacity 0.2s ease;
 }
 
@@ -515,7 +517,7 @@
   font-size: 16px;
   line-height: 1;
   cursor: pointer;
-  z-index: 1;
+  z-index: 2;
   box-shadow: var(--panel-shadow);
   transition: color 0.15s ease, transform 0.15s ease;
 }
@@ -546,7 +548,7 @@
   border-radius: 50%;
   color: var(--text-primary);
   cursor: pointer;
-  z-index: 1;
+  z-index: 2;
   box-shadow: var(--panel-shadow);
   transition: color 0.15s ease, transform 0.15s ease, background 0.15s ease;
 }
@@ -589,7 +591,7 @@
   padding: 3px 8px;
   border-radius: 12px;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
 
 .map-compass {
@@ -607,7 +609,7 @@
   border: 1.5px solid var(--accent-amber);
   border-radius: 50%;
   cursor: pointer;
-  z-index: 1;
+  z-index: 2;
   box-shadow: var(--panel-shadow);
   transition: transform 0.15s ease, background 0.15s ease;
 }
@@ -654,6 +656,9 @@
   top: 16px;
   left: 16px;
   width: 300px;
+  /* Above the isolate3d-overlay (z-index: 0), same as the rest of this
+     chrome, so the sidebar stays usable while the 3D view is open. */
+  z-index: 1;
   background: var(--panel-bg);
   backdrop-filter: blur(var(--panel-blur));
   color: var(--text-primary);

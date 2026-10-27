@@ -7,11 +7,22 @@ import type { TerrainContext } from './terrainContext'
 
 interface Props {
   terrain: TerrainContext
-  /** How far below the lowest terrain point the cut extends, in real (unexaggerated) meters. */
-  depthBelowMin?: number
+  /** Current terrain-relief exaggeration, so the wall's own depth can be kept constant on screen regardless of it. */
+  exaggeration: number
   /** Normalized direction toward the sun, kept in sync with the scene's directional light. */
   sunDirection: THREE.Vector3
 }
+
+/**
+ * How deep the cut reads on screen, in already-exaggerated display meters —
+ * a fixed stylistic plinth depth, not a real geological measurement. This
+ * is deliberately independent of the exaggeration slider: that slider is
+ * meant to emphasize subtle terrain relief, not balloon the cutaway into a
+ * several-hundred-meter cliff at high settings (which, combined with the
+ * boundary's own concave notches, was opening a visible gap clean through
+ * the block at higher exaggeration).
+ */
+export const CUTAWAY_DISPLAY_DEPTH = 26
 
 /**
  * The cut face around the estate: a wall dropped from the real terrain
@@ -20,7 +31,9 @@ interface Props {
  * computeVertexNormals() gives flat, faceted shading per segment — the
  * "cut stone block" look, rather than a smoothed organic wall.
  */
-export default function CutawayWalls({ terrain, depthBelowMin = 110, sunDirection }: Props) {
+export default function CutawayWalls({ terrain, exaggeration, sunDirection }: Props) {
+  const depthBelowMin = CUTAWAY_DISPLAY_DEPTH / exaggeration
+
   const { wallGeometry, capGeometry, bottomY, topYMax } = useMemo(() => {
     const tops = BOUNDARY_LOCAL.map(([x, z]) => terrain.heightAtLocal(x, z))
     const bottom = terrain.grid.minElevation - depthBelowMin

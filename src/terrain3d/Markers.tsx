@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Html } from '@react-three/drei'
-import { landmarks, landmarkCategoryColors, landmarkCategoryIcons, type Landmark } from '../landmarks'
+import { landmarkCategoryColors, landmarkCategoryIcons, type Landmark } from '../landmarks'
 import { pois, type Poi } from '../poi'
 import PoiIcon from '../PoiIcon'
 import { SCENE_ORIGIN } from './terrainContext'
@@ -10,6 +10,13 @@ import type { TerrainContext } from './terrainContext'
 
 interface Props {
   terrain: TerrainContext
+  /**
+   * Already filtered by the main app's own chutes/sites visibility rules
+   * (passcode-gated chutes, the "Lieux remarquables & coraux" toggle) —
+   * mirrors whatever is currently visible on the 2D map instead of a
+   * separate, unconditional copy that would leak passcode-gated pins.
+   */
+  landmarks: Landmark[]
   onSelectLandmark?: (landmark: Landmark) => void
 }
 
@@ -27,16 +34,15 @@ interface Props {
  * exaggeration-scaled <group> as those, so the one group scale lifts the
  * markers with the terrain instead of each component exaggerating on its own.
  */
-export default function Markers({ terrain, onSelectLandmark }: Props) {
+export default function Markers({ terrain, landmarks, onSelectLandmark }: Props) {
   const placedLandmarks = useMemo(() => {
     return landmarks
-      .filter((l) => l.category === 'mirador')
       .map((l) => {
         const [x, z] = toLocalXZ(SCENE_ORIGIN, l.longitude, l.latitude)
         return { landmark: l, x, z }
       })
       .filter(({ x, z }) => pointInPolygon(x, z, BOUNDARY_LOCAL))
-  }, [])
+  }, [landmarks])
 
   const placedPois = useMemo(() => {
     return pois
