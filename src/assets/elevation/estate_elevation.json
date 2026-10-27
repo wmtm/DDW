@@ -1,0 +1,13 @@
+{
+  "width": 108,
+  "height": 123,
+  "minLng": 57.36208333333333,
+  "maxLng": 57.39208333333333,
+  "minLat": -20.316805555555558,
+  "maxLat": -20.28263888888889,
+  "minElevation": 0.0,
+  "maxElevation": 90.97954559326172,
+  "pixelSizeLng": 0.0002777777777777778,
+  "pixelSizeLat": 0.0002777777777777778,
+  "source": "Copernicus DEM GLO-30 (ESA/Airbus, via AWS Open Data copernicus-dem-30m)"
+}

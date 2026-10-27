@@ -1250,6 +1250,61 @@
   text-underline-offset: 2px;
 }
 
+.windguru-card {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-card-border);
+  border-radius: 12px;
+  padding: 10px 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.windguru-card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.windguru-card-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.01em;
+}
+
+.windguru-card-badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-amber);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--surface-card-border);
+  border-radius: 999px;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+
+.windguru-widget-frame {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  display: block;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.windguru-card-link {
+  align-self: flex-end;
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .datetime-clock {
   font-size: 21px;
   font-weight: 700;
