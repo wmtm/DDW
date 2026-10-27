@@ -10,6 +10,7 @@ import type { Landmark } from './landmarks'
 
 interface Props {
   onClose: () => void
+  landmarks: Landmark[]
   onSelectLandmark?: (landmark: Landmark) => void
 }
 
@@ -25,7 +26,7 @@ const DEFAULT_SUN_ELEVATION = 28
  * heightmap (see terrain3d/elevationData.ts) and satellite tiles fetched
  * live for just the estate's footprint.
  */
-export default function Isolate3DView({ onClose, onSelectLandmark }: Props) {
+export default function Isolate3DView({ onClose, landmarks, onSelectLandmark }: Props) {
   const [terrain, setTerrain] = useState<TerrainContext | null>(null)
   const [textures, setTextures] = useState<TerrainTextures | null>(null)
   const [loadError, setLoadError] = useState(false)
@@ -116,6 +117,7 @@ export default function Isolate3DView({ onClose, onSelectLandmark }: Props) {
                 sunElevationDeg={sunElevation}
                 isMobile={isMobile}
                 resetToken={resetToken}
+                landmarks={landmarks}
                 onSelectLandmark={onSelectLandmark}
               />
             </Canvas>

@@ -16,7 +16,11 @@ import type { TerrainContext } from './terrainContext'
  * property line.
  */
 
-const MAX_TILES = 144
+// At this estate's footprint, MapTiler's z17 (~143 tiles) only gets ~1.1m/px
+// of real source detail — soft once the camera gets close. z18 (~500 tiles,
+// ~0.56m/px) is a real sharpness jump for a one-time fetch made only when
+// the 3D view is opened, not on every pan/zoom like the 2D basemap.
+const MAX_TILES = 520
 
 function lngToTileX(lng: number, z: number): number {
   return Math.floor(((lng + 180) / 360) * 2 ** z)
@@ -283,7 +287,7 @@ function buildFallbackTexture(size: number, bounds: TerrainTextures['bounds']): 
   return { map, alphaMap, bounds }
 }
 
-export async function buildTerrainTextures(terrain: TerrainContext, outSize = 1536): Promise<TerrainTextures> {
+export async function buildTerrainTextures(terrain: TerrainContext, outSize = 2560): Promise<TerrainTextures> {
   const bounds = TERRAIN_LNGLAT_BOUNDS
 
   try {
@@ -304,7 +308,7 @@ export async function buildTerrainTextures(terrain: TerrainContext, outSize = 15
         bctx.drawImage(cropped, 0, 0)
         const map = new THREE.CanvasTexture(boosted)
         map.colorSpace = THREE.SRGBColorSpace
-        map.anisotropy = 4
+        map.anisotropy = 8
         const alphaMap = new THREE.CanvasTexture(
           paintBoundaryMask(outSize, bounds.minLng, bounds.maxLng, bounds.minLat, bounds.maxLat),
         )

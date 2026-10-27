@@ -4,10 +4,17 @@
  * the 3D view never download it.
  */
 
+/*
+ * Absolute (not fixed) and a modest z-index, same convention as the main
+ * map's own floating chrome (.controls-panel etc.) — this replaces the
+ * terrain visually but sits *under* that chrome, so the sidebar (search,
+ * chutes toggle, miradors, distances...) stays visible and usable while the
+ * 3D view is open, exactly like it already does over the 2D map.
+ */
 .isolate3d-overlay {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: 50;
+  z-index: 0;
   background: radial-gradient(ellipse at 50% 35%, #e9e2d3 0%, #cfc7b4 45%, #a9a089 100%);
 }
 
@@ -62,10 +69,12 @@
   background: rgba(20, 16, 10, 0.9);
 }
 
+/* Lifted clear of the cube 3D-toggle button below it (bottom:76-110px) and
+   the compass in the opposite corner — both are now visible overhead too. */
 .isolate3d-panel {
   position: absolute;
   left: 16px;
-  bottom: 16px;
+  bottom: 120px;
   z-index: 2;
   width: 240px;
   max-width: calc(100vw - 32px);
@@ -149,7 +158,10 @@
   .isolate3d-panel {
     left: 12px;
     right: 12px;
-    bottom: 12px;
+    /* Clears the collapsed bottom sheet's toggle bar; the sheet itself
+       sits above this panel (same stacking as over the 2D map) when
+       expanded, rather than this panel breaking or overlapping it. */
+    bottom: 56px;
     width: auto;
   }
 }

@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { ContactShadows } from '@react-three/drei'
 import { EffectComposer, N8AO, DepthOfField, Vignette, SMAA } from '@react-three/postprocessing'
 import TerrainMesh from './TerrainMesh'
-import CutawayWalls from './CutawayWalls'
+import CutawayWalls, { CUTAWAY_DISPLAY_DEPTH } from './CutawayWalls'
 import Markers from './Markers'
 import CameraRig from './CameraRig'
 import { BOUNDARY_LOCAL_BOUNDS } from './terrainContext'
@@ -19,10 +19,11 @@ interface Props {
   sunElevationDeg: number
   isMobile: boolean
   resetToken: number
+  landmarks: Landmark[]
   onSelectLandmark?: (landmark: Landmark) => void
 }
 
-export default function Scene({ terrain, textures, exaggeration, sunAzimuthDeg, sunElevationDeg, isMobile, resetToken, onSelectLandmark }: Props) {
+export default function Scene({ terrain, textures, exaggeration, sunAzimuthDeg, sunElevationDeg, isMobile, resetToken, landmarks, onSelectLandmark }: Props) {
   const centerX = (BOUNDARY_LOCAL_BOUNDS.minX + BOUNDARY_LOCAL_BOUNDS.maxX) / 2
   const centerZ = (BOUNDARY_LOCAL_BOUNDS.minZ + BOUNDARY_LOCAL_BOUNDS.maxZ) / 2
   const footprintSize = Math.max(
@@ -109,12 +110,12 @@ export default function Scene({ terrain, textures, exaggeration, sunAzimuthDeg, 
 
       <group scale={[1, exaggeration, 1]}>
         <TerrainMesh terrain={terrain} textures={textures} />
-        <CutawayWalls terrain={terrain} sunDirection={sunDirection} />
-        <Markers terrain={terrain} onSelectLandmark={onSelectLandmark} />
+        <CutawayWalls terrain={terrain} exaggeration={exaggeration} sunDirection={sunDirection} />
+        <Markers terrain={terrain} landmarks={landmarks} onSelectLandmark={onSelectLandmark} />
       </group>
 
       <ContactShadows
-        position={[centerX, terrain.grid.minElevation * exaggeration - 2, centerZ]}
+        position={[centerX, terrain.grid.minElevation * exaggeration - CUTAWAY_DISPLAY_DEPTH - 2, centerZ]}
         opacity={0.45}
         scale={footprintSize * 2.2}
         blur={2.4}
