@@ -170,8 +170,11 @@
 
 .isolate3d-gizmo {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  /* Not top-left: the global .controls-panel sidebar (search/legend) also
+     anchors there, at the same z-index stacking level, and stays visible
+     over the 3D view by design — it would sit directly on top of this. */
+  top: 66px;
+  right: 16px;
   z-index: 2;
   padding: 6px;
   border-radius: 14px;
@@ -196,7 +199,7 @@
 
 .isolate3d-minimap {
   position: absolute;
-  top: 66px;
+  top: 170px;
   right: 16px;
   z-index: 2;
   padding: 8px;
@@ -328,16 +331,17 @@
 
   /* The sliders panel becomes a full-width bottom sheet on mobile (see
      .isolate3d-panel's own media query above), which would otherwise sit
-     under the compass/zoom stack — move them up to where the minimap
-     (hidden on mobile) would have been instead. */
+     under the compass/zoom stack — move them up instead, stacked below the
+     gizmo in the same top-right column (the minimap that would normally
+     fill that space is hidden on mobile). */
   .isolate3d-compass {
-    top: 66px;
+    top: 152px;
     right: 16px;
     bottom: auto;
   }
 
   .isolate3d-zoom-stack {
-    top: 120px;
+    top: 208px;
     right: 16px;
     bottom: auto;
   }
