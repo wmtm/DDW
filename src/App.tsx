@@ -750,7 +750,10 @@ export default function App() {
       {!isolate3dHintDismissed && !wolmarOnly && (
         <div className="isolate-3d-hint">Cliquez pour une vue 3D isolée</div>
       )}
-      <MapCompass bearing={bearing} onReset={handleResetNorth} />
+      {/* The beta 3D view has its own compass (reflecting the 3D camera's
+          azimuth, not the hidden 2D map's) in the same corner — showing
+          both would be a confusing, overlapping duplicate. */}
+      {!(wolmarOnly && isBeta3DRequested()) && <MapCompass bearing={bearing} onReset={handleResetNorth} />}
       <OnboardingCard />
 
       {renderedImageryUrl !== null && (

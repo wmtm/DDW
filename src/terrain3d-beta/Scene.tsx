@@ -11,6 +11,7 @@ import { BOUNDARY_LOCAL, BOUNDARY_LOCAL_BOUNDS, displayHeightAtLocal } from './t
 import type { TerrainContext } from './terrainContext'
 import type { TerrainTextures } from './satelliteTexture'
 import type { Landmark } from '../landmarks'
+import type { CameraOrientation, CameraRigHandle } from './CameraRig'
 
 interface Props {
   terrain: TerrainContext
@@ -22,9 +23,23 @@ interface Props {
   resetToken: number
   landmarks: Landmark[]
   onSelectLandmark?: (landmark: Landmark) => void
+  cameraRigRef: React.RefObject<CameraRigHandle>
+  orientationRef: React.MutableRefObject<CameraOrientation>
 }
 
-export default function Scene({ terrain, textures, exaggeration, sunAzimuthDeg, sunElevationDeg, isMobile, resetToken, landmarks, onSelectLandmark }: Props) {
+export default function Scene({
+  terrain,
+  textures,
+  exaggeration,
+  sunAzimuthDeg,
+  sunElevationDeg,
+  isMobile,
+  resetToken,
+  landmarks,
+  onSelectLandmark,
+  cameraRigRef,
+  orientationRef,
+}: Props) {
   const centerX = (BOUNDARY_LOCAL_BOUNDS.minX + BOUNDARY_LOCAL_BOUNDS.maxX) / 2
   const centerZ = (BOUNDARY_LOCAL_BOUNDS.minZ + BOUNDARY_LOCAL_BOUNDS.maxZ) / 2
   const footprintSize = Math.max(
@@ -149,12 +164,14 @@ export default function Scene({ terrain, textures, exaggeration, sunAzimuthDeg, 
       />
 
       <CameraRig
+        ref={cameraRigRef}
         target={target}
         settledPosition={settledPosition}
         introStartPosition={introStartPosition}
         minDistance={footprintSize * 0.3}
         maxDistance={footprintSize * 2.2}
         resetToken={resetToken}
+        orientationRef={orientationRef}
       />
 
       {/* DepthOfField removed entirely — it was blurring the whole block, not

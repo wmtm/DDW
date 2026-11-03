@@ -1,10 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import './terrain3d-beta/Isolate3D.css'
-import { loadTerrainContext } from './terrain3d-beta/terrainContext'
+import { BOUNDARY_LOCAL, BOUNDARY_LOCAL_BOUNDS, loadTerrainContext } from './terrain3d-beta/terrainContext'
 import { buildTerrainTextures, type TerrainTextures } from './terrain3d-beta/satelliteTexture'
 import Scene from './terrain3d-beta/Scene'
+import NavigationHUD from './terrain3d-beta/NavigationHUD'
+import { MIN_POLAR_ANGLE, MAX_POLAR_ANGLE } from './terrain3d-beta/CameraRig'
+import type { CameraOrientation, CameraRigHandle } from './terrain3d-beta/CameraRig'
 import type { TerrainContext } from './terrain3d-beta/terrainContext'
 import type { Landmark } from './landmarks'
 
@@ -34,6 +37,14 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark }: 
   const [sunAzimuth, setSunAzimuth] = useState(DEFAULT_SUN_AZIMUTH)
   const [sunElevation, setSunElevation] = useState(DEFAULT_SUN_ELEVATION)
   const [resetToken, setResetToken] = useState(0)
+
+  const cameraRigRef = useRef<CameraRigHandle>(null)
+  // Matches Scene.tsx's own settledPosition default (azimuth 35°, elevation
+  // 48°) so the compass/minimap read something sane on the very first frame,
+  // before CameraRig's own useFrame has written a real value.
+  const orientationRef = useRef<CameraOrientation>({ azimuthDeg: 35, elevationDeg: 48, distance: 0 })
+  const minElevationDeg = 90 - THREE.MathUtils.radToDeg(MAX_POLAR_ANGLE)
+  const maxElevationDeg = 90 - THREE.MathUtils.radToDeg(MIN_POLAR_ANGLE)
 
   const isMobile = useMemo(() => {
     try {
@@ -119,9 +130,20 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark }: 
                 resetToken={resetToken}
                 landmarks={landmarks}
                 onSelectLandmark={onSelectLandmark}
+                cameraRigRef={cameraRigRef}
+                orientationRef={orientationRef}
               />
             </Canvas>
           </div>
+
+          <NavigationHUD
+            cameraApi={cameraRigRef}
+            orientationRef={orientationRef}
+            boundaryLocal={BOUNDARY_LOCAL}
+            boundaryBounds={BOUNDARY_LOCAL_BOUNDS}
+            minElevationDeg={minElevationDeg}
+            maxElevationDeg={maxElevationDeg}
+          />
 
           <div className="isolate3d-panel">
             <p className="isolate3d-panel-title">Vue plateforme 3D (BETA)</p>
