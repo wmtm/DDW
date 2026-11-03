@@ -707,7 +707,7 @@ export default function App() {
           <NavigationControl position="top-right" visualizePitch />
         </>
       )}
-      {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && (
+      {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && !(wolmarOnly && isBeta3DRequested()) && (
         <div className="rotate-hint">Cliquez et glissez pour incliner/pivoter</div>
       )}
       {basemapTransitioning && <div className="basemap-transition-veil" />}
