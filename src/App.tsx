@@ -62,6 +62,18 @@ import './App.css'
 // Lazy-loaded so the ~hundreds of kB Three.js/postprocessing stack is only
 // ever downloaded by visitors who actually open the 3D platform view.
 const Isolate3DView = lazy(() => import('./Isolate3DView'))
+// In-progress rework of the 3D view (blur/distortion/relief/camera fixes),
+// only reachable via ?beta3d so regular visitors keep today's version
+// unchanged until it's reviewed and promoted.
+const Isolate3DViewBeta = lazy(() => import('./Isolate3DViewBeta'))
+
+function isBeta3DRequested(): boolean {
+  try {
+    return new URLSearchParams(window.location.search).has('beta3d')
+  } catch {
+    return false
+  }
+}
 
 interface MeasurePoint {
   lngLat: [number, number]
@@ -1110,7 +1122,11 @@ export default function App() {
       />
       {wolmarOnly && (
         <Suspense fallback={null}>
-          <Isolate3DView onClose={handleToggleWolmarOnly} landmarks={visibleLandmarks} onSelectLandmark={handleSelectLandmark} />
+          {isBeta3DRequested() ? (
+            <Isolate3DViewBeta onClose={handleToggleWolmarOnly} landmarks={visibleLandmarks} onSelectLandmark={handleSelectLandmark} />
+          ) : (
+            <Isolate3DView onClose={handleToggleWolmarOnly} landmarks={visibleLandmarks} onSelectLandmark={handleSelectLandmark} />
+          )}
         </Suspense>
       )}
     </Map>
