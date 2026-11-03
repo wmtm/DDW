@@ -697,8 +697,16 @@ export default function App() {
       }}
       cursor={measureActive ? 'crosshair' : mapDragging ? 'grabbing' : 'grab'}
     >
-      <FullscreenControl position="top-right" />
-      <NavigationControl position="top-right" visualizePitch />
+      {/* These control the hidden 2D map, and their fixed top-right anchor
+          collides with the beta 3D view's own axis gizmo/minimap in that
+          same corner — hide them while that view is open, same reasoning
+          as the compass above. */}
+      {!(wolmarOnly && isBeta3DRequested()) && (
+        <>
+          <FullscreenControl position="top-right" />
+          <NavigationControl position="top-right" visualizePitch />
+        </>
+      )}
       {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && (
         <div className="rotate-hint">Cliquez et glissez pour incliner/pivoter</div>
       )}
