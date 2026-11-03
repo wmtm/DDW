@@ -258,13 +258,27 @@ function paintHillshade(
   ctx.globalAlpha = 1
 }
 
-/** Rasterizes the estate boundary polygon as a white-on-black mask, in the same pixel space as the diffuse texture. */
-function paintBoundaryMask(size: number, minLng: number, maxLng: number, minLat: number, maxLat: number): HTMLCanvasElement {
+/**
+ * Rasterizes the estate boundary polygon as a white-on-black mask, at
+ * exactly the diffuse texture's own pixel dimensions (not a separately
+ * computed width/height) — this used to derive its own canvas aspect ratio
+ * from the raw lng/lat degree deltas, with no correction for longitude
+ * degrees covering less real ground than latitude degrees at this
+ * latitude (~6-7% narrower around -20.3°). That stretched the mask ~6-7%
+ * wider than the diffuse texture and the mesh geometry (both of which are
+ * physically/Mercator-correct), so the alpha-clipped edge drifted away
+ * from the true boundary — worse the further a point sat from the bbox
+ * center, which is exactly the "the outline doesn't match our
+ * coordinates" pattern reported near the property's edges. Taking the
+ * target canvas's actual width/height removes the second, independent
+ * aspect computation entirely, so the two can no longer disagree.
+ */
+function paintBoundaryMask(width: number, height: number, minLng: number, maxLng: number, minLat: number, maxLat: number): HTMLCanvasElement {
   const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
   const aspectLng = maxLng - minLng
   const aspectLat = maxLat - minLat
-  canvas.width = size
-  canvas.height = Math.round(size * (aspectLat / aspectLng))
   const ctx = canvas.getContext('2d')
   if (!ctx) return canvas
   ctx.fillStyle = '#000'
@@ -301,7 +315,7 @@ function buildFallbackTexture(size: number, bounds: TerrainTextures['bounds']): 
   }
   const map = new THREE.CanvasTexture(canvas)
   map.colorSpace = THREE.SRGBColorSpace
-  const alphaMap = new THREE.CanvasTexture(paintBoundaryMask(size, bounds.minLng, bounds.maxLng, bounds.minLat, bounds.maxLat))
+  const alphaMap = new THREE.CanvasTexture(paintBoundaryMask(size, size, bounds.minLng, bounds.maxLng, bounds.minLat, bounds.maxLat))
   return { map, alphaMap, bounds }
 }
 
@@ -339,7 +353,7 @@ export async function buildTerrainTextures(terrain: TerrainContext, outSize = 25
         map.colorSpace = THREE.SRGBColorSpace
         map.anisotropy = 8
         const alphaMap = new THREE.CanvasTexture(
-          paintBoundaryMask(outSize, bounds.minLng, bounds.maxLng, bounds.minLat, bounds.maxLat),
+          paintBoundaryMask(boosted.width, boosted.height, bounds.minLng, bounds.maxLng, bounds.minLat, bounds.maxLat),
         )
         return { map, alphaMap, bounds }
       }
@@ -348,7 +362,7 @@ export async function buildTerrainTextures(terrain: TerrainContext, outSize = 25
     const map = new THREE.CanvasTexture(cropped)
     map.colorSpace = THREE.SRGBColorSpace
     const alphaMap = new THREE.CanvasTexture(
-      paintBoundaryMask(outSize, bounds.minLng, bounds.maxLng, bounds.minLat, bounds.maxLat),
+      paintBoundaryMask(cropped.width, cropped.height, bounds.minLng, bounds.maxLng, bounds.minLat, bounds.maxLat),
     )
     return { map, alphaMap, bounds }
   } catch {
