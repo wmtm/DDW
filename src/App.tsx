@@ -697,9 +697,17 @@ export default function App() {
       }}
       cursor={measureActive ? 'crosshair' : mapDragging ? 'grabbing' : 'grab'}
     >
-      <FullscreenControl position="top-right" />
-      <NavigationControl position="top-right" visualizePitch />
-      {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && (
+      {/* These control the hidden 2D map, and their fixed top-right anchor
+          collides with the beta 3D view's own axis gizmo/minimap in that
+          same corner — hide them while that view is open, same reasoning
+          as the compass above. */}
+      {!(wolmarOnly && isBeta3DRequested()) && (
+        <>
+          <FullscreenControl position="top-right" />
+          <NavigationControl position="top-right" visualizePitch />
+        </>
+      )}
+      {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && !(wolmarOnly && isBeta3DRequested()) && (
         <div className="rotate-hint">Cliquez et glissez pour incliner/pivoter</div>
       )}
       {basemapTransitioning && <div className="basemap-transition-veil" />}
@@ -750,7 +758,10 @@ export default function App() {
       {!isolate3dHintDismissed && !wolmarOnly && (
         <div className="isolate-3d-hint">Cliquez pour une vue 3D isolée</div>
       )}
-      <MapCompass bearing={bearing} onReset={handleResetNorth} />
+      {/* The beta 3D view has its own compass (reflecting the 3D camera's
+          azimuth, not the hidden 2D map's) in the same corner — showing
+          both would be a confusing, overlapping duplicate. */}
+      {!(wolmarOnly && isBeta3DRequested()) && <MapCompass bearing={bearing} onReset={handleResetNorth} />}
       <OnboardingCard />
 
       {renderedImageryUrl !== null && (

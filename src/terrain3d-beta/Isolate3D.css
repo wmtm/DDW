@@ -165,3 +165,184 @@
     width: auto;
   }
 }
+
+/* --- Navigation HUD (compass, zoom, minimap, axis gizmo, gesture hints) --- */
+
+.isolate3d-gizmo {
+  position: absolute;
+  /* Not top-left: the global .controls-panel sidebar (search/legend) also
+     anchors there, at the same z-index stacking level, and stays visible
+     over the 3D view by design — it would sit directly on top of this. */
+  top: 66px;
+  right: 16px;
+  z-index: 2;
+  padding: 6px;
+  border-radius: 14px;
+  background: rgba(20, 16, 10, 0.62);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 209, 102, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.isolate3d-gizmo-node {
+  cursor: pointer;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.15s ease;
+}
+
+.isolate3d-gizmo-node:hover,
+.isolate3d-gizmo-node:focus-visible {
+  transform: scale(1.14);
+  outline: none;
+}
+
+.isolate3d-minimap {
+  position: absolute;
+  top: 170px;
+  right: 16px;
+  z-index: 2;
+  padding: 8px;
+  border-radius: 14px;
+  background: rgba(20, 16, 10, 0.72);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 209, 102, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.isolate3d-zoom-stack {
+  position: absolute;
+  bottom: 96px;
+  right: 16px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(20, 16, 10, 0.72);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 209, 102, 0.35);
+}
+
+.isolate3d-zoom-stack button {
+  width: 34px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  color: #f2ede2;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.isolate3d-zoom-stack button:first-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.isolate3d-zoom-stack button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.isolate3d-compass {
+  position: absolute;
+  bottom: 40px;
+  right: 16px;
+  z-index: 2;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 16, 10, 0.72);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid var(--accent-amber, #ffd166);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.isolate3d-compass:hover {
+  transform: scale(1.06);
+  background: rgba(20, 16, 10, 0.9);
+}
+
+.isolate3d-compass-ring {
+  fill: rgba(255, 255, 255, 0.04);
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 1;
+}
+
+.isolate3d-gesture-hints {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  gap: 40px;
+  pointer-events: none;
+}
+
+.isolate3d-gesture-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: isolate3d-hint-fade 4.2s ease-in-out forwards;
+}
+
+.isolate3d-gesture-hint-2 {
+  animation-delay: 0.3s;
+}
+
+.isolate3d-gesture-hint span {
+  color: #f2ede2;
+  font-size: 12px;
+  font-family: var(--font-body);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+@keyframes isolate3d-hint-fade {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .isolate3d-minimap {
+    display: none;
+  }
+
+  .isolate3d-gizmo svg {
+    width: 64px;
+    height: 64px;
+  }
+
+  /* The sliders panel becomes a full-width bottom sheet on mobile (see
+     .isolate3d-panel's own media query above), which would otherwise sit
+     under the compass/zoom stack — move them up instead, stacked below the
+     gizmo in the same top-right column (the minimap that would normally
+     fill that space is hidden on mobile). */
+  .isolate3d-compass {
+    top: 152px;
+    right: 16px;
+    bottom: auto;
+  }
+
+  .isolate3d-zoom-stack {
+    top: 208px;
+    right: 16px;
+    bottom: auto;
+  }
+}
