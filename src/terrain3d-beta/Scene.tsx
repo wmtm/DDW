@@ -17,6 +17,7 @@ interface Props {
   terrain: TerrainContext
   textures: TerrainTextures
   exaggeration: number
+  canopyExaggeration: number
   sunAzimuthDeg: number
   sunElevationDeg: number
   isMobile: boolean
@@ -31,6 +32,7 @@ export default function Scene({
   terrain,
   textures,
   exaggeration,
+  canopyExaggeration,
   sunAzimuthDeg,
   sunElevationDeg,
   isMobile,
@@ -143,7 +145,7 @@ export default function Scene({
       <TextureDiagnostics textures={textures} />
 
       <group>
-        <TerrainMesh terrain={terrain} textures={textures} exaggeration={exaggeration} />
+        <TerrainMesh terrain={terrain} textures={textures} exaggeration={exaggeration} canopyExaggeration={canopyExaggeration} />
         <CutawayWalls terrain={terrain} exaggeration={exaggeration} sunDirection={sunDirection} />
         <Markers terrain={terrain} landmarks={landmarks} exaggeration={exaggeration} onSelectLandmark={onSelectLandmark} />
       </group>

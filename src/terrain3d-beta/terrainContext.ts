@@ -1,6 +1,7 @@
 import { estateBoundary, estateBoundingBox } from '../boundary'
 import { createLocalOrigin, toLocalXZ, type LocalOrigin } from './projection'
 import { loadElevationGrid, sampleElevation, type ElevationGrid } from './elevationData'
+import { loadCanopyGrid, sampleCanopy } from './canopyData'
 
 /** Same center point isolateMode.ts already uses for the MapLibre isolate-view camera. */
 export const SCENE_ORIGIN: LocalOrigin = createLocalOrigin(
@@ -58,6 +59,8 @@ export interface TerrainContext {
    * not the regional slope itself (see DETREND_PLANE below).
    */
   trendAtLocal: (x: number, z: number) => number
+  /** Canopy height in meters *above the ground* (unexaggerated) at local scene X/Z meters — 0 in clearings/tracks/firebreaks and outside the data's coverage. */
+  canopyAtLocal: (x: number, z: number) => number
 }
 
 /**
@@ -130,11 +133,29 @@ export function displayHeightAtLocal(terrain: TerrainContext, x: number, z: numb
   return trend + (real - trend) * exaggeration
 }
 
+/**
+ * The full displayed surface height for the top mesh: the exaggerated
+ * ground (see displayHeightAtLocal) plus canopy height on top, scaled by
+ * its own independent exaggeration slider. Everything else that places
+ * geometry at ground level — the cutaway walls, the boundary minimum, the
+ * landmark markers — intentionally keeps using displayHeightAtLocal alone:
+ * those represent real ground/soil, not the tree canopy sitting above it.
+ */
+export function displaySurfaceHeightAtLocal(
+  terrain: TerrainContext,
+  x: number,
+  z: number,
+  groundExaggeration: number,
+  canopyExaggeration: number,
+): number {
+  return displayHeightAtLocal(terrain, x, z, groundExaggeration) + terrain.canopyAtLocal(x, z) * canopyExaggeration
+}
+
 let cached: Promise<TerrainContext> | null = null
 
 export function loadTerrainContext(): Promise<TerrainContext> {
   if (!cached) {
-    cached = loadElevationGrid().then((grid) => {
+    cached = Promise.all([loadElevationGrid(), loadCanopyGrid()]).then(([grid, canopyGrid]) => {
       const heightAt = (lng: number, lat: number) => sampleElevation(grid, lng, lat)
       const heightAtLocal = (x: number, z: number) => {
         // Inverse of toLocalXZ, inlined to avoid a function-call round trip
@@ -142,6 +163,11 @@ export function loadTerrainContext(): Promise<TerrainContext> {
         const lng = SCENE_ORIGIN.lng + (x / (6371000 * SCENE_ORIGIN.cosLat)) * (180 / Math.PI)
         const lat = SCENE_ORIGIN.lat - (z / 6371000) * (180 / Math.PI)
         return sampleElevation(grid, lng, lat)
+      }
+      const canopyAtLocal = (x: number, z: number) => {
+        const lng = SCENE_ORIGIN.lng + (x / (6371000 * SCENE_ORIGIN.cosLat)) * (180 / Math.PI)
+        const lat = SCENE_ORIGIN.lat - (z / 6371000) * (180 / Math.PI)
+        return sampleCanopy(canopyGrid, lng, lat)
       }
 
       const n = grid.width * grid.height
@@ -162,7 +188,7 @@ export function loadTerrainContext(): Promise<TerrainContext> {
       }
       const trendAtLocal = fitPlane(xs, zs, ys)
 
-      return { grid, heightAt, heightAtLocal, trendAtLocal }
+      return { grid, heightAt, heightAtLocal, trendAtLocal, canopyAtLocal }
     })
   }
   return cached
