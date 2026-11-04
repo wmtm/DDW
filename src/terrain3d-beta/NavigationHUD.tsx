@@ -127,6 +127,8 @@ export default function NavigationHUD({
 
   useEffect(() => {
     let raf = 0
+    let lastAzimuthDeg = NaN
+    let lastElevationDeg = NaN
     const applyGizmoNode = (ref: React.MutableRefObject<GizmoNodeRefs>, axis: readonly [number, number, number], azimuthDeg: number, elevationDeg: number, label: string) => {
       const { x, y, depth } = projectAxis(axis, azimuthDeg, elevationDeg)
       const nx = 50 + x * GIZMO_RADIUS
@@ -152,6 +154,18 @@ export default function NavigationHUD({
 
     const tick = () => {
       const { azimuthDeg, elevationDeg } = orientationRef.current
+      // Skip the DOM writes below once the camera is genuinely idle (no
+      // drag, no damping residual, no auto-rotate) instead of touching
+      // these elements' attributes 60 times a second for no visible
+      // change — both wasted work and, as it turns out, enough constant
+      // attribute churn to make some tools (Playwright's "stable" actionability
+      // wait, for one) see the gizmo as perpetually in motion.
+      if (Math.abs(azimuthDeg - lastAzimuthDeg) < 0.01 && Math.abs(elevationDeg - lastElevationDeg) < 0.01) {
+        raf = requestAnimationFrame(tick)
+        return
+      }
+      lastAzimuthDeg = azimuthDeg
+      lastElevationDeg = elevationDeg
       if (compassNeedleRef.current) {
         compassNeedleRef.current.setAttribute('transform', `rotate(${(-azimuthDeg).toFixed(1)} 24 24)`)
       }
