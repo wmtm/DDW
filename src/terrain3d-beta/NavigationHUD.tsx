@@ -19,6 +19,57 @@ interface Props {
 
 const MINIMAP_PAD = 14
 const MARKER_ORBIT = 42
+const GIZMO_RADIUS = 32
+const GIZMO_MIN_R = 7
+const GIZMO_MAX_R = 12
+
+interface GizmoNodeRefs {
+  line: SVGLineElement | null
+  circle: SVGCircleElement | null
+  text: SVGTextElement | null
+}
+
+/**
+ * Projects a world axis (ex/ey/ez, one of the 3 unit vectors) onto the
+ * gizmo's 2D face given the camera's current azimuth/elevation, the same
+ * way a real orientation cube (Blender, Fusion 360, …) does: build the
+ * camera's own right/up/forward basis from its spherical position (exactly
+ * the formula Scene.tsx already uses for the camera's world position, see
+ * settledPosition), then read off each axis's component along right/up for
+ * its 2D position and along "toward the camera" for depth (used to make
+ * the node facing the viewer read as closer: bigger and more opaque).
+ */
+function projectAxis(
+  axis: readonly [number, number, number],
+  azimuthDeg: number,
+  elevationDeg: number,
+): { x: number; y: number; depth: number } {
+  const az = (azimuthDeg * Math.PI) / 180
+  const el = (elevationDeg * Math.PI) / 180
+  // Direction from the target to the camera — see Scene.tsx's settledPosition/sunPosition formulas.
+  const dirX = Math.sin(az) * Math.cos(el)
+  const dirY = Math.sin(el)
+  const dirZ = Math.cos(az) * Math.cos(el)
+
+  // right = normalize(worldUp × dir); worldUp = (0,1,0).
+  let rightX = dirZ
+  let rightZ = -dirX
+  const rightLen = Math.hypot(rightX, rightZ) || 1
+  rightX /= rightLen
+  rightZ /= rightLen
+
+  // up = dir × right.
+  const upX = dirY * rightZ
+  const upY = dirZ * rightX - dirX * rightZ
+  const upZ = -dirY * rightX
+
+  const [ax, ay, az_] = axis
+  return {
+    x: ax * rightX + ay * 0 + az_ * rightZ,
+    y: ax * upX + ay * upY + az_ * upZ,
+    depth: ax * dirX + ay * dirY + az_ * dirZ,
+  }
+}
 
 function buildMinimapPolygon(boundary: [number, number][], bounds: BoundaryBounds): string {
   const spanX = bounds.maxX - bounds.minX || 1
@@ -59,13 +110,48 @@ export default function NavigationHUD({
 }: Props) {
   const compassNeedleRef = useRef<SVGGElement | null>(null)
   const minimapMarkerRef = useRef<SVGGElement | null>(null)
+  const gizmoYRef = useRef<GizmoNodeRefs>({ line: null, circle: null, text: null })
+  const gizmoXRef = useRef<GizmoNodeRefs>({ line: null, circle: null, text: null })
+  const gizmoZRef = useRef<GizmoNodeRefs>({ line: null, circle: null, text: null })
 
   const minimapPolygon = useMemo(() => buildMinimapPolygon(boundaryLocal, boundaryBounds), [boundaryLocal, boundaryBounds])
 
+  // Initial paint, before the rAF loop below has run even once — recomputed
+  // from whatever orientationRef already holds (CameraRig's own mount
+  // default) rather than hardcoding a rest pose that would visibly jump on
+  // the very first frame.
+  const initial = orientationRef.current
+  const initY = projectAxis([0, 1, 0], initial.azimuthDeg, initial.elevationDeg)
+  const initX = projectAxis([1, 0, 0], initial.azimuthDeg, initial.elevationDeg)
+  const initZ = projectAxis([0, 0, 1], initial.azimuthDeg, initial.elevationDeg)
+
   useEffect(() => {
     let raf = 0
+    const applyGizmoNode = (ref: React.MutableRefObject<GizmoNodeRefs>, axis: readonly [number, number, number], azimuthDeg: number, elevationDeg: number, label: string) => {
+      const { x, y, depth } = projectAxis(axis, azimuthDeg, elevationDeg)
+      const nx = 50 + x * GIZMO_RADIUS
+      const ny = 50 - y * GIZMO_RADIUS
+      const r = GIZMO_MIN_R + ((depth + 1) / 2) * (GIZMO_MAX_R - GIZMO_MIN_R)
+      const { line, circle, text } = ref.current
+      if (line) {
+        line.setAttribute('x2', nx.toFixed(2))
+        line.setAttribute('y2', ny.toFixed(2))
+      }
+      if (circle) {
+        circle.setAttribute('cx', nx.toFixed(2))
+        circle.setAttribute('cy', ny.toFixed(2))
+        circle.setAttribute('r', r.toFixed(2))
+      }
+      if (text) {
+        text.setAttribute('x', nx.toFixed(2))
+        text.setAttribute('y', (ny + r * 0.38).toFixed(2))
+        text.setAttribute('font-size', (r * 1.05).toFixed(2))
+        text.textContent = label
+      }
+    }
+
     const tick = () => {
-      const { azimuthDeg } = orientationRef.current
+      const { azimuthDeg, elevationDeg } = orientationRef.current
       if (compassNeedleRef.current) {
         compassNeedleRef.current.setAttribute('transform', `rotate(${(-azimuthDeg).toFixed(1)} 24 24)`)
       }
@@ -78,6 +164,9 @@ export default function NavigationHUD({
           `translate(${dx.toFixed(2)} ${dy.toFixed(2)}) rotate(${(-azimuthDeg).toFixed(1)})`,
         )
       }
+      applyGizmoNode(gizmoYRef, [0, 1, 0], azimuthDeg, elevationDeg, 'Y')
+      applyGizmoNode(gizmoXRef, [1, 0, 0], azimuthDeg, elevationDeg, 'X')
+      applyGizmoNode(gizmoZRef, [0, 0, 1], azimuthDeg, elevationDeg, 'Z')
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
@@ -91,15 +180,20 @@ export default function NavigationHUD({
 
   return (
     <>
-      {/* Axis gizmo — top-left. Each node snaps to a canonical view along
-          that axis, clamped to the same orbit limits a manual drag is held
-          to (CameraRig's MIN/MAX_POLAR_ANGLE), so a snap can never land on
-          the flat/thin side-on angle the camera is normally kept out of. */}
+      {/* Axis gizmo — top-right. A real orientation gizmo: each node's
+          position (and its depth-based size) is recomputed every frame from
+          the live camera orientation (see projectAxis), so it rotates in
+          sync as the view orbits, the same way Blender's or Fusion 360's
+          does — not just a static clickable icon. Clicking a node still
+          snaps to that axis's canonical view, clamped to the same orbit
+          limits a manual drag is held to (CameraRig's MIN/MAX_POLAR_ANGLE),
+          so a snap can never land on the flat/thin side-on angle the camera
+          is normally kept out of. */}
       <div className="isolate3d-gizmo" title="Points de vue">
         <svg viewBox="0 0 100 100" width="92" height="92">
-          <line x1="50" y1="50" x2="50" y2="18" stroke="#ade34a" strokeWidth="2.5" />
-          <line x1="50" y1="50" x2="78" y2="65" stroke="#ea3058" strokeWidth="2.5" />
-          <line x1="50" y1="50" x2="23" y2="63" stroke="#4f9fdc" strokeWidth="2.5" />
+          <line ref={(el) => (gizmoYRef.current.line = el)} x1="50" y1="50" x2={initY.x * GIZMO_RADIUS + 50} y2={50 - initY.y * GIZMO_RADIUS} stroke="#ade34a" strokeWidth="2.5" />
+          <line ref={(el) => (gizmoXRef.current.line = el)} x1="50" y1="50" x2={initX.x * GIZMO_RADIUS + 50} y2={50 - initX.y * GIZMO_RADIUS} stroke="#ea3058" strokeWidth="2.5" />
+          <line ref={(el) => (gizmoZRef.current.line = el)} x1="50" y1="50" x2={initZ.x * GIZMO_RADIUS + 50} y2={50 - initZ.y * GIZMO_RADIUS} stroke="#4f9fdc" strokeWidth="2.5" />
           <circle cx="22" cy="28" r="4.5" fill="#ec8ca3" />
           <circle cx="80" cy="36" r="5" fill="#a2c8e9" />
           <circle cx="60" cy="84" r="4.5" fill="#cee79c" />
@@ -111,8 +205,8 @@ export default function NavigationHUD({
             tabIndex={0}
             aria-label="Vue du dessus"
           >
-            <circle cx="50" cy="18" r="11" fill="#ade34a" />
-            <text x="50" y="22" textAnchor="middle" fontSize="11" fontWeight="700" fill="#17390a">
+            <circle ref={(el) => (gizmoYRef.current.circle = el)} cx={initY.x * GIZMO_RADIUS + 50} cy={50 - initY.y * GIZMO_RADIUS} r="11" fill="#ade34a" />
+            <text ref={(el) => (gizmoYRef.current.text = el)} x={initY.x * GIZMO_RADIUS + 50} y={50 - initY.y * GIZMO_RADIUS + 4} textAnchor="middle" fontSize="11" fontWeight="700" fill="#17390a">
               Y
             </text>
           </g>
@@ -124,8 +218,8 @@ export default function NavigationHUD({
             tabIndex={0}
             aria-label="Vue depuis l'est"
           >
-            <circle cx="78" cy="65" r="11" fill="#ea3058" />
-            <text x="78" y="69" textAnchor="middle" fontSize="11" fontWeight="700" fill="#3a0512">
+            <circle ref={(el) => (gizmoXRef.current.circle = el)} cx={initX.x * GIZMO_RADIUS + 50} cy={50 - initX.y * GIZMO_RADIUS} r="11" fill="#ea3058" />
+            <text ref={(el) => (gizmoXRef.current.text = el)} x={initX.x * GIZMO_RADIUS + 50} y={50 - initX.y * GIZMO_RADIUS + 4} textAnchor="middle" fontSize="11" fontWeight="700" fill="#3a0512">
               X
             </text>
           </g>
@@ -137,8 +231,8 @@ export default function NavigationHUD({
             tabIndex={0}
             aria-label="Vue depuis le sud"
           >
-            <circle cx="23" cy="63" r="11" fill="#4f9fdc" />
-            <text x="23" y="67" textAnchor="middle" fontSize="11" fontWeight="700" fill="#0a2338">
+            <circle ref={(el) => (gizmoZRef.current.circle = el)} cx={initZ.x * GIZMO_RADIUS + 50} cy={50 - initZ.y * GIZMO_RADIUS} r="11" fill="#4f9fdc" />
+            <text ref={(el) => (gizmoZRef.current.text = el)} x={initZ.x * GIZMO_RADIUS + 50} y={50 - initZ.y * GIZMO_RADIUS + 4} textAnchor="middle" fontSize="11" fontWeight="700" fill="#0a2338">
               Z
             </text>
           </g>
