@@ -96,14 +96,13 @@ export default function NavigationHUD({
           to (CameraRig's MIN/MAX_POLAR_ANGLE), so a snap can never land on
           the flat/thin side-on angle the camera is normally kept out of. */}
       <div className="isolate3d-gizmo" title="Points de vue">
-        <svg viewBox="0 0 100 100" width="84" height="84">
-          <line x1="50" y1="50" x2="50" y2="20" stroke="rgba(242,237,226,0.35)" strokeWidth="2" />
-          <line x1="50" y1="50" x2="76" y2="64" stroke="rgba(242,237,226,0.35)" strokeWidth="2" />
-          <line x1="50" y1="50" x2="26" y2="62" stroke="rgba(242,237,226,0.35)" strokeWidth="2" />
-          <circle cx="24" cy="30" r="4" fill="#f9a8c9" opacity="0.55" />
-          <circle cx="78" cy="38" r="4.5" fill="#93c5f0" opacity="0.55" />
-          <circle cx="58" cy="82" r="4" fill="#bfe08a" opacity="0.5" />
-          <circle cx="50" cy="50" r="7" fill="#2a241b" stroke="rgba(242,237,226,0.5)" strokeWidth="1.5" />
+        <svg viewBox="0 0 100 100" width="92" height="92">
+          <line x1="50" y1="50" x2="50" y2="18" stroke="#ade34a" strokeWidth="2.5" />
+          <line x1="50" y1="50" x2="78" y2="65" stroke="#ea3058" strokeWidth="2.5" />
+          <line x1="50" y1="50" x2="23" y2="63" stroke="#4f9fdc" strokeWidth="2.5" />
+          <circle cx="22" cy="28" r="4.5" fill="#ec8ca3" />
+          <circle cx="80" cy="36" r="5" fill="#a2c8e9" />
+          <circle cx="60" cy="84" r="4.5" fill="#cee79c" />
           <g
             className="isolate3d-gizmo-node"
             onClick={flyToTop}
@@ -112,8 +111,8 @@ export default function NavigationHUD({
             tabIndex={0}
             aria-label="Vue du dessus"
           >
-            <circle cx="50" cy="20" r="9" fill="#5fcf6a" stroke="#1a1407" strokeWidth="1.5" />
-            <text x="50" y="23.5" textAnchor="middle" fontSize="9" fontWeight="700" fill="#0d1a0e">
+            <circle cx="50" cy="18" r="11" fill="#ade34a" />
+            <text x="50" y="22" textAnchor="middle" fontSize="11" fontWeight="700" fill="#17390a">
               Y
             </text>
           </g>
@@ -125,8 +124,8 @@ export default function NavigationHUD({
             tabIndex={0}
             aria-label="Vue depuis l'est"
           >
-            <circle cx="76" cy="64" r="9" fill="#ef5b5b" stroke="#1a1407" strokeWidth="1.5" />
-            <text x="76" y="67.5" textAnchor="middle" fontSize="9" fontWeight="700" fill="#2b0b0b">
+            <circle cx="78" cy="65" r="11" fill="#ea3058" />
+            <text x="78" y="69" textAnchor="middle" fontSize="11" fontWeight="700" fill="#3a0512">
               X
             </text>
           </g>
@@ -138,8 +137,8 @@ export default function NavigationHUD({
             tabIndex={0}
             aria-label="Vue depuis le sud"
           >
-            <circle cx="26" cy="62" r="9" fill="#5b9bef" stroke="#1a1407" strokeWidth="1.5" />
-            <text x="26" y="65.5" textAnchor="middle" fontSize="9" fontWeight="700" fill="#0b1a2b">
+            <circle cx="23" cy="63" r="11" fill="#4f9fdc" />
+            <text x="23" y="67" textAnchor="middle" fontSize="11" fontWeight="700" fill="#0a2338">
               Z
             </text>
           </g>

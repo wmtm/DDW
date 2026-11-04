@@ -176,12 +176,11 @@
   top: 66px;
   right: 16px;
   z-index: 2;
-  padding: 6px;
-  border-radius: 14px;
-  background: rgba(20, 16, 10, 0.62);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 209, 102, 0.3);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  padding: 4px;
+  border-radius: 50%;
+  /* No card/panel — floats directly over the scene with just a soft glow,
+     matching the reference gizmo this was modeled on. */
+  background: radial-gradient(circle, rgba(20, 16, 10, 0.3) 0%, rgba(20, 16, 10, 0) 72%);
 }
 
 .isolate3d-gizmo-node {
