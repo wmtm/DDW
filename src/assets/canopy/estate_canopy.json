@@ -1,0 +1,12 @@
+{
+  "width": 1308,
+  "height": 1593,
+  "minLng": 57.36329913139343,
+  "maxLng": 57.39136576652526,
+  "minLat": -20.31574326522108,
+  "maxLat": -20.283684219708846,
+  "minHeight": 0,
+  "maxHeight": 26,
+  "source": "Meta & World Resources Institute (WRI), 2024 — global canopy height map, CC BY 4.0 (imagery: Maxar)",
+  "sourceUrl": "https://registry.opendata.aws/dataforgood-fb-forests/"
+}

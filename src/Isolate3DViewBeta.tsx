@@ -18,6 +18,7 @@ interface Props {
 }
 
 const DEFAULT_EXAGGERATION = 2.75
+const DEFAULT_CANOPY_EXAGGERATION = 1.75
 const DEFAULT_SUN_AZIMUTH = 55
 const DEFAULT_SUN_ELEVATION = 28
 
@@ -34,6 +35,7 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark }: 
   const [textures, setTextures] = useState<TerrainTextures | null>(null)
   const [loadError, setLoadError] = useState(false)
   const [exaggeration, setExaggeration] = useState(DEFAULT_EXAGGERATION)
+  const [canopyExaggeration, setCanopyExaggeration] = useState(DEFAULT_CANOPY_EXAGGERATION)
   const [sunAzimuth, setSunAzimuth] = useState(DEFAULT_SUN_AZIMUTH)
   const [sunElevation, setSunElevation] = useState(DEFAULT_SUN_ELEVATION)
   const [resetToken, setResetToken] = useState(0)
@@ -124,6 +126,7 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark }: 
                 terrain={terrain}
                 textures={textures}
                 exaggeration={exaggeration}
+                canopyExaggeration={canopyExaggeration}
                 sunAzimuthDeg={sunAzimuth}
                 sunElevationDeg={sunElevation}
                 isMobile={isMobile}
@@ -159,6 +162,20 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark }: 
                 step={0.1}
                 value={exaggeration}
                 onChange={(e) => setExaggeration(Number(e.target.value))}
+              />
+            </label>
+            <label className="isolate3d-slider-row">
+              <span className="isolate3d-slider-label">
+                <span>Hauteur de la canopée</span>
+                <span>{canopyExaggeration.toFixed(1)}×</span>
+              </span>
+              <input
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={canopyExaggeration}
+                onChange={(e) => setCanopyExaggeration(Number(e.target.value))}
               />
             </label>
             <label className="isolate3d-slider-row">
