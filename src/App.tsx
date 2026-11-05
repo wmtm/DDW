@@ -62,18 +62,6 @@ import './App.css'
 // Lazy-loaded so the ~hundreds of kB Three.js/postprocessing stack is only
 // ever downloaded by visitors who actually open the 3D platform view.
 const Isolate3DView = lazy(() => import('./Isolate3DView'))
-// In-progress rework of the 3D view (blur/distortion/relief/camera fixes),
-// only reachable via ?beta3d so regular visitors keep today's version
-// unchanged until it's reviewed and promoted.
-const Isolate3DViewBeta = lazy(() => import('./Isolate3DViewBeta'))
-
-function isBeta3DRequested(): boolean {
-  try {
-    return new URLSearchParams(window.location.search).has('beta3d')
-  } catch {
-    return false
-  }
-}
 
 interface MeasurePoint {
   lngLat: [number, number]
@@ -698,16 +686,16 @@ export default function App() {
       cursor={measureActive ? 'crosshair' : mapDragging ? 'grabbing' : 'grab'}
     >
       {/* These control the hidden 2D map, and their fixed top-right anchor
-          collides with the beta 3D view's own axis gizmo/minimap in that
-          same corner — hide them while that view is open, same reasoning
-          as the compass above. */}
-      {!(wolmarOnly && isBeta3DRequested()) && (
+          collides with the 3D view's own axis gizmo/minimap in that same
+          corner — hide them while that view is open, same reasoning as the
+          compass below. */}
+      {!wolmarOnly && (
         <>
           <FullscreenControl position="top-right" />
           <NavigationControl position="top-right" visualizePitch />
         </>
       )}
-      {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && !(wolmarOnly && isBeta3DRequested()) && (
+      {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && !wolmarOnly && (
         <div className="rotate-hint">Cliquez et glissez pour incliner/pivoter</div>
       )}
       {basemapTransitioning && <div className="basemap-transition-veil" />}
@@ -758,10 +746,10 @@ export default function App() {
       {!isolate3dHintDismissed && !wolmarOnly && (
         <div className="isolate-3d-hint">Cliquez pour une vue 3D isolée</div>
       )}
-      {/* The beta 3D view has its own compass (reflecting the 3D camera's
+      {/* The 3D view has its own compass (reflecting the 3D camera's
           azimuth, not the hidden 2D map's) in the same corner — showing
           both would be a confusing, overlapping duplicate. */}
-      {!(wolmarOnly && isBeta3DRequested()) && <MapCompass bearing={bearing} onReset={handleResetNorth} />}
+      {!wolmarOnly && <MapCompass bearing={bearing} onReset={handleResetNorth} />}
       <OnboardingCard />
 
       {renderedImageryUrl !== null && (
@@ -1133,11 +1121,7 @@ export default function App() {
       />
       {wolmarOnly && (
         <Suspense fallback={null}>
-          {isBeta3DRequested() ? (
-            <Isolate3DViewBeta onClose={handleToggleWolmarOnly} landmarks={visibleLandmarks} onSelectLandmark={handleSelectLandmark} />
-          ) : (
-            <Isolate3DView onClose={handleToggleWolmarOnly} landmarks={visibleLandmarks} onSelectLandmark={handleSelectLandmark} />
-          )}
+          <Isolate3DView onClose={handleToggleWolmarOnly} landmarks={visibleLandmarks} onSelectLandmark={handleSelectLandmark} />
         </Suspense>
       )}
     </Map>
