@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
-import { BOUNDARY_LOCAL } from './terrainContext'
+import { BOUNDARY_LOCAL, displayHeightAtLocal } from './terrainContext'
 import { FOOTPRINT_TRIANGLES } from './boundaryTriangulation'
 import './SoilShaderMaterial'
 import type { TerrainContext } from './terrainContext'
@@ -14,22 +14,25 @@ interface Props {
 }
 
 /**
- * How deep the cut reads on screen, in already-exaggerated display meters —
- * a fixed stylistic plinth depth, not a real geological measurement. This
- * is deliberately independent of the exaggeration slider: that slider is
- * meant to emphasize subtle terrain relief, not balloon the cutaway into a
- * several-hundred-meter cliff at high settings.
+ * How deep the cut reads on screen, in display meters — a fixed stylistic
+ * plinth depth, not a real geological measurement, and not divided by
+ * exaggeration any more: now that TerrainMesh bakes exaggeration into each
+ * vertex itself (see displayHeightAtLocal) instead of a uniform group
+ * scale, this depth is already in the same display space as everything
+ * else and needs no further conversion. Deliberately thick ("much thicker
+ * in display space") so the cutaway reads as a solid block, not a thin
+ * skirt, at any exaggeration setting.
  *
  * The cut follows the terrain's own silhouette at this constant depth
  * everywhere (a "skirt", not a single flat plane at the property's lowest
  * point) — this site has real relief along its boundary (tens of meters),
  * and a flat-bottomed cut necessarily makes the wall at the highest
- * boundary point span that *entire* range, which at any real exaggeration
- * reads as a wildly oversized ramp jutting out of the block instead of a
- * plinth. A constant-depth skirt keeps every segment the same modest
- * height regardless of where it sits on the property.
+ * boundary point span that *entire* range, which reads as a wildly
+ * oversized ramp jutting out of the block instead of a plinth. A
+ * constant-depth skirt keeps every segment the same modest height
+ * regardless of where it sits on the property.
  */
-export const CUTAWAY_DISPLAY_DEPTH = 26
+export const CUTAWAY_DISPLAY_DEPTH = 80
 
 /**
  * The cut face around the estate: a wall dropped a constant depth below
@@ -39,10 +42,10 @@ export const CUTAWAY_DISPLAY_DEPTH = 26
  * "cut stone block" look, rather than a smoothed organic wall.
  */
 export default function CutawayWalls({ terrain, exaggeration, sunDirection }: Props) {
-  const depthBelowMin = CUTAWAY_DISPLAY_DEPTH / exaggeration
+  const depthBelowMin = CUTAWAY_DISPLAY_DEPTH
 
   const { wallGeometry, capGeometry } = useMemo(() => {
-    const tops = BOUNDARY_LOCAL.map(([x, z]) => terrain.heightAtLocal(x, z))
+    const tops = BOUNDARY_LOCAL.map(([x, z]) => displayHeightAtLocal(terrain, x, z, exaggeration))
     const segments = BOUNDARY_LOCAL.length - 1 // last point repeats the first
 
     // Outward-normal sign, same shoelace trick estateSlab.ts used.
@@ -110,7 +113,7 @@ export default function CutawayWalls({ terrain, exaggeration, sunDirection }: Pr
     capGeo.computeVertexNormals()
 
     return { wallGeometry: wallGeo, capGeometry: capGeo }
-  }, [terrain, depthBelowMin])
+  }, [terrain, exaggeration, depthBelowMin])
 
   return (
     <group>

@@ -71,16 +71,22 @@ const FRAGMENT = /* glsl */ `
     vec3 ironstone = vec3(0.404, 0.361, 0.263);
     vec3 claySubsoil = vec3(0.447, 0.302, 0.169);
     vec3 laterite = vec3(0.584, 0.267, 0.145);
+    // Thin dark root/topsoil crust right under the surface — a band most
+    // real cuttings show, and a clean visual stop so the wall doesn't just
+    // fade into the terrain texture above it.
+    vec3 topsoil = vec3(0.129, 0.102, 0.078);
 
     vec3 color;
-    if (band < 0.22) {
-      color = mix(basalt, clayGrey, smoothstep(0.0, 0.22, band));
-    } else if (band < 0.45) {
-      color = mix(clayGrey, ironstone, smoothstep(0.22, 0.45, band));
-    } else if (band < 0.7) {
-      color = mix(ironstone, claySubsoil, smoothstep(0.45, 0.7, band));
+    if (band < 0.2) {
+      color = mix(basalt, clayGrey, smoothstep(0.0, 0.2, band));
+    } else if (band < 0.42) {
+      color = mix(clayGrey, ironstone, smoothstep(0.2, 0.42, band));
+    } else if (band < 0.64) {
+      color = mix(ironstone, claySubsoil, smoothstep(0.42, 0.64, band));
+    } else if (band < 0.93) {
+      color = mix(claySubsoil, laterite, smoothstep(0.64, 0.93, band));
     } else {
-      color = mix(claySubsoil, laterite, smoothstep(0.7, 1.0, band));
+      color = mix(laterite, topsoil, smoothstep(0.93, 1.0, band));
     }
 
     // Fine speckle for a little grain/texture without a real texture map.

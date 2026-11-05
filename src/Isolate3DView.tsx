@@ -1,10 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import './terrain3d/Isolate3D.css'
-import { loadTerrainContext } from './terrain3d/terrainContext'
+import { BOUNDARY_LOCAL, BOUNDARY_LOCAL_BOUNDS, loadTerrainContext } from './terrain3d/terrainContext'
 import { buildTerrainTextures, type TerrainTextures } from './terrain3d/satelliteTexture'
 import Scene from './terrain3d/Scene'
+import NavigationHUD from './terrain3d/NavigationHUD'
+import { MIN_POLAR_ANGLE, MAX_POLAR_ANGLE } from './terrain3d/CameraRig'
+import type { CameraOrientation, CameraRigHandle } from './terrain3d/CameraRig'
 import type { TerrainContext } from './terrain3d/terrainContext'
 import type { Landmark } from './landmarks'
 
@@ -15,6 +18,7 @@ interface Props {
 }
 
 const DEFAULT_EXAGGERATION = 2.75
+const DEFAULT_CANOPY_EXAGGERATION = 1.75
 const DEFAULT_SUN_AZIMUTH = 55
 const DEFAULT_SUN_ELEVATION = 28
 
@@ -31,9 +35,18 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark }: 
   const [textures, setTextures] = useState<TerrainTextures | null>(null)
   const [loadError, setLoadError] = useState(false)
   const [exaggeration, setExaggeration] = useState(DEFAULT_EXAGGERATION)
+  const [canopyExaggeration, setCanopyExaggeration] = useState(DEFAULT_CANOPY_EXAGGERATION)
   const [sunAzimuth, setSunAzimuth] = useState(DEFAULT_SUN_AZIMUTH)
   const [sunElevation, setSunElevation] = useState(DEFAULT_SUN_ELEVATION)
   const [resetToken, setResetToken] = useState(0)
+
+  const cameraRigRef = useRef<CameraRigHandle>(null)
+  // Matches Scene.tsx's own settledPosition default (azimuth 35°, elevation
+  // 48°) so the compass/minimap read something sane on the very first frame,
+  // before CameraRig's own useFrame has written a real value.
+  const orientationRef = useRef<CameraOrientation>({ azimuthDeg: 35, elevationDeg: 48, distance: 0 })
+  const minElevationDeg = 90 - THREE.MathUtils.radToDeg(MAX_POLAR_ANGLE)
+  const maxElevationDeg = 90 - THREE.MathUtils.radToDeg(MIN_POLAR_ANGLE)
 
   const isMobile = useMemo(() => {
     try {
@@ -105,7 +118,7 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark }: 
           <div className="isolate3d-canvas-wrap">
             <Canvas
               shadows
-              dpr={[1, isMobile ? 1.5 : 2]}
+              dpr={Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2)}
               gl={{ antialias: false, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.1 }}
               camera={{ near: 1, far: 20000, fov: 50 }}
             >
@@ -113,15 +126,27 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark }: 
                 terrain={terrain}
                 textures={textures}
                 exaggeration={exaggeration}
+                canopyExaggeration={canopyExaggeration}
                 sunAzimuthDeg={sunAzimuth}
                 sunElevationDeg={sunElevation}
                 isMobile={isMobile}
                 resetToken={resetToken}
                 landmarks={landmarks}
                 onSelectLandmark={onSelectLandmark}
+                cameraRigRef={cameraRigRef}
+                orientationRef={orientationRef}
               />
             </Canvas>
           </div>
+
+          <NavigationHUD
+            cameraApi={cameraRigRef}
+            orientationRef={orientationRef}
+            boundaryLocal={BOUNDARY_LOCAL}
+            boundaryBounds={BOUNDARY_LOCAL_BOUNDS}
+            minElevationDeg={minElevationDeg}
+            maxElevationDeg={maxElevationDeg}
+          />
 
           <div className="isolate3d-panel">
             <p className="isolate3d-panel-title">Vue plateforme 3D</p>
@@ -137,6 +162,20 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark }: 
                 step={0.1}
                 value={exaggeration}
                 onChange={(e) => setExaggeration(Number(e.target.value))}
+              />
+            </label>
+            <label className="isolate3d-slider-row">
+              <span className="isolate3d-slider-label">
+                <span>Hauteur de la canopée</span>
+                <span>{canopyExaggeration.toFixed(1)}×</span>
+              </span>
+              <input
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={canopyExaggeration}
+                onChange={(e) => setCanopyExaggeration(Number(e.target.value))}
               />
             </label>
             <label className="isolate3d-slider-row">
