@@ -78,7 +78,6 @@
   z-index: 2;
   width: 240px;
   max-width: calc(100vw - 32px);
-  padding: 14px 16px;
   border-radius: 14px;
   background: rgba(20, 16, 10, 0.72);
   backdrop-filter: blur(10px);
@@ -86,15 +85,40 @@
   color: #f2ede2;
   font-family: var(--font-body);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
 }
 
-.isolate3d-panel-title {
+.isolate3d-panel-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 11px 16px;
+  background: transparent;
+  border: none;
+  color: #f2ede2;
   font-family: var(--font-display, inherit);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  opacity: 0.75;
-  margin: 0 0 10px;
+  opacity: 0.85;
+  cursor: pointer;
+}
+
+.isolate3d-panel-toggle:hover {
+  opacity: 1;
+}
+
+/* Collapsed: just the toggle row stays, the sliders/reset button underneath
+   are unmounted rather than hidden, so this panel can take up almost no
+   room on a small screen — the point the user asked for. */
+.isolate3d-panel-collapsed {
+  width: auto;
+}
+
+.isolate3d-panel-content {
+  padding: 12px 16px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .isolate3d-slider-row {
