@@ -56,7 +56,11 @@ async function buildOne(productId, file) {
 
   const image = sharp(srcPath)
   const metadata = await image.metadata()
-  const transparent = metadata.hasAlpha === true
+  let transparent = false
+  if (metadata.hasAlpha) {
+    const { channels } = await image.stats()
+    transparent = channels[channels.length - 1].min < 255
+  }
 
   const thumbName = `${colorId}-${view}-thumb.webp`
   const fullName = `${colorId}-${view}-full.webp`
