@@ -1,4 +1,70 @@
 {
+  "casquette": {
+    "blanc": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/casquette/blanc-face-thumb.webp",
+          "w": 640,
+          "h": 640
+        },
+        "full": {
+          "src": "merch-optimized/casquette/blanc-face-full.webp",
+          "w": 1600,
+          "h": 1600
+        }
+      }
+    ],
+    "noir": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/casquette/noir-face-thumb.webp",
+          "w": 360,
+          "h": 360
+        },
+        "full": {
+          "src": "merch-optimized/casquette/noir-face-full.webp",
+          "w": 360,
+          "h": 360
+        }
+      }
+    ],
+    "sable": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/casquette/sable-face-thumb.webp",
+          "w": 640,
+          "h": 546
+        },
+        "full": {
+          "src": "merch-optimized/casquette/sable-face-full.webp",
+          "w": 1600,
+          "h": 1366
+        }
+      }
+    ],
+    "vert": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/casquette/vert-face-thumb.webp",
+          "w": 640,
+          "h": 640
+        },
+        "full": {
+          "src": "merch-optimized/casquette/vert-face-full.webp",
+          "w": 1600,
+          "h": 1600
+        }
+      }
+    ]
+  },
   "golf": {
     "blanc": [
       {
@@ -11,6 +77,38 @@
         },
         "full": {
           "src": "merch-optimized/golf/blanc-face-full.webp",
+          "w": 1600,
+          "h": 1600
+        }
+      }
+    ],
+    "jaune": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/golf/jaune-face-thumb.webp",
+          "w": 640,
+          "h": 640
+        },
+        "full": {
+          "src": "merch-optimized/golf/jaune-face-full.webp",
+          "w": 1600,
+          "h": 1600
+        }
+      }
+    ],
+    "rose": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/golf/rose-face-thumb.webp",
+          "w": 640,
+          "h": 640
+        },
+        "full": {
+          "src": "merch-optimized/golf/rose-face-full.webp",
           "w": 1600,
           "h": 1600
         }
@@ -29,6 +127,22 @@
         },
         "full": {
           "src": "merch-optimized/gourde/argent-face-full.webp",
+          "w": 1600,
+          "h": 1600
+        }
+      }
+    ],
+    "blanc": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/gourde/blanc-face-thumb.webp",
+          "w": 640,
+          "h": 640
+        },
+        "full": {
+          "src": "merch-optimized/gourde/blanc-face-full.webp",
           "w": 1600,
           "h": 1600
         }
@@ -100,6 +214,36 @@
         }
       }
     ],
+    "gris": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/polo/gris-face-thumb.webp",
+          "w": 640,
+          "h": 982
+        },
+        "full": {
+          "src": "merch-optimized/polo/gris-face-full.webp",
+          "w": 1126,
+          "h": 1728
+        }
+      },
+      {
+        "view": "dos",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/polo/gris-dos-thumb.webp",
+          "w": 640,
+          "h": 982
+        },
+        "full": {
+          "src": "merch-optimized/polo/gris-dos-full.webp",
+          "w": 1126,
+          "h": 1728
+        }
+      }
+    ],
     "noir": [
       {
         "view": "face",
@@ -127,6 +271,40 @@
           "src": "merch-optimized/polo/noir-dos-full.webp",
           "w": 1126,
           "h": 1728
+        }
+      }
+    ]
+  },
+  "tablier": {
+    "kaki": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/tablier/kaki-face-thumb.webp",
+          "w": 640,
+          "h": 636
+        },
+        "full": {
+          "src": "merch-optimized/tablier/kaki-face-full.webp",
+          "w": 1600,
+          "h": 1591
+        }
+      }
+    ],
+    "noir": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/tablier/noir-face-thumb.webp",
+          "w": 640,
+          "h": 636
+        },
+        "full": {
+          "src": "merch-optimized/tablier/noir-face-full.webp",
+          "w": 1600,
+          "h": 1591
         }
       }
     ]
