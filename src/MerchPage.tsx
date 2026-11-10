@@ -29,11 +29,7 @@ const PLACEHOLDER_ITEMS: PlaceholderItem[] = [
   { id: 'mug', name: 'Mug en grès', icon: 'mug' },
 ]
 
-// The client's Formspree form endpoint (https://formspree.io/f/xxxxxxxx,
-// from their dashboard after creating a form — no code on their end).
-// Empty until that's set up, in which case the form explains orders
-// aren't open yet instead of silently failing.
-const ORDER_FORM_ENDPOINT = ''
+const ORDER_FORM_ENDPOINT = 'https://formspree.io/f/xjyynreq'
 
 const JUICE_PHONE = '5812 3094'
 
