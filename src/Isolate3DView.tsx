@@ -39,6 +39,7 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark }: 
   const [sunAzimuth, setSunAzimuth] = useState(DEFAULT_SUN_AZIMUTH)
   const [sunElevation, setSunElevation] = useState(DEFAULT_SUN_ELEVATION)
   const [resetToken, setResetToken] = useState(0)
+  const [panelCollapsed, setPanelCollapsed] = useState(false)
 
   const cameraRigRef = useRef<CameraRigHandle>(null)
   // Matches Scene.tsx's own settledPosition default (azimuth 35°, elevation
@@ -148,67 +149,80 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark }: 
             maxElevationDeg={maxElevationDeg}
           />
 
-          <div className="isolate3d-panel">
-            <p className="isolate3d-panel-title">Vue plateforme 3D</p>
-            <label className="isolate3d-slider-row">
-              <span className="isolate3d-slider-label">
-                <span>Exagération du relief</span>
-                <span>{exaggeration.toFixed(1)}×</span>
-              </span>
-              <input
-                type="range"
-                min={1}
-                max={6}
-                step={0.1}
-                value={exaggeration}
-                onChange={(e) => setExaggeration(Number(e.target.value))}
-              />
-            </label>
-            <label className="isolate3d-slider-row">
-              <span className="isolate3d-slider-label">
-                <span>Hauteur de la canopée</span>
-                <span>{canopyExaggeration.toFixed(1)}×</span>
-              </span>
-              <input
-                type="range"
-                min={1}
-                max={3}
-                step={0.1}
-                value={canopyExaggeration}
-                onChange={(e) => setCanopyExaggeration(Number(e.target.value))}
-              />
-            </label>
-            <label className="isolate3d-slider-row">
-              <span className="isolate3d-slider-label">
-                <span>Angle du soleil</span>
-                <span>{Math.round(sunElevation)}°</span>
-              </span>
-              <input
-                type="range"
-                min={8}
-                max={75}
-                step={1}
-                value={sunElevation}
-                onChange={(e) => setSunElevation(Number(e.target.value))}
-              />
-            </label>
-            <label className="isolate3d-slider-row">
-              <span className="isolate3d-slider-label">
-                <span>Orientation du soleil</span>
-                <span>{Math.round(sunAzimuth)}°</span>
-              </span>
-              <input
-                type="range"
-                min={0}
-                max={359}
-                step={1}
-                value={sunAzimuth}
-                onChange={(e) => setSunAzimuth(Number(e.target.value))}
-              />
-            </label>
-            <button type="button" className="isolate3d-reset-button" onClick={() => setResetToken((n) => n + 1)}>
-              Réinitialiser la vue
+          <div className={`isolate3d-panel ${panelCollapsed ? 'isolate3d-panel-collapsed' : ''}`}>
+            <button
+              type="button"
+              className="isolate3d-panel-toggle"
+              onClick={() => setPanelCollapsed((c) => !c)}
+              aria-label={panelCollapsed ? 'Afficher les réglages' : 'Masquer les réglages'}
+              aria-expanded={!panelCollapsed}
+            >
+              <span>Vue plateforme 3D</span>
+              <span aria-hidden="true">{panelCollapsed ? '▲' : '▼'}</span>
             </button>
+            {!panelCollapsed && (
+              <div className="isolate3d-panel-content">
+                <label className="isolate3d-slider-row">
+                  <span className="isolate3d-slider-label">
+                    <span>Exagération du relief</span>
+                    <span>{exaggeration.toFixed(1)}×</span>
+                  </span>
+                  <input
+                    type="range"
+                    min={1}
+                    max={6}
+                    step={0.1}
+                    value={exaggeration}
+                    onChange={(e) => setExaggeration(Number(e.target.value))}
+                  />
+                </label>
+                <label className="isolate3d-slider-row">
+                  <span className="isolate3d-slider-label">
+                    <span>Hauteur de la canopée</span>
+                    <span>{canopyExaggeration.toFixed(1)}×</span>
+                  </span>
+                  <input
+                    type="range"
+                    min={1}
+                    max={3}
+                    step={0.1}
+                    value={canopyExaggeration}
+                    onChange={(e) => setCanopyExaggeration(Number(e.target.value))}
+                  />
+                </label>
+                <label className="isolate3d-slider-row">
+                  <span className="isolate3d-slider-label">
+                    <span>Angle du soleil</span>
+                    <span>{Math.round(sunElevation)}°</span>
+                  </span>
+                  <input
+                    type="range"
+                    min={8}
+                    max={75}
+                    step={1}
+                    value={sunElevation}
+                    onChange={(e) => setSunElevation(Number(e.target.value))}
+                  />
+                </label>
+                <label className="isolate3d-slider-row">
+                  <span className="isolate3d-slider-label">
+                    <span>Orientation du soleil</span>
+                    <span>{Math.round(sunAzimuth)}°</span>
+                  </span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={359}
+                    step={1}
+                    value={sunAzimuth}
+                    onChange={(e) => setSunAzimuth(Number(e.target.value))}
+                  />
+                </label>
+                <button type="button" className="isolate3d-reset-button" onClick={() => setResetToken((n) => n + 1)}>
+                  Réinitialiser la vue
+                </button>
+              </div>
+            )}
           </div>
         </>
       )}
