@@ -15,9 +15,10 @@ import iconTimeTravel from './assets/branding/icon-time-travel.png'
 import iconDistances from './assets/branding/icon-distances.png'
 import iconMiradors from './assets/branding/icon-miradors.png'
 import iconHallOfFame from './assets/branding/icon-hall-of-fame.png'
-import iconSeeMore from './assets/branding/icon-see-more.png'
+import iconDisplay from './assets/branding/icon-see-more.png'
+import iconServices from './assets/branding/icon-services.svg'
 
-export type SectionKey = 'weather' | 'timeTravel' | 'distances' | 'miradors' | 'hallOfFame' | 'more'
+export type SectionKey = 'weather' | 'timeTravel' | 'distances' | 'miradors' | 'hallOfFame' | 'display' | 'services'
 
 interface Props {
   landmarks: Landmark[]
@@ -71,7 +72,8 @@ const SECTIONS: { key: SectionKey; icon: string; label: string; shortLabel: stri
   { key: 'distances', icon: iconDistances, label: 'Distances', shortLabel: 'Distances', color: '#a9713f' },
   { key: 'miradors', icon: iconMiradors, label: 'Miradors', shortLabel: 'Miradors', color: '#5fae6e' },
   { key: 'hallOfFame', icon: iconHallOfFame, label: 'Hall of Fame', shortLabel: 'Palmarès', color: '#e0ac2b' },
-  { key: 'more', icon: iconSeeMore, label: 'Plus', shortLabel: 'Plus', color: '#a259c4' },
+  { key: 'display', icon: iconDisplay, label: 'Affichage', shortLabel: 'Affichage', color: '#a259c4' },
+  { key: 'services', icon: iconServices, label: 'Services', shortLabel: 'Services', color: '#2f9e8f' },
 ]
 
 function ControlGroup({ label, children }: { label?: string; children: ReactNode }) {
@@ -427,7 +429,7 @@ export default function ControlsPanel({
           </ControlGroup>
         )}
 
-        {activeSection === 'more' && (
+        {activeSection === 'display' && (
           <>
             <ControlGroup label="Fond de carte">
               <div className="button-row">
@@ -442,12 +444,6 @@ export default function ControlsPanel({
                   </button>
                 ))}
               </div>
-            </ControlGroup>
-
-            <ControlGroup>
-              <button className="action-button" onClick={onToggleTour} disabled={landmarkTourActive}>
-                {tourRunning ? 'Arrêter la visite' : 'Démarrer la visite aérienne'}
-              </button>
             </ControlGroup>
 
             <ControlGroup label="Terrain">
@@ -505,13 +501,15 @@ export default function ControlsPanel({
                 <span>Lieux remarquables &amp; coraux</span>
               </label>
             </ControlGroup>
+          </>
+        )}
 
-            <ControlGroup label="La Boutique">
-              <div className="boutique-info">
-                <span>Lun-Ven : 9h–15h</span>
-                <span>Sam : 9h–11h</span>
-                <span className="hint">Autres informations à venir</span>
-              </div>
+        {activeSection === 'services' && (
+          <>
+            <ControlGroup>
+              <button className="action-button" onClick={onToggleTour} disabled={landmarkTourActive}>
+                {tourRunning ? 'Arrêter la visite' : 'Démarrer la visite aérienne'}
+              </button>
             </ControlGroup>
 
             <ControlGroup label="Partager">
@@ -539,6 +537,14 @@ export default function ControlsPanel({
                   )}
                 </div>
               )}
+            </ControlGroup>
+
+            <ControlGroup label="La Boutique">
+              <div className="boutique-info">
+                <span>Lun-Ven : 9h–15h</span>
+                <span>Sam : 9h–11h</span>
+                <span className="hint">Autres informations à venir</span>
+              </div>
             </ControlGroup>
           </>
         )}

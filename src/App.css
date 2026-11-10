@@ -779,6 +779,14 @@
   gap: 8px;
 }
 
+/* With 7 sections the last row holds a single tile — center it under the
+   row above instead of leaving it stranded in the left column. Generic for
+   any section count that lands the same way (matches only when the last
+   item also starts a row). */
+.panel-icon-tabs > :last-child:nth-child(3n + 1) {
+  grid-column: 2;
+}
+
 .panel-icon-tab {
   position: relative;
   display: flex;
