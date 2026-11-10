@@ -6,15 +6,14 @@ import './Merch.css'
 /**
  * Beta preview of the branded merchandise sold in person at La Boutique
  * (see the "Services" tab's shop-hours note), now with a lightweight order
- * form: visitors pick an item and submit their details, which are appended
- * as a row to a Google Sheet via a small Apps Script web app (no backend of
- * our own — see scripts/merch-order-sheet.gs for the script and setup
- * steps). Payment itself isn't processed on the site: the form just
- * displays MCB Juice / bank transfer instructions and collects a reference,
- * and the client confirms payment and places the print order with whichever
- * local supplier they choose, tracked from that same sheet. Items are still
- * placeholders (no real photos/names/prices yet) until the client provides
- * the actual lineup.
+ * form: visitors pick an item and submit their details, which land in the
+ * client's Formspree dashboard (and inbox) — no backend of our own. Payment
+ * itself isn't processed on the site: the form just displays MCB Juice /
+ * bank transfer instructions and collects a reference, and the client
+ * confirms payment and places the print order with whichever local
+ * Mauritian supplier they choose, tracked from that same dashboard. Items
+ * are still placeholders (no real photos/names/prices yet) until the
+ * client provides the actual lineup.
  */
 
 interface PlaceholderItem {
@@ -30,11 +29,11 @@ const PLACEHOLDER_ITEMS: PlaceholderItem[] = [
   { id: 'mug', name: 'Mug en grès', icon: 'mug' },
 ]
 
-// Deployed from scripts/merch-order-sheet.gs — see that file's header
-// comment for the one-time Google Sheet + Apps Script setup steps. Empty
-// until that's deployed, in which case the form explains orders aren't
-// open yet instead of silently failing.
-const ORDER_SHEET_WEBHOOK_URL = ''
+// The client's Formspree form endpoint (https://formspree.io/f/xxxxxxxx,
+// from their dashboard after creating a form — no code on their end).
+// Empty until that's set up, in which case the form explains orders
+// aren't open yet instead of silently failing.
+const ORDER_FORM_ENDPOINT = ''
 
 const JUICE_PHONE = '5812 3094'
 
@@ -105,17 +104,15 @@ function OrderForm({ item, onClose }: OrderFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!canSubmit) return
-    if (!ORDER_SHEET_WEBHOOK_URL) {
+    if (!ORDER_FORM_ENDPOINT) {
       setStatus('error')
       return
     }
     setStatus('submitting')
     try {
-      // text/plain avoids a CORS preflight the Apps Script web app can't
-      // answer — the script still reads and JSON.parses the raw body.
-      await fetch(ORDER_SHEET_WEBHOOK_URL, {
+      const res = await fetch(ORDER_FORM_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           item: item.name,
           quantity,
@@ -127,7 +124,7 @@ function OrderForm({ item, onClose }: OrderFormProps) {
           paymentReference,
         }),
       })
-      setStatus('sent')
+      setStatus(res.ok ? 'sent' : 'error')
     } catch {
       setStatus('error')
     }
@@ -228,7 +225,7 @@ function OrderForm({ item, onClose }: OrderFormProps) {
 
       {status === 'error' && (
         <p className="merch-order-error">
-          {ORDER_SHEET_WEBHOOK_URL
+          {ORDER_FORM_ENDPOINT
             ? "Une erreur est survenue, merci de réessayer ou de nous contacter directement."
             : "Les commandes en ligne ne sont pas encore ouvertes — merci de passer à La Boutique."}
         </p>
