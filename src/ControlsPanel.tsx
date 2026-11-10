@@ -23,13 +23,12 @@ import {
 import logoWolmar from './assets/branding/logo-wolmar-small.png'
 import iconWeather from './assets/branding/icon-weather.png'
 import iconTimeTravel from './assets/branding/icon-time-travel.png'
-import iconDistances from './assets/branding/icon-distances.png'
 import iconMiradors from './assets/branding/icon-miradors.png'
 import iconHallOfFame from './assets/branding/icon-hall-of-fame.png'
 import iconDisplay from './assets/branding/icon-see-more.png'
 import iconServices from './assets/branding/icon-services.svg'
 
-export type SectionKey = 'weather' | 'timeTravel' | 'distances' | 'miradors' | 'hallOfFame' | 'display' | 'services'
+export type SectionKey = 'weather' | 'timeTravel' | 'miradors' | 'hallOfFame' | 'display' | 'services'
 
 interface Props {
   landmarks: Landmark[]
@@ -80,11 +79,10 @@ interface Props {
 const SECTIONS: { key: SectionKey; icon: string; label: string; shortLabel: string; color: string }[] = [
   { key: 'weather', icon: iconWeather, label: 'Météo', shortLabel: 'Météo', color: '#4aa3d8' },
   { key: 'timeTravel', icon: iconTimeTravel, label: 'Voyage dans le temps', shortLabel: 'Historique', color: '#c4a339' },
-  { key: 'distances', icon: iconDistances, label: 'Distances', shortLabel: 'Distances', color: '#a9713f' },
   { key: 'miradors', icon: iconMiradors, label: 'Miradors', shortLabel: 'Miradors', color: '#5fae6e' },
   { key: 'hallOfFame', icon: iconHallOfFame, label: 'Hall of Fame', shortLabel: 'Palmarès', color: '#e0ac2b' },
   { key: 'display', icon: iconDisplay, label: 'Affichage', shortLabel: 'Affichage', color: '#a259c4' },
-  { key: 'services', icon: iconServices, label: 'Services', shortLabel: 'Services', color: '#2f9e8f' },
+  { key: 'services', icon: iconServices, label: 'Boutique', shortLabel: 'Boutique', color: '#2f9e8f' },
 ]
 
 const BASEMAP_ACCENT: Record<BasemapStyle, string> = {
@@ -314,69 +312,6 @@ export default function ControlsPanel({
           </ControlGroup>
         )}
 
-        {activeSection === 'distances' && (
-          <ControlGroup>
-            <button
-              className={`action-button ${measureActive ? 'chip-active' : ''}`}
-              onClick={onToggleMeasure}
-              disabled={tourRunning || landmarkTourActive}
-            >
-              {measureActive ? 'Quitter le mode mesure' : 'Mesurer une distance'}
-            </button>
-            {measureActive && measurePointCount === 0 && (
-              <span className="hint">Cliquez sur le terrain pour tracer un parcours</span>
-            )}
-            {measureActive && measurePointCount > 0 && !measureClosed && (
-              <div className="button-row">
-                <button className="clear-button" onClick={onUndoMeasurePoint}>
-                  Annuler le point
-                </button>
-                {measurePointCount >= 3 && (
-                  <button className="clear-button" onClick={onCloseMeasureLoop}>
-                    Fermer la boucle
-                  </button>
-                )}
-              </div>
-            )}
-            {measureResult && (
-              <div className="measure-result">
-                <div>
-                  {measureClosed ? 'Périmètre' : 'Longueur'} : {formatDistance(measureResult.distanceMeters)}
-                </div>
-                {measureResult.areaSquareMeters !== null && (
-                  <div>
-                    <span>Surface : </span>
-                    <div className="area-chip-row">
-                      {(() => {
-                        const units = formatAreaUnits(measureResult.areaSquareMeters)
-                        return (
-                          <>
-                            <span className="area-chip" title="Perches (Île Maurice, 1 perche ≈ 42,21 m²)">
-                              {units.perches} perches
-                            </span>
-                            <span className="area-chip" title="Pieds carrés">
-                              {units.ft2} pi²
-                            </span>
-                          </>
-                        )
-                      })()}
-                    </div>
-                  </div>
-                )}
-                <div>
-                  Dénivelé :{' '}
-                  {measureResult.elevationDeltaMeters === null
-                    ? 'indisponible'
-                    : `${Math.round(measureResult.elevationDeltaMeters)} m`}
-                </div>
-                <button className="clear-button" onClick={onClearMeasure}>
-                  Effacer
-                </button>
-              </div>
-            )}
-          </ControlGroup>
-        )}
-
         {activeSection === 'miradors' && (
           <>
             <ControlGroup label="Rechercher une chute ou un point d'intérêt">
@@ -547,6 +482,67 @@ export default function ControlsPanel({
                   accent="#2f9e8f"
                 />
               </div>
+            </ControlGroup>
+
+            <ControlGroup label="Distances">
+              <button
+                className={`action-button ${measureActive ? 'chip-active' : ''}`}
+                onClick={onToggleMeasure}
+                disabled={tourRunning || landmarkTourActive}
+              >
+                {measureActive ? 'Quitter le mode mesure' : 'Mesurer une distance'}
+              </button>
+              {measureActive && measurePointCount === 0 && (
+                <span className="hint">Cliquez sur le terrain pour tracer un parcours</span>
+              )}
+              {measureActive && measurePointCount > 0 && !measureClosed && (
+                <div className="button-row">
+                  <button className="clear-button" onClick={onUndoMeasurePoint}>
+                    Annuler le point
+                  </button>
+                  {measurePointCount >= 3 && (
+                    <button className="clear-button" onClick={onCloseMeasureLoop}>
+                      Fermer la boucle
+                    </button>
+                  )}
+                </div>
+              )}
+              {measureResult && (
+                <div className="measure-result">
+                  <div>
+                    {measureClosed ? 'Périmètre' : 'Longueur'} : {formatDistance(measureResult.distanceMeters)}
+                  </div>
+                  {measureResult.areaSquareMeters !== null && (
+                    <div>
+                      <span>Surface : </span>
+                      <div className="area-chip-row">
+                        {(() => {
+                          const units = formatAreaUnits(measureResult.areaSquareMeters)
+                          return (
+                            <>
+                              <span className="area-chip" title="Perches (Île Maurice, 1 perche ≈ 42,21 m²)">
+                                {units.perches} perches
+                              </span>
+                              <span className="area-chip" title="Pieds carrés">
+                                {units.ft2} pi²
+                              </span>
+                            </>
+                          )
+                        })()}
+                      </div>
+                    </div>
+                  )}
+                  <div>
+                    Dénivelé :{' '}
+                    {measureResult.elevationDeltaMeters === null
+                      ? 'indisponible'
+                      : `${Math.round(measureResult.elevationDeltaMeters)} m`}
+                  </div>
+                  <button className="clear-button" onClick={onClearMeasure}>
+                    Effacer
+                  </button>
+                </div>
+              )}
             </ControlGroup>
           </>
         )}
