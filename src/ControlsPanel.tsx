@@ -9,6 +9,17 @@ import WindCompass from './WindCompass'
 import WeatherIcon, { SunriseIcon, SunsetIcon } from './WeatherIcon'
 import WindForecastChart from './WindForecastChart'
 import PasscodeGate from './PasscodeGate'
+import {
+  ToggleIconButton,
+  SlopeContrastIcon,
+  BoundaryIcon,
+  DrawnMapIcon,
+  LandmarkIcon,
+  SatelliteIcon,
+  MapIcon,
+  HybridIcon,
+  TerrainIcon,
+} from './ToggleIconButton'
 import logoWolmar from './assets/branding/logo-wolmar-small.png'
 import iconWeather from './assets/branding/icon-weather.png'
 import iconTimeTravel from './assets/branding/icon-time-travel.png'
@@ -75,6 +86,26 @@ const SECTIONS: { key: SectionKey; icon: string; label: string; shortLabel: stri
   { key: 'display', icon: iconDisplay, label: 'Affichage', shortLabel: 'Affichage', color: '#a259c4' },
   { key: 'services', icon: iconServices, label: 'Services', shortLabel: 'Services', color: '#2f9e8f' },
 ]
+
+const BASEMAP_ACCENT: Record<BasemapStyle, string> = {
+  satellite: '#4aa3d8',
+  map: '#a9713f',
+  hybrid: '#a259c4',
+  terrain: '#5fae6e',
+}
+
+function BasemapIcon({ value }: { value: BasemapStyle }) {
+  switch (value) {
+    case 'satellite':
+      return <SatelliteIcon />
+    case 'map':
+      return <MapIcon />
+    case 'hybrid':
+      return <HybridIcon />
+    case 'terrain':
+      return <TerrainIcon />
+  }
+}
 
 function ControlGroup({ label, children }: { label?: string; children: ReactNode }) {
   return (
@@ -432,16 +463,18 @@ export default function ControlsPanel({
         {activeSection === 'display' && (
           <>
             <ControlGroup label="Fond de carte">
-              <div className="button-row">
+              <div className="toggle-icon-row toggle-icon-row-pill">
                 {basemapOptions.map((opt) => (
-                  <button
+                  <ToggleIconButton
                     key={opt.value}
-                    className={`chip ${basemap === opt.value ? 'chip-active' : ''}`}
+                    icon={<BasemapIcon value={opt.value} />}
+                    label={opt.label}
+                    active={basemap === opt.value}
                     onClick={() => onBasemapChange(opt.value)}
+                    accent={BASEMAP_ACCENT[opt.value]}
                     disabled={tourRunning || landmarkTourActive}
-                  >
-                    {opt.label}
-                  </button>
+                    pill
+                  />
                 ))}
               </div>
             </ControlGroup>
@@ -462,25 +495,31 @@ export default function ControlsPanel({
                   <span className="hint">Survolez le terrain</span>
                 )}
               </div>
-              <button
-                className={`action-button ${slopeContrast ? 'chip-active' : ''}`}
-                onClick={onToggleSlopeContrast}
-              >
-                {slopeContrast ? "Afficher l'ombrage normal" : 'Accentuer le contraste des pentes'}
-              </button>
+              <div className="toggle-icon-row">
+                <ToggleIconButton
+                  icon={<SlopeContrastIcon />}
+                  label="Contraste des pentes"
+                  active={slopeContrast}
+                  onClick={onToggleSlopeContrast}
+                  accent="#d9824a"
+                />
+              </div>
               {slopeContrast && (
                 <span className="hint">Les terrains plus pentus apparaissent plus rouges/sombres lors du survol</span>
               )}
             </ControlGroup>
 
             <ControlGroup>
-              <button
-                className={`action-button ${showOverlay ? 'chip-active' : ''}`}
-                onClick={onToggleOverlay}
-                disabled={tourRunning}
-              >
-                {showOverlay ? 'Masquer le contour du domaine' : 'Afficher le contour du domaine'}
-              </button>
+              <div className="toggle-icon-row">
+                <ToggleIconButton
+                  icon={<BoundaryIcon />}
+                  label="Contour du domaine"
+                  active={showOverlay}
+                  onClick={onToggleOverlay}
+                  accent="#4a90d9"
+                  disabled={tourRunning}
+                />
+              </div>
               {showOverlay && (
                 <div className="legend">
                   <div className="legend-row">
@@ -492,14 +531,22 @@ export default function ControlsPanel({
             </ControlGroup>
 
             <ControlGroup label="Couches">
-              <label className="layer-toggle-row">
-                <input type="checkbox" checked={showDrawnMap} onChange={onToggleDrawnMap} />
-                <span>Carte dessinée</span>
-              </label>
-              <label className="layer-toggle-row">
-                <input type="checkbox" checked={showSitePois} onChange={onToggleSitePois} />
-                <span>Lieux remarquables &amp; coraux</span>
-              </label>
+              <div className="toggle-icon-row">
+                <ToggleIconButton
+                  icon={<DrawnMapIcon />}
+                  label="Carte dessinée"
+                  active={showDrawnMap}
+                  onClick={onToggleDrawnMap}
+                  accent="#c4a339"
+                />
+                <ToggleIconButton
+                  icon={<LandmarkIcon />}
+                  label="Lieux remarquables & coraux"
+                  active={showSitePois}
+                  onClick={onToggleSitePois}
+                  accent="#2f9e8f"
+                />
+              </div>
             </ControlGroup>
           </>
         )}
