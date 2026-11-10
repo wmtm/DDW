@@ -73,18 +73,51 @@ async function loadImage(url: string): Promise<HTMLImageElement | null> {
   })
 }
 
+const TILE_RETRY_BACKOFF_MS = 500
+
 /**
  * One retry for a tile that times out or errors — with 500+ tiles fetched
- * in parallel for a sharp texture, a handful failing on the first attempt
- * (rate limiting, a dropped connection) is normal; without a retry, each
- * failure used to leave a literal transparent hole in the stitched canvas,
- * which rendered as a solid black patch (the texture has no alpha
- * blending, so a 0-alpha pixel's black RGB shows through untouched).
+ * for a sharp texture, a handful failing on the first attempt (rate
+ * limiting, a dropped connection) is normal; without a retry, each failure
+ * used to leave a literal transparent hole in the stitched canvas, which
+ * rendered as a solid black patch (the texture has no alpha blending, so a
+ * 0-alpha pixel's black RGB shows through untouched) — later changed to a
+ * flat fallback-color patch instead of black (see FALLBACK_COLOR below),
+ * but a visible flat square either way.
+ *
+ * If the first failure was itself a burst-rate-limit response, retrying
+ * instantly just resubmits into the same limited window — a short backoff
+ * gives it a chance to actually clear. See runWithConcurrencyLimit for the
+ * other half of this: capping how many tiles are even in flight at once,
+ * so a 500+-tile fetch doesn't look like a burst to the API in the first
+ * place.
  */
 async function loadImageWithRetry(url: string): Promise<HTMLImageElement | null> {
   const first = await loadImage(url)
   if (first) return first
+  await new Promise((resolve) => setTimeout(resolve, TILE_RETRY_BACKOFF_MS))
   return loadImage(url)
+}
+
+const TILE_FETCH_CONCURRENCY = 16
+
+/**
+ * Runs `tasks` with at most `limit` in flight at once, rather than firing
+ * all of them in parallel — see loadImageWithRetry's docstring for why an
+ * unbounded burst of 500+ simultaneous tile requests is the likely cause
+ * of tiles failing (and then failing their retry too) in the first place.
+ */
+async function runWithConcurrencyLimit<T>(tasks: (() => Promise<T>)[], limit: number): Promise<T[]> {
+  const results: T[] = new Array(tasks.length)
+  let nextIndex = 0
+  async function worker() {
+    while (nextIndex < tasks.length) {
+      const i = nextIndex++
+      results[i] = await tasks[i]()
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, tasks.length) }, worker))
+  return results
 }
 
 interface StitchResult {
@@ -119,21 +152,20 @@ async function stitchSatelliteTiles(
   ctx.fillStyle = FALLBACK_COLOR
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-  const loads: Promise<void>[] = []
   let loadedAny = false
+  const tasks: (() => Promise<void>)[] = []
   for (let ty = y0; ty <= y1; ty++) {
     for (let tx = x0; tx <= x1; tx++) {
       const url = `https://api.maptiler.com/tiles/satellite-v2/${z}/${tx}/${ty}?key=${MAPTILER_KEY}`
-      loads.push(
-        loadImageWithRetry(url).then((img) => {
-          if (!img) return
-          loadedAny = true
-          ctx.drawImage(img, (tx - x0) * TILE_SIZE, (ty - y0) * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-        }),
-      )
+      tasks.push(async () => {
+        const img = await loadImageWithRetry(url)
+        if (!img) return
+        loadedAny = true
+        ctx.drawImage(img, (tx - x0) * TILE_SIZE, (ty - y0) * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+      })
     }
   }
-  await Promise.all(loads)
+  await runWithConcurrencyLimit(tasks, TILE_FETCH_CONCURRENCY)
   if (!loadedAny) return null
 
   return {

@@ -8,6 +8,7 @@ import './index.css'
 // and the map shouldn't have to wait on leaderboard code it'll never use.
 const App = lazy(() => import('./App'))
 const LeaderboardPage = lazy(() => import('./LeaderboardPage'))
+const MerchPage = lazy(() => import('./MerchPage'))
 
 const fallback = <div style={{ position: 'fixed', inset: 0, background: '#14100c' }} />
 
@@ -20,7 +21,11 @@ function Root() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
-  return <Suspense fallback={fallback}>{hash === '#/leaderboard' ? <LeaderboardPage /> : <App />}</Suspense>
+  return (
+    <Suspense fallback={fallback}>
+      {hash === '#/leaderboard' ? <LeaderboardPage /> : hash === '#/merch' ? <MerchPage /> : <App />}
+    </Suspense>
+  )
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
