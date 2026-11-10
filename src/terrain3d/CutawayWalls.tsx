@@ -120,8 +120,21 @@ export default function CutawayWalls({ terrain, exaggeration, sunDirection }: Pr
       <mesh geometry={wallGeometry} castShadow receiveShadow>
         <cutawaySoilMaterial uDepth={depthBelowMin} uLightDir={sunDirection} />
       </mesh>
+      {/*
+       * The flat bottom of the plinth — normally hidden under the walls
+       * from any reasonable viewing angle, so it used to carry a near-black
+       * "#1f2124" fill on the assumption it would basically never be seen.
+       * At concave notches in the (real, 88-point) boundary the camera CAN
+       * look past the walls and straight down onto it, and because it
+       * faces away from the sun entirely (normal points -Y) it only ever
+       * gets ambient/hemisphere light — with that near-black base color the
+       * result read as a solid black hole in the terrain, reported as a
+       * rendering bug. A lighter bedrock tone plus a little emissive floor
+       * keeps it dark (it's still meant to read as rock in shadow) without
+       * ever crushing all the way to literal black.
+       */}
       <mesh geometry={capGeometry} receiveShadow>
-        <meshStandardMaterial color="#1f2124" roughness={1} metalness={0} />
+        <meshStandardMaterial color="#4a4238" roughness={1} metalness={0} emissive="#120f0a" emissiveIntensity={0.6} />
       </mesh>
     </group>
   )
