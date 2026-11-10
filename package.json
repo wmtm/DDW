@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "predev": "node scripts/copy-maplibre-worker.mjs",
+    "predev": "node scripts/copy-maplibre-worker.mjs && node scripts/build-merch-images.mjs",
     "dev": "vite",
-    "prebuild": "node scripts/copy-maplibre-worker.mjs",
+    "prebuild": "node scripts/copy-maplibre-worker.mjs && node scripts/build-merch-images.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
   },
@@ -26,6 +26,7 @@
     "@types/three": "^0.160.0",
     "@vitejs/plugin-react": "^4.3.4",
     "geotiff": "^3.0.5",
+    "sharp": "^0.35.5",
     "typescript": "^5.7.3",
     "undici": "^8.12.3",
     "vite": "^6.1.0"

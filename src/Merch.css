@@ -170,7 +170,7 @@
   overflow: hidden;
 }
 
-.boutique-card:hover .merch-mockup-stage {
+.boutique-card:hover .boutique-photo-frame {
   transform: scale(1.06);
 }
 
@@ -226,6 +226,129 @@
   inset: 0;
   width: 100%;
   height: 100%;
+}
+
+/* ---------- Product photos (real product photography) ---------- */
+
+.boutique-photo-frame {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 38%, #efe6d4 0%, #ddd0b7 65%, #c7b798 100%);
+  transition: transform 0.25s ease;
+}
+
+.boutique-photo-frame-clickable {
+  cursor: zoom-in;
+}
+
+.boutique-photo-img {
+  position: relative;
+  max-width: 88%;
+  max-height: 88%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.boutique-photo-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  width: 55%;
+  height: 10%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse, rgba(42, 32, 19, 0.38) 0%, rgba(42, 32, 19, 0) 72%);
+  border-radius: 50%;
+}
+
+.boutique-photo-placeholder {
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text-muted);
+  background: var(--surface-card);
+}
+
+.boutique-photo-placeholder svg {
+  opacity: 0.6;
+}
+
+.boutique-photo-placeholder span {
+  font-size: 11px;
+  text-align: center;
+  padding: 0 10px;
+}
+
+/* ---------- Product gallery (detail panel) ---------- */
+
+.boutique-gallery {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.boutique-gallery-main {
+  flex: 1;
+  min-height: 0;
+}
+
+.boutique-gallery-thumbs {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  background: var(--panel-bg-solid);
+}
+
+.boutique-gallery-thumb {
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: none;
+}
+
+.boutique-gallery-thumb-active {
+  border-color: var(--accent-amber);
+}
+
+/* ---------- Lightbox ---------- */
+
+.boutique-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: rgba(10, 8, 6, 0.88);
+  cursor: zoom-out;
+}
+
+.boutique-lightbox-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.boutique-lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--panel-border);
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 14px;
 }
 
 /* ---------- Product detail modal ---------- */

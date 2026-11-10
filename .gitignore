@@ -1,6 +1,12 @@
 node_modules
 dist
-public
+# Most of public/ is build-generated (maplibre-gl-*.mjs copied in by
+# scripts/copy-maplibre-worker.mjs, merch-optimized/ by
+# scripts/build-merch-images.mjs) and shouldn't be committed — except
+# public/merch/, the real product photos the site is built from.
+public/*
+!public/merch
+!public/merch/**
 *.log
 .claude/settings.local.json
 *.tsbuildinfo
