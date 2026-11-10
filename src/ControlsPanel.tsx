@@ -545,6 +545,9 @@ export default function ControlsPanel({
                 <span>Sam : 9h–11h</span>
                 <span className="hint">Autres informations à venir</span>
               </div>
+              <a className="action-button leaderboard-link" href="#/merch">
+                Voir les produits dérivés
+              </a>
             </ControlGroup>
           </>
         )}

@@ -1,0 +1,68 @@
+.merch-badge-beta {
+  background: rgba(165, 219, 255, 0.12);
+  border-color: rgba(165, 219, 255, 0.4);
+  color: var(--accent-blue);
+}
+
+.merch-intro {
+  margin: 0 0 22px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.merch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.merch-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 10px;
+  border: 1px dashed var(--panel-border);
+  border-radius: 10px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.merch-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 209, 102, 0.1);
+  color: var(--accent-amber);
+}
+
+.merch-card-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.merch-card-status {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.merch-boutique-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  border-top: 1px solid var(--panel-border);
+  padding-top: 16px;
+  color: var(--text-muted);
+}
+
+.merch-boutique-note strong {
+  color: var(--text-primary);
+}
