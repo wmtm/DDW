@@ -799,6 +799,7 @@
   border-radius: 14px;
   background: var(--surface-card);
   cursor: pointer;
+  text-decoration: none;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
@@ -866,6 +867,35 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Always visible under the panel, regardless of which tab is active —
+   see the comment at its JSX for why it isn't tied to a section. */
+.panel-boutique-note {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--divider-soft);
+  color: var(--text-muted);
+}
+
+.panel-boutique-note svg {
+  flex-shrink: 0;
+  color: var(--accent-amber);
+}
+
+.panel-boutique-note-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+}
+
+.panel-boutique-note-text strong {
+  color: var(--text-primary);
+  font-size: 13px;
 }
 
 .hall-of-fame-panel {
@@ -1085,34 +1115,6 @@
   background: rgba(255, 255, 255, 0.12);
 }
 
-.share-toast {
-  align-self: flex-start;
-  background: rgba(74, 222, 128, 0.15);
-  border: 1px solid rgba(74, 222, 128, 0.4);
-  color: #4ade80;
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 12px;
-  animation: toast-fade 2.5s ease forwards;
-}
-
-@keyframes toast-fade {
-  0% {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  10% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
 .search-result-number {
   display: inline-flex;
   align-items: center;
@@ -1130,26 +1132,6 @@
 .hint {
   font-size: 11px;
   opacity: 0.7;
-}
-
-.share-result {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.share-link-input {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  padding: 5px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .estate-status {
@@ -1491,12 +1473,6 @@
   padding: 2px 7px;
   font-size: 11px;
   cursor: default;
-}
-
-.boutique-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
 }
 
 .clear-button {

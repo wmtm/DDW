@@ -19,6 +19,7 @@ import {
   MapIcon,
   HybridIcon,
   TerrainIcon,
+  MeatIcon,
 } from './ToggleIconButton'
 import logoWolmar from './assets/branding/logo-wolmar-small.png'
 import iconWeather from './assets/branding/icon-weather.png'
@@ -26,9 +27,9 @@ import iconTimeTravel from './assets/branding/icon-time-travel.png'
 import iconMiradors from './assets/branding/icon-miradors.png'
 import iconHallOfFame from './assets/branding/icon-hall-of-fame.png'
 import iconDisplay from './assets/branding/icon-see-more.png'
-import iconServices from './assets/branding/icon-services.svg'
+import iconBoutique from './assets/branding/icon-boutique.png'
 
-export type SectionKey = 'weather' | 'timeTravel' | 'miradors' | 'hallOfFame' | 'display' | 'services'
+export type SectionKey = 'weather' | 'timeTravel' | 'miradors' | 'hallOfFame' | 'display'
 
 interface Props {
   landmarks: Landmark[]
@@ -47,7 +48,6 @@ interface Props {
   basemap: BasemapStyle
   onBasemapChange: (basemap: BasemapStyle) => void
   tourRunning: boolean
-  onToggleTour: () => void
   chuteCount: number
   landmarkTourActive: boolean
   onStartLandmarkTour: () => void
@@ -68,21 +68,51 @@ interface Props {
   imageryLoading: boolean
   weather: WeatherData | null
   weatherError: string | null
-  onCaptureView: () => void
-  onGenerateShareLink: () => void
-  shareUrl: string | null
-  shareCopied: boolean
   slopeContrast: boolean
   onToggleSlopeContrast: () => void
 }
 
-const SECTIONS: { key: SectionKey; icon: string; label: string; shortLabel: string; color: string }[] = [
-  { key: 'weather', icon: iconWeather, label: 'Météo', shortLabel: 'Météo', color: '#4aa3d8' },
-  { key: 'timeTravel', icon: iconTimeTravel, label: 'Voyage dans le temps', shortLabel: 'Historique', color: '#c4a339' },
-  { key: 'miradors', icon: iconMiradors, label: 'Miradors', shortLabel: 'Miradors', color: '#5fae6e' },
-  { key: 'hallOfFame', icon: iconHallOfFame, label: 'Hall of Fame', shortLabel: 'Palmarès', color: '#e0ac2b' },
-  { key: 'display', icon: iconDisplay, label: 'Affichage', shortLabel: 'Affichage', color: '#a259c4' },
-  { key: 'services', icon: iconServices, label: 'Boutique', shortLabel: 'Boutique', color: '#2f9e8f' },
+interface SectionTab {
+  kind: 'section'
+  key: SectionKey
+  icon: string
+  label: string
+  shortLabel: string
+  color: string
+}
+
+interface LinkTab {
+  kind: 'link'
+  href: string
+  icon: string
+  label: string
+  shortLabel: string
+  color: string
+}
+
+const SECTIONS: (SectionTab | LinkTab)[] = [
+  { kind: 'section', key: 'weather', icon: iconWeather, label: 'Météo', shortLabel: 'Météo', color: '#4aa3d8' },
+  {
+    kind: 'section',
+    key: 'timeTravel',
+    icon: iconTimeTravel,
+    label: 'Voyage dans le temps',
+    shortLabel: 'Historique',
+    color: '#c4a339',
+  },
+  { kind: 'section', key: 'miradors', icon: iconMiradors, label: 'Miradors', shortLabel: 'Miradors', color: '#5fae6e' },
+  {
+    kind: 'section',
+    key: 'hallOfFame',
+    icon: iconHallOfFame,
+    label: 'Hall of Fame',
+    shortLabel: 'Palmarès',
+    color: '#e0ac2b',
+  },
+  { kind: 'section', key: 'display', icon: iconDisplay, label: 'Affichage', shortLabel: 'Affichage', color: '#a259c4' },
+  // A link, not a section tab — clicking it jumps straight to the shop
+  // page instead of switching this panel to an in-place section.
+  { kind: 'link', href: '#/merch', icon: iconBoutique, label: 'La Boutique', shortLabel: 'Boutique', color: '#2f9e8f' },
 ]
 
 const BASEMAP_ACCENT: Record<BasemapStyle, string> = {
@@ -131,7 +161,6 @@ export default function ControlsPanel({
   basemap,
   onBasemapChange,
   tourRunning,
-  onToggleTour,
   chuteCount,
   landmarkTourActive,
   onStartLandmarkTour,
@@ -152,10 +181,6 @@ export default function ControlsPanel({
   imageryLoading,
   weather,
   weatherError,
-  onCaptureView,
-  onGenerateShareLink,
-  shareUrl,
-  shareCopied,
   slopeContrast,
   onToggleSlopeContrast,
 }: Props) {
@@ -197,21 +222,35 @@ export default function ControlsPanel({
           </div>
 
           <div className="panel-icon-tabs">
-            {SECTIONS.map((section) => (
-              <button
-                key={section.key}
-                type="button"
-                className={`panel-icon-tab ${activeSection === section.key ? 'panel-icon-tab-active' : ''}`}
-                style={{ '--tab-accent': section.color } as CSSProperties}
-                onClick={() => onSectionChange(section.key)}
-                aria-label={section.label}
-                aria-pressed={activeSection === section.key}
-                title={section.label}
-              >
-                <img src={section.icon} alt="" className="panel-icon-tab-glyph" />
-                <span className="panel-icon-tab-label">{section.shortLabel}</span>
-              </button>
-            ))}
+            {SECTIONS.map((tab) =>
+              tab.kind === 'link' ? (
+                <a
+                  key={tab.href}
+                  href={tab.href}
+                  className="panel-icon-tab"
+                  style={{ '--tab-accent': tab.color } as CSSProperties}
+                  aria-label={tab.label}
+                  title={tab.label}
+                >
+                  <img src={tab.icon} alt="" className="panel-icon-tab-glyph" />
+                  <span className="panel-icon-tab-label">{tab.shortLabel}</span>
+                </a>
+              ) : (
+                <button
+                  key={tab.key}
+                  type="button"
+                  className={`panel-icon-tab ${activeSection === tab.key ? 'panel-icon-tab-active' : ''}`}
+                  style={{ '--tab-accent': tab.color } as CSSProperties}
+                  onClick={() => onSectionChange(tab.key)}
+                  aria-label={tab.label}
+                  aria-pressed={activeSection === tab.key}
+                  title={tab.label}
+                >
+                  <img src={tab.icon} alt="" className="panel-icon-tab-glyph" />
+                  <span className="panel-icon-tab-label">{tab.shortLabel}</span>
+                </button>
+              ),
+            )}
           </div>
 
           <div className="panel-section-content" key={activeSection}>
@@ -547,53 +586,17 @@ export default function ControlsPanel({
           </>
         )}
 
-        {activeSection === 'services' && (
-          <>
-            <ControlGroup>
-              <button className="action-button" onClick={onToggleTour} disabled={landmarkTourActive}>
-                {tourRunning ? 'Arrêter la visite' : 'Démarrer la visite aérienne'}
-              </button>
-            </ControlGroup>
+          </div>
 
-            <ControlGroup label="Partager">
-              <div className="button-row">
-                <button className="action-button" onClick={onCaptureView}>
-                  Capturer la vue (PNG)
-                </button>
-                <button className="action-button" onClick={onGenerateShareLink}>
-                  Copier le lien de partage
-                </button>
-              </div>
-              {shareUrl && (
-                <div className="share-result">
-                  <input
-                    className="share-link-input"
-                    type="text"
-                    readOnly
-                    value={shareUrl}
-                    onFocus={(e) => e.currentTarget.select()}
-                  />
-                  {shareCopied ? (
-                    <div className="share-toast">Copié dans le presse-papiers</div>
-                  ) : (
-                    <span className="hint">Copiez le lien ci-dessus</span>
-                  )}
-                </div>
-              )}
-            </ControlGroup>
-
-            <ControlGroup label="La Boutique">
-              <div className="boutique-info">
-                <span>Lun-Ven : 9h–15h</span>
-                <span>Sam : 9h–11h</span>
-                <span className="hint">Autres informations à venir</span>
-              </div>
-              <a className="action-button leaderboard-link" href="#/merch">
-                Voir les produits dérivés
-              </a>
-            </ControlGroup>
-          </>
-        )}
+          {/* Always visible regardless of the active tab — not tied to a
+              section, since the top Boutique tile now jumps straight to
+              #/merch instead of showing panel content. */}
+          <div className="panel-boutique-note">
+            <MeatIcon />
+            <div className="panel-boutique-note-text">
+              <strong>La Boutique</strong>
+              <span>Lun-Ven : 9h–15h · Sam : 9h–11h</span>
+            </div>
           </div>
         </div>
       </div>

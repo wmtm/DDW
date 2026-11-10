@@ -23,7 +23,6 @@ import { pois, type Poi } from './poi'
 import PoiIcon from './PoiIcon'
 import MapCompass from './MapCompass'
 import { mapStyle } from './mapStyle'
-import { runTour } from './tour'
 import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
 import { estateBoundary } from './boundary'
 import { ISOLATE_VIEW } from './isolateMode'
@@ -42,7 +41,7 @@ import {
 } from './basemap'
 import { sampleElevation, type ElevationSample } from './elevation'
 import { fetchCurrentWeather, type WeatherData } from './weather'
-import { buildShareUrl, parseShareStateFromUrl } from './shareState'
+import { parseShareStateFromUrl } from './shareState'
 import { flyToEstate } from './cameraMotion'
 import { computeDayNight } from './dayNight'
 import { buildWindConeGeoJSON } from './windCone'
@@ -119,7 +118,6 @@ export default function App() {
   const lastHoverRef = useRef(0)
   const lastZoomRef = useRef(0)
   const lastBearingRef = useRef(0)
-  const shareCopiedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const shared = useMemo(() => parseShareStateFromUrl(), [])
 
@@ -146,8 +144,6 @@ export default function App() {
   const [mapLoadError, setMapLoadError] = useState(false)
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [weatherError, setWeatherError] = useState<string | null>(null)
-  const [shareUrl, setShareUrl] = useState<string | null>(null)
-  const [shareCopied, setShareCopied] = useState(false)
   const [slopeContrast, setSlopeContrast] = useState(false)
   const [basemap, setBasemap] = useState<BasemapStyle>(shared.basemap ?? readStoredBasemap() ?? 'satellite')
   const [basemapTransitioning, setBasemapTransitioning] = useState(false)
@@ -278,24 +274,6 @@ export default function App() {
     },
     [flyToLandmark],
   )
-
-  const handleToggleTour = useCallback(() => {
-    const map = mapRef.current?.getMap()
-    if (!map) return
-
-    if (tourRunning) {
-      cancelledRef.current = true
-      setTourRunning(false)
-      return
-    }
-
-    setSelected(null)
-    setMeasureActive(false)
-    setLandmarkTourIndex(null)
-    cancelledRef.current = false
-    setTourRunning(true)
-    runTour(map, cancelledRef).finally(() => setTourRunning(false))
-  }, [tourRunning])
 
   const handleToggleMeasure = useCallback(() => {
     setMeasureActive((active) => !active)
@@ -521,43 +499,6 @@ export default function App() {
     }
   }, [])
 
-
-  const handleCaptureView = useCallback(() => {
-    const map = mapRef.current?.getMap()
-    if (!map) return
-    const canvas = map.getCanvas()
-    const link = document.createElement('a')
-    link.download = `wolmar-estate-${Date.now()}.png`
-    link.href = canvas.toDataURL('image/png')
-    link.click()
-  }, [])
-
-  const handleGenerateShareLink = useCallback(() => {
-    const map = mapRef.current?.getMap()
-    const center = map ? map.getCenter() : { lng: ESTATE_CENTER.longitude, lat: ESTATE_CENTER.latitude }
-
-    const url = buildShareUrl({
-      longitude: center.lng,
-      latitude: center.lat,
-      zoom: map?.getZoom(),
-      pitch: map?.getPitch(),
-      bearing: map?.getBearing(),
-      showOverlay,
-      historicalYear,
-      basemap,
-    })
-
-    setShareUrl(url)
-    setShareCopied(false)
-    navigator.clipboard
-      ?.writeText(url)
-      .then(() => {
-        setShareCopied(true)
-        if (shareCopiedTimeoutRef.current) clearTimeout(shareCopiedTimeoutRef.current)
-        shareCopiedTimeoutRef.current = setTimeout(() => setShareCopied(false), 2500)
-      })
-      .catch(() => {})
-  }, [showOverlay, historicalYear, basemap])
 
   const imageryTileUrl =
     historicalYear === 'current'
@@ -1091,7 +1032,6 @@ export default function App() {
         basemap={basemap}
         onBasemapChange={handleBasemapChange}
         tourRunning={tourRunning}
-        onToggleTour={handleToggleTour}
         chuteCount={chuteLandmarks.length}
         landmarkTourActive={landmarkTourIndex !== null}
         onStartLandmarkTour={handleStartLandmarkTour}
@@ -1112,10 +1052,6 @@ export default function App() {
         imageryLoading={imageryLoading}
         weather={weather}
         weatherError={weatherError}
-        onCaptureView={handleCaptureView}
-        onGenerateShareLink={handleGenerateShareLink}
-        shareUrl={shareUrl}
-        shareCopied={shareCopied}
         slopeContrast={slopeContrast}
         onToggleSlopeContrast={handleToggleSlopeContrast}
       />

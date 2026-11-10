@@ -122,3 +122,14 @@ export function TerrainIcon() {
     </svg>
   )
 }
+
+export function MeatIcon() {
+  return (
+    <svg {...common}>
+      <circle cx="12" cy="12" r="8.4" />
+      <path d="M8.8 8.3 L7.5 15.5" />
+      <path d="M12.3 7.7 L10.9 16.1" />
+      <path d="M15.6 8.6 L14.5 14.8" />
+    </svg>
+  )
+}
