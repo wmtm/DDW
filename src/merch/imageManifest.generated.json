@@ -1,9 +1,27 @@
 {
+  "golf": {
+    "blanc": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/golf/blanc-face-thumb.webp",
+          "w": 640,
+          "h": 640
+        },
+        "full": {
+          "src": "merch-optimized/golf/blanc-face-full.webp",
+          "w": 1600,
+          "h": 1600
+        }
+      }
+    ]
+  },
   "gourde": {
     "argent": [
       {
         "view": "face",
-        "transparent": true,
+        "transparent": false,
         "thumb": {
           "src": "merch-optimized/gourde/argent-face-thumb.webp",
           "w": 640,
@@ -47,6 +65,68 @@
           "src": "merch-optimized/mug/noir-face-full.webp",
           "w": 801,
           "h": 677
+        }
+      }
+    ]
+  },
+  "polo": {
+    "blanc": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/polo/blanc-face-thumb.webp",
+          "w": 640,
+          "h": 982
+        },
+        "full": {
+          "src": "merch-optimized/polo/blanc-face-full.webp",
+          "w": 1126,
+          "h": 1728
+        }
+      },
+      {
+        "view": "dos",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/polo/blanc-dos-thumb.webp",
+          "w": 640,
+          "h": 982
+        },
+        "full": {
+          "src": "merch-optimized/polo/blanc-dos-full.webp",
+          "w": 1126,
+          "h": 1728
+        }
+      }
+    ],
+    "noir": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/polo/noir-face-thumb.webp",
+          "w": 640,
+          "h": 982
+        },
+        "full": {
+          "src": "merch-optimized/polo/noir-face-full.webp",
+          "w": 1126,
+          "h": 1728
+        }
+      },
+      {
+        "view": "dos",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/polo/noir-dos-thumb.webp",
+          "w": 640,
+          "h": 982
+        },
+        "full": {
+          "src": "merch-optimized/polo/noir-dos-full.webp",
+          "w": 1126,
+          "h": 1728
         }
       }
     ]
