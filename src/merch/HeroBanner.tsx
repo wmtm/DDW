@@ -1,4 +1,5 @@
-import MockupCanvas from './MockupCanvas'
+import { Photo } from './Photo'
+import { availableColorIds, imagesFor } from './images'
 import { featuredProducts } from './products'
 
 export default function HeroBanner() {
@@ -14,11 +15,15 @@ export default function HeroBanner() {
         </p>
       </div>
       <div className="boutique-hero-mockups">
-        {featured.map((p) => (
-          <div key={p.id} className="boutique-hero-mockup">
-            <MockupCanvas product={p} colorId={p.colors[0].id} />
-          </div>
-        ))}
+        {featured.map((p) => {
+          const defaultColorId = availableColorIds(p.id)[0] ?? p.colors[0].id
+          const images = imagesFor(p.id, defaultColorId)
+          return (
+            <div key={p.id} className="boutique-hero-mockup">
+              <Photo image={images[0] ?? null} size="thumb" alt={p.name} />
+            </div>
+          )
+        })}
       </div>
     </section>
   )

@@ -1,11 +1,15 @@
 import { useState } from 'react'
-import MockupCanvas from './MockupCanvas'
+import ProductGallery from './ProductGallery'
 import OrderForm from './OrderForm'
+import { availableColorIds } from './images'
 import { PRIX_SUR_DEMANDE } from './products'
 import type { Product } from './types'
 
 export default function ProductDetailPanel({ product, onClose }: { product: Product; onClose: () => void }) {
-  const [colorId, setColorId] = useState(product.colors[0].id)
+  const availableIds = new Set(availableColorIds(product.id))
+  const shownColors = product.colors.filter((c) => availableIds.has(c.id))
+
+  const [colorId, setColorId] = useState(shownColors[0]?.id ?? product.colors[0].id)
   const [size, setSize] = useState(product.sizes?.[0] ?? '')
   const [ordering, setOrdering] = useState(false)
 
@@ -20,7 +24,7 @@ export default function ProductDetailPanel({ product, onClose }: { product: Prod
         </button>
 
         <div className="boutique-modal-mockup">
-          <MockupCanvas product={product} colorId={colorId} />
+          <ProductGallery productId={product.id} colorId={colorId} alt={product.name} />
         </div>
 
         <div className="boutique-modal-info">
@@ -28,11 +32,11 @@ export default function ProductDetailPanel({ product, onClose }: { product: Prod
           <p className="boutique-modal-description">{product.description}</p>
           <p className="boutique-modal-price">{PRIX_SUR_DEMANDE}</p>
 
-          {product.colors.length > 1 && (
+          {shownColors.length > 1 && (
             <div className="boutique-option-group">
               <span className="boutique-option-label">Couleur — {colorLabel}</span>
               <div className="boutique-swatch-row">
-                {product.colors.map((c) => (
+                {shownColors.map((c) => (
                   <button
                     key={c.id}
                     type="button"
