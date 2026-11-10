@@ -44,19 +44,3 @@ export function parseShareStateFromUrl(): ShareState {
         : undefined,
   }
 }
-
-export function buildShareUrl(state: ShareState): string {
-  const params = new URLSearchParams()
-  if (state.longitude !== undefined) params.set('lng', state.longitude.toFixed(6))
-  if (state.latitude !== undefined) params.set('lat', state.latitude.toFixed(6))
-  if (state.zoom !== undefined) params.set('z', state.zoom.toFixed(2))
-  if (state.pitch !== undefined) params.set('p', state.pitch.toFixed(1))
-  if (state.bearing !== undefined) params.set('b', state.bearing.toFixed(1))
-  if (state.showOverlay !== undefined) params.set('ov', state.showOverlay ? '1' : '0')
-  if (state.historicalYear !== undefined && state.historicalYear !== null) {
-    params.set('hy', String(state.historicalYear))
-  }
-  if (state.basemap) params.set('bm', state.basemap)
-
-  return `${window.location.origin}${window.location.pathname}?${params.toString()}`
-}
