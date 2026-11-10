@@ -1,1 +1,72 @@
-{}
+{
+  "gourde": {
+    "argent": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/gourde/argent-face-thumb.webp",
+          "w": 640,
+          "h": 640
+        },
+        "full": {
+          "src": "merch-optimized/gourde/argent-face-full.webp",
+          "w": 1600,
+          "h": 1600
+        }
+      }
+    ]
+  },
+  "mug": {
+    "blanc": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/mug/blanc-face-thumb.webp",
+          "w": 491,
+          "h": 478
+        },
+        "full": {
+          "src": "merch-optimized/mug/blanc-face-full.webp",
+          "w": 491,
+          "h": 478
+        }
+      }
+    ],
+    "noir": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/mug/noir-face-thumb.webp",
+          "w": 640,
+          "h": 541
+        },
+        "full": {
+          "src": "merch-optimized/mug/noir-face-full.webp",
+          "w": 801,
+          "h": 677
+        }
+      }
+    ]
+  },
+  "tshirt": {
+    "noir": [
+      {
+        "view": "dos",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/tshirt/noir-dos-thumb.webp",
+          "w": 640,
+          "h": 542
+        },
+        "full": {
+          "src": "merch-optimized/tshirt/noir-dos-full.webp",
+          "w": 1001,
+          "h": 848
+        }
+      }
+    ]
+  }
+}
