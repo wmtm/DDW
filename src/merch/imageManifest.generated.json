@@ -3,7 +3,7 @@
     "blanc": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/casquette/blanc-face-thumb.webp",
           "w": 640,
@@ -35,7 +35,7 @@
     "sable": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/casquette/sable-face-thumb.webp",
           "w": 640,
@@ -51,7 +51,7 @@
     "vert": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/casquette/vert-face-thumb.webp",
           "w": 640,
@@ -69,7 +69,7 @@
     "blanc": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/golf/blanc-face-thumb.webp",
           "w": 640,
@@ -85,7 +85,7 @@
     "jaune": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/golf/jaune-face-thumb.webp",
           "w": 640,
@@ -101,7 +101,7 @@
     "rose": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/golf/rose-face-thumb.webp",
           "w": 640,
@@ -119,7 +119,7 @@
     "argent": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/gourde/argent-face-thumb.webp",
           "w": 640,
@@ -135,7 +135,7 @@
     "blanc": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/gourde/blanc-face-thumb.webp",
           "w": 640,
@@ -187,7 +187,7 @@
     "blanc": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/polo/blanc-face-thumb.webp",
           "w": 640,
@@ -201,7 +201,7 @@
       },
       {
         "view": "dos",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/polo/blanc-dos-thumb.webp",
           "w": 640,
@@ -217,7 +217,7 @@
     "gris": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/polo/gris-face-thumb.webp",
           "w": 640,
@@ -231,7 +231,7 @@
       },
       {
         "view": "dos",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/polo/gris-dos-thumb.webp",
           "w": 640,
@@ -247,7 +247,7 @@
     "noir": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/polo/noir-face-thumb.webp",
           "w": 640,
@@ -261,7 +261,7 @@
       },
       {
         "view": "dos",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/polo/noir-dos-thumb.webp",
           "w": 640,
@@ -279,7 +279,7 @@
     "kaki": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/tablier/kaki-face-thumb.webp",
           "w": 640,
@@ -295,7 +295,7 @@
     "noir": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/tablier/noir-face-thumb.webp",
           "w": 640,
@@ -312,15 +312,15 @@
   "tshirt": {
     "noir": [
       {
-        "view": "dos",
+        "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/tshirt/noir-dos-thumb.webp",
+          "src": "merch-optimized/tshirt/noir-face-thumb.webp",
           "w": 640,
           "h": 542
         },
         "full": {
-          "src": "merch-optimized/tshirt/noir-dos-full.webp",
+          "src": "merch-optimized/tshirt/noir-face-full.webp",
           "w": 1001,
           "h": 848
         }
