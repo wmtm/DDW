@@ -1,4 +1,38 @@
 {
+  "carnet-chasse": {
+    "beige": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/carnet-chasse/beige-face-thumb.webp",
+          "w": 640,
+          "h": 596
+        },
+        "full": {
+          "src": "merch-optimized/carnet-chasse/beige-face-full.webp",
+          "w": 1600,
+          "h": 1491
+        }
+      }
+    ],
+    "brun": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/carnet-chasse/brun-face-thumb.webp",
+          "w": 640,
+          "h": 596
+        },
+        "full": {
+          "src": "merch-optimized/carnet-chasse/brun-face-full.webp",
+          "w": 1600,
+          "h": 1490
+        }
+      }
+    ]
+  },
   "casquette": {
     "kaki": [
       {
@@ -326,6 +360,38 @@
     ]
   },
   "tshirt": {
+    "blanc": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/tshirt/blanc-face-thumb.webp",
+          "w": 640,
+          "h": 573
+        },
+        "full": {
+          "src": "merch-optimized/tshirt/blanc-face-full.webp",
+          "w": 1600,
+          "h": 1432
+        }
+      }
+    ],
+    "kaki": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/tshirt/kaki-face-thumb.webp",
+          "w": 640,
+          "h": 567
+        },
+        "full": {
+          "src": "merch-optimized/tshirt/kaki-face-full.webp",
+          "w": 1600,
+          "h": 1418
+        }
+      }
+    ],
     "noir": [
       {
         "view": "face",
@@ -339,6 +405,24 @@
           "src": "merch-optimized/tshirt/noir-face-full.webp",
           "w": 1001,
           "h": 848
+        }
+      }
+    ]
+  },
+  "tshirt-chasse": {
+    "camouflage": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/tshirt-chasse/camouflage-face-thumb.webp",
+          "w": 640,
+          "h": 587
+        },
+        "full": {
+          "src": "merch-optimized/tshirt-chasse/camouflage-face-full.webp",
+          "w": 1600,
+          "h": 1466
         }
       }
     ]

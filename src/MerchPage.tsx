@@ -24,9 +24,10 @@ import { CATEGORY_LABELS, type Category, type Product } from './merch/types'
  * per product later without touching the compositing logic.
  */
 
-const CATEGORIES: Category[] = ['vetements', 'accessoires', 'enfants', 'animaux']
+const CATEGORIES: Category[] = ['chasse', 'vetements', 'accessoires', 'enfants', 'animaux']
 
 const CATEGORY_ICON: Record<Category, string | null> = {
+  chasse: '🦌',
   vetements: null,
   accessoires: null,
   enfants: '✦',

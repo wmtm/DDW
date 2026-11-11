@@ -15,40 +15,20 @@ const ADULT_SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 const KIDS_SIZES = ['4-6 ans', '8-10 ans', '12-14 ans']
 
 export const PRODUCTS: Product[] = [
-  // ---- Vêtements ----
+  // ---- Saison de chasse ----
   {
-    id: 'tshirt',
-    category: 'vetements',
-    name: 'T-shirt Wolmar',
-    description: "Coton épais, coupe unisexe. Petit blason sur le cœur, grand visuel dans le dos.",
+    id: 'tshirt-chasse',
+    category: 'chasse',
+    name: 'T-shirt Camouflage Wolmar',
+    description: 'Coton épais, motif camouflage forestier — la pièce de la saison de chasse.',
     base: 'tshirt',
-    colors: [
-      { id: 'noir', label: 'Noir', hex: '#1c1b19' },
-      { id: 'kaki', label: 'Kaki', hex: '#54502f' },
-      { id: 'sable', label: 'Sable', hex: '#cdbfa0' },
-    ],
+    colors: [{ id: 'camouflage', label: 'Camouflage', hex: '#7a6b52' }],
     sizes: ADULT_SIZES,
     logoZone: { logo: 'pocket', finish: 'fabric', xPct: 560, yPct: 505, widthPct: 88 },
-    featured: true,
-  },
-  {
-    id: 'polo',
-    category: 'vetements',
-    name: 'Polo Wolmar',
-    description: "Polo piqué résistant, logo brodé sur la poitrine — tenue de terrain élégante.",
-    base: 'polo',
-    colors: [
-      { id: 'noir', label: 'Noir', hex: '#1c1b19' },
-      { id: 'kaki', label: 'Kaki', hex: '#54502f' },
-      { id: 'blanc', label: 'Blanc', hex: '#f3ede0' },
-      { id: 'gris', label: 'Gris', hex: '#9a9a9a' },
-    ],
-    sizes: ADULT_SIZES,
-    logoZone: { logo: 'pocket', finish: 'fabric', xPct: 560, yPct: 510, widthPct: 80 },
   },
   {
     id: 'casquette',
-    category: 'vetements',
+    category: 'chasse',
     name: 'Casquette Wolmar',
     description: 'Casquette ajustable, broderie sur la façade avant.',
     base: 'cap',
@@ -64,6 +44,50 @@ export const PRODUCTS: Product[] = [
     featured: true,
   },
   {
+    id: 'carnet-chasse',
+    category: 'chasse',
+    name: 'Carnet de chasse Wolmar',
+    description: 'Carnet de chasse en cuir pleine fleur, gaufré du blason Wolmar — pages météo, vent, lune et observations.',
+    base: 'notebook',
+    colors: [
+      { id: 'beige', label: 'Beige', hex: '#a9754a' },
+      { id: 'brun', label: 'Brun', hex: '#4a3626' },
+    ],
+    sizes: ['Unique'],
+    logoZone: { logo: 'pocket', finish: 'engraved', xPct: 500, yPct: 400, widthPct: 42 },
+  },
+
+  // ---- Vêtements ----
+  {
+    id: 'tshirt',
+    category: 'vetements',
+    name: 'T-shirt Wolmar',
+    description: "Coton épais, coupe unisexe. Petit blason sur le cœur, grand visuel dans le dos.",
+    base: 'tshirt',
+    colors: [
+      { id: 'noir', label: 'Noir', hex: '#1c1b19' },
+      { id: 'kaki', label: 'Kaki', hex: '#54502f' },
+      { id: 'blanc', label: 'Blanc', hex: '#f3ede0' },
+    ],
+    sizes: ADULT_SIZES,
+    logoZone: { logo: 'pocket', finish: 'fabric', xPct: 560, yPct: 505, widthPct: 88 },
+    featured: true,
+  },
+  {
+    id: 'polo',
+    category: 'vetements',
+    name: 'Polo Wolmar',
+    description: "Polo piqué résistant, logo brodé sur la poitrine — tenue de terrain élégante.",
+    base: 'polo',
+    colors: [
+      { id: 'noir', label: 'Noir', hex: '#1c1b19' },
+      { id: 'blanc', label: 'Blanc', hex: '#f3ede0' },
+      { id: 'gris', label: 'Gris', hex: '#9a9a9a' },
+    ],
+    sizes: ADULT_SIZES,
+    logoZone: { logo: 'pocket', finish: 'fabric', xPct: 560, yPct: 510, widthPct: 80 },
+  },
+  {
     id: 'tablier',
     category: 'vetements',
     name: 'Tablier Wolmar',
@@ -71,7 +95,6 @@ export const PRODUCTS: Product[] = [
     base: 'apron',
     colors: [
       { id: 'kaki', label: 'Kaki', hex: '#54502f' },
-      { id: 'brun', label: 'Brun', hex: '#4a3626' },
       { id: 'noir', label: 'Noir', hex: '#1c1b19' },
     ],
     sizes: ['Unique'],
@@ -100,8 +123,6 @@ export const PRODUCTS: Product[] = [
     description: 'Gourde aluminium 750 ml, logo imprimé sur le flanc.',
     base: 'bottle',
     colors: [
-      { id: 'noir', label: 'Noir mat', hex: '#232220' },
-      { id: 'olive', label: 'Vert olive', hex: '#4f5a3c' },
       { id: 'argent', label: 'Argent', hex: '#c9ccd1' },
       { id: 'blanc', label: 'Blanc', hex: '#f3ede0' },
     ],

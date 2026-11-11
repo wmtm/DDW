@@ -1,6 +1,6 @@
 import { CATEGORY_LABELS, type Category } from './types'
 
-const CATEGORIES: Category[] = ['vetements', 'accessoires', 'enfants', 'animaux']
+const CATEGORIES: Category[] = ['chasse', 'vetements', 'accessoires', 'enfants', 'animaux']
 
 /**
  * Scrolls to each category section rather than using real `#anchor` links:
