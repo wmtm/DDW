@@ -283,6 +283,20 @@ function Leash({ color }: { color: string }) {
   )
 }
 
+function Notebook({ color }: { color: string }) {
+  const id = useId()
+  return (
+    <>
+      <defs>
+        <Shaded id={id} color={color} />
+      </defs>
+      <rect x="370" y="280" width="260" height="440" rx="10" fill={`url(#${id})`} stroke={shade(color, -0.4)} strokeWidth="2" />
+      <rect x="370" y="490" width="40" height="18" rx="4" fill={shade(color, -0.3)} />
+      <rect x="370" y="560" width="40" height="18" rx="4" fill={shade(color, -0.3)} />
+    </>
+  )
+}
+
 export const BASE_RENDERERS: Record<BaseKind, (props: { color: string }) => JSX.Element> = {
   tshirt: TShirt,
   polo: Polo,
@@ -298,4 +312,5 @@ export const BASE_RENDERERS: Record<BaseKind, (props: { color: string }) => JSX.
   petTag: PetTag,
   bandana: Bandana,
   leash: Leash,
+  notebook: Notebook,
 }

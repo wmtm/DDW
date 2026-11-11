@@ -5,7 +5,7 @@
  * the same shapes.
  */
 
-export type Category = 'vetements' | 'accessoires' | 'enfants' | 'animaux'
+export type Category = 'chasse' | 'vetements' | 'accessoires' | 'enfants' | 'animaux'
 
 /** Which base silhouette renders this product — see bases/index.tsx. */
 export type BaseKind =
@@ -23,6 +23,7 @@ export type BaseKind =
   | 'petTag'
   | 'bandana'
   | 'leash'
+  | 'notebook'
 
 /**
  * How the logo is applied to the surface — drives which compositing mode
@@ -71,6 +72,7 @@ export interface Product {
 }
 
 export const CATEGORY_LABELS: Record<Category, string> = {
+  chasse: 'Saison de chasse',
   vetements: 'Vêtements',
   accessoires: 'Accessoires',
   enfants: 'Coin des enfants',
