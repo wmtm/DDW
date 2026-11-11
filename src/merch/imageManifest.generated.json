@@ -5,12 +5,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/bandana/blanc-face-thumb.webp",
+          "src": "merch-optimized/bandana/blanc-face-17ee9fe1df-thumb.webp",
           "w": 640,
           "h": 1300
         },
         "full": {
-          "src": "merch-optimized/bandana/blanc-face-full.webp",
+          "src": "merch-optimized/bandana/blanc-face-17ee9fe1df-full.webp",
           "w": 938,
           "h": 1906
         }
@@ -21,12 +21,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/bandana/rouge-face-thumb.webp",
+          "src": "merch-optimized/bandana/rouge-face-63f507a0ae-thumb.webp",
           "w": 640,
           "h": 1298
         },
         "full": {
-          "src": "merch-optimized/bandana/rouge-face-full.webp",
+          "src": "merch-optimized/bandana/rouge-face-63f507a0ae-full.webp",
           "w": 939,
           "h": 1905
         }
@@ -39,12 +39,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/carnet-chasse/beige-face-thumb.webp",
+          "src": "merch-optimized/carnet-chasse/beige-face-f0aef77ce7-thumb.webp",
           "w": 640,
           "h": 596
         },
         "full": {
-          "src": "merch-optimized/carnet-chasse/beige-face-full.webp",
+          "src": "merch-optimized/carnet-chasse/beige-face-f0aef77ce7-full.webp",
           "w": 1600,
           "h": 1491
         }
@@ -55,12 +55,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/carnet-chasse/brun-face-thumb.webp",
+          "src": "merch-optimized/carnet-chasse/brun-face-8106806932-thumb.webp",
           "w": 640,
           "h": 596
         },
         "full": {
-          "src": "merch-optimized/carnet-chasse/brun-face-full.webp",
+          "src": "merch-optimized/carnet-chasse/brun-face-8106806932-full.webp",
           "w": 1600,
           "h": 1490
         }
@@ -73,12 +73,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/casquette/kaki-face-thumb.webp",
+          "src": "merch-optimized/casquette/kaki-face-881be8a7c6-thumb.webp",
           "w": 640,
           "h": 533
         },
         "full": {
-          "src": "merch-optimized/casquette/kaki-face-full.webp",
+          "src": "merch-optimized/casquette/kaki-face-881be8a7c6-full.webp",
           "w": 1323,
           "h": 1102
         }
@@ -89,12 +89,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/casquette/noir-face-thumb.webp",
+          "src": "merch-optimized/casquette/noir-face-d2a40a8bbf-thumb.webp",
           "w": 640,
           "h": 538
         },
         "full": {
-          "src": "merch-optimized/casquette/noir-face-full.webp",
+          "src": "merch-optimized/casquette/noir-face-d2a40a8bbf-full.webp",
           "w": 1600,
           "h": 1346
         }
@@ -105,12 +105,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/casquette/orange-face-thumb.webp",
+          "src": "merch-optimized/casquette/orange-face-8629bed5d8-thumb.webp",
           "w": 640,
           "h": 531
         },
         "full": {
-          "src": "merch-optimized/casquette/orange-face-full.webp",
+          "src": "merch-optimized/casquette/orange-face-8629bed5d8-full.webp",
           "w": 1324,
           "h": 1098
         }
@@ -121,12 +121,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/casquette/sable-face-thumb.webp",
+          "src": "merch-optimized/casquette/sable-face-c2410ebaf8-thumb.webp",
           "w": 640,
           "h": 546
         },
         "full": {
-          "src": "merch-optimized/casquette/sable-face-full.webp",
+          "src": "merch-optimized/casquette/sable-face-c2410ebaf8-full.webp",
           "w": 1600,
           "h": 1366
         }
@@ -137,12 +137,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/casquette/vert-face-thumb.webp",
+          "src": "merch-optimized/casquette/vert-face-ac4a436d24-thumb.webp",
           "w": 640,
           "h": 535
         },
         "full": {
-          "src": "merch-optimized/casquette/vert-face-full.webp",
+          "src": "merch-optimized/casquette/vert-face-ac4a436d24-full.webp",
           "w": 1325,
           "h": 1108
         }
@@ -155,12 +155,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/casquette-enfant/kaki-face-thumb.webp",
+          "src": "merch-optimized/casquette-enfant/kaki-face-881be8a7c6-thumb.webp",
           "w": 640,
           "h": 533
         },
         "full": {
-          "src": "merch-optimized/casquette-enfant/kaki-face-full.webp",
+          "src": "merch-optimized/casquette-enfant/kaki-face-881be8a7c6-full.webp",
           "w": 1323,
           "h": 1102
         }
@@ -171,12 +171,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/casquette-enfant/noir-face-thumb.webp",
+          "src": "merch-optimized/casquette-enfant/noir-face-d2a40a8bbf-thumb.webp",
           "w": 640,
           "h": 538
         },
         "full": {
-          "src": "merch-optimized/casquette-enfant/noir-face-full.webp",
+          "src": "merch-optimized/casquette-enfant/noir-face-d2a40a8bbf-full.webp",
           "w": 1600,
           "h": 1346
         }
@@ -187,12 +187,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/casquette-enfant/orange-face-thumb.webp",
+          "src": "merch-optimized/casquette-enfant/orange-face-8629bed5d8-thumb.webp",
           "w": 640,
           "h": 531
         },
         "full": {
-          "src": "merch-optimized/casquette-enfant/orange-face-full.webp",
+          "src": "merch-optimized/casquette-enfant/orange-face-8629bed5d8-full.webp",
           "w": 1324,
           "h": 1098
         }
@@ -203,12 +203,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/casquette-enfant/sable-face-thumb.webp",
+          "src": "merch-optimized/casquette-enfant/sable-face-c2410ebaf8-thumb.webp",
           "w": 640,
           "h": 546
         },
         "full": {
-          "src": "merch-optimized/casquette-enfant/sable-face-full.webp",
+          "src": "merch-optimized/casquette-enfant/sable-face-c2410ebaf8-full.webp",
           "w": 1600,
           "h": 1366
         }
@@ -219,12 +219,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/casquette-enfant/vert-face-thumb.webp",
+          "src": "merch-optimized/casquette-enfant/vert-face-ac4a436d24-thumb.webp",
           "w": 640,
           "h": 535
         },
         "full": {
-          "src": "merch-optimized/casquette-enfant/vert-face-full.webp",
+          "src": "merch-optimized/casquette-enfant/vert-face-ac4a436d24-full.webp",
           "w": 1325,
           "h": 1108
         }
@@ -237,12 +237,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/doudou/sable-face-thumb.webp",
+          "src": "merch-optimized/doudou/sable-face-6cf1a23d89-thumb.webp",
           "w": 640,
           "h": 956
         },
         "full": {
-          "src": "merch-optimized/doudou/sable-face-full.webp",
+          "src": "merch-optimized/doudou/sable-face-6cf1a23d89-full.webp",
           "w": 1312,
           "h": 1960
         }
@@ -255,12 +255,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/frisbee/bleu-face-thumb.webp",
+          "src": "merch-optimized/frisbee/bleu-face-20d0fba2ac-thumb.webp",
           "w": 640,
           "h": 519
         },
         "full": {
-          "src": "merch-optimized/frisbee/bleu-face-full.webp",
+          "src": "merch-optimized/frisbee/bleu-face-20d0fba2ac-full.webp",
           "w": 1553,
           "h": 1259
         }
@@ -271,12 +271,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/frisbee/orange-face-thumb.webp",
+          "src": "merch-optimized/frisbee/orange-face-25118fd63e-thumb.webp",
           "w": 640,
           "h": 519
         },
         "full": {
-          "src": "merch-optimized/frisbee/orange-face-full.webp",
+          "src": "merch-optimized/frisbee/orange-face-25118fd63e-full.webp",
           "w": 1555,
           "h": 1260
         }
@@ -287,12 +287,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/frisbee/rose-face-thumb.webp",
+          "src": "merch-optimized/frisbee/rose-face-8f7a2cee6d-thumb.webp",
           "w": 640,
           "h": 518
         },
         "full": {
-          "src": "merch-optimized/frisbee/rose-face-full.webp",
+          "src": "merch-optimized/frisbee/rose-face-8f7a2cee6d-full.webp",
           "w": 1552,
           "h": 1256
         }
@@ -305,12 +305,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/gobelet-enfant/orange-face-thumb.webp",
+          "src": "merch-optimized/gobelet-enfant/orange-face-49851a5730-thumb.webp",
           "w": 640,
           "h": 1387
         },
         "full": {
-          "src": "merch-optimized/gobelet-enfant/orange-face-full.webp",
+          "src": "merch-optimized/gobelet-enfant/orange-face-49851a5730-full.webp",
           "w": 889,
           "h": 1927
         }
@@ -321,12 +321,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/gobelet-enfant/vert-face-thumb.webp",
+          "src": "merch-optimized/gobelet-enfant/vert-face-270242b01b-thumb.webp",
           "w": 640,
           "h": 1387
         },
         "full": {
-          "src": "merch-optimized/gobelet-enfant/vert-face-full.webp",
+          "src": "merch-optimized/gobelet-enfant/vert-face-270242b01b-full.webp",
           "w": 886,
           "h": 1920
         }
@@ -339,12 +339,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/golf/blanc-face-thumb.webp",
+          "src": "merch-optimized/golf/blanc-face-a11f139f3d-thumb.webp",
           "w": 640,
           "h": 640
         },
         "full": {
-          "src": "merch-optimized/golf/blanc-face-full.webp",
+          "src": "merch-optimized/golf/blanc-face-a11f139f3d-full.webp",
           "w": 1600,
           "h": 1600
         }
@@ -355,12 +355,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/golf/jaune-face-thumb.webp",
+          "src": "merch-optimized/golf/jaune-face-6783c529be-thumb.webp",
           "w": 640,
           "h": 640
         },
         "full": {
-          "src": "merch-optimized/golf/jaune-face-full.webp",
+          "src": "merch-optimized/golf/jaune-face-6783c529be-full.webp",
           "w": 1600,
           "h": 1600
         }
@@ -371,12 +371,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/golf/rose-face-thumb.webp",
+          "src": "merch-optimized/golf/rose-face-795d2f5c30-thumb.webp",
           "w": 640,
           "h": 640
         },
         "full": {
-          "src": "merch-optimized/golf/rose-face-full.webp",
+          "src": "merch-optimized/golf/rose-face-795d2f5c30-full.webp",
           "w": 1600,
           "h": 1600
         }
@@ -389,12 +389,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/gourde/argent-face-thumb.webp",
+          "src": "merch-optimized/gourde/argent-face-4ea968bde4-thumb.webp",
           "w": 640,
           "h": 640
         },
         "full": {
-          "src": "merch-optimized/gourde/argent-face-full.webp",
+          "src": "merch-optimized/gourde/argent-face-4ea968bde4-full.webp",
           "w": 1600,
           "h": 1600
         }
@@ -405,12 +405,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/gourde/blanc-face-thumb.webp",
+          "src": "merch-optimized/gourde/blanc-face-ebbe2009cd-thumb.webp",
           "w": 640,
           "h": 640
         },
         "full": {
-          "src": "merch-optimized/gourde/blanc-face-full.webp",
+          "src": "merch-optimized/gourde/blanc-face-ebbe2009cd-full.webp",
           "w": 1600,
           "h": 1600
         }
@@ -423,12 +423,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/medaille/laiton-face-thumb.webp",
+          "src": "merch-optimized/medaille/laiton-face-d7b09634e1-thumb.webp",
           "w": 640,
           "h": 504
         },
         "full": {
-          "src": "merch-optimized/medaille/laiton-face-full.webp",
+          "src": "merch-optimized/medaille/laiton-face-d7b09634e1-full.webp",
           "w": 1600,
           "h": 1261
         }
@@ -441,12 +441,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/mug/blanc-face-thumb.webp",
+          "src": "merch-optimized/mug/blanc-face-9c937db9e2-thumb.webp",
           "w": 491,
           "h": 478
         },
         "full": {
-          "src": "merch-optimized/mug/blanc-face-full.webp",
+          "src": "merch-optimized/mug/blanc-face-9c937db9e2-full.webp",
           "w": 491,
           "h": 478
         }
@@ -457,12 +457,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/mug/noir-face-thumb.webp",
+          "src": "merch-optimized/mug/noir-face-4668a6af01-thumb.webp",
           "w": 640,
           "h": 541
         },
         "full": {
-          "src": "merch-optimized/mug/noir-face-full.webp",
+          "src": "merch-optimized/mug/noir-face-4668a6af01-full.webp",
           "w": 801,
           "h": 677
         }
@@ -475,12 +475,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/polo/blanc-face-thumb.webp",
+          "src": "merch-optimized/polo/blanc-face-3ff0c92590-thumb.webp",
           "w": 640,
           "h": 929
         },
         "full": {
-          "src": "merch-optimized/polo/blanc-face-full.webp",
+          "src": "merch-optimized/polo/blanc-face-3ff0c92590-full.webp",
           "w": 1083,
           "h": 1572
         }
@@ -489,12 +489,12 @@
         "view": "dos",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/polo/blanc-dos-thumb.webp",
+          "src": "merch-optimized/polo/blanc-dos-3b33a16cf0-thumb.webp",
           "w": 640,
           "h": 833
         },
         "full": {
-          "src": "merch-optimized/polo/blanc-dos-full.webp",
+          "src": "merch-optimized/polo/blanc-dos-3b33a16cf0-full.webp",
           "w": 1210,
           "h": 1575
         }
@@ -505,12 +505,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/polo/gris-face-thumb.webp",
+          "src": "merch-optimized/polo/gris-face-af400ca443-thumb.webp",
           "w": 640,
           "h": 915
         },
         "full": {
-          "src": "merch-optimized/polo/gris-face-full.webp",
+          "src": "merch-optimized/polo/gris-face-af400ca443-full.webp",
           "w": 1083,
           "h": 1549
         }
@@ -519,12 +519,12 @@
         "view": "dos",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/polo/gris-dos-thumb.webp",
+          "src": "merch-optimized/polo/gris-dos-e00166d09d-thumb.webp",
           "w": 640,
           "h": 834
         },
         "full": {
-          "src": "merch-optimized/polo/gris-dos-full.webp",
+          "src": "merch-optimized/polo/gris-dos-e00166d09d-full.webp",
           "w": 1192,
           "h": 1554
         }
@@ -535,12 +535,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/polo/noir-face-thumb.webp",
+          "src": "merch-optimized/polo/noir-face-a3bb8d6ca0-thumb.webp",
           "w": 640,
           "h": 903
         },
         "full": {
-          "src": "merch-optimized/polo/noir-face-full.webp",
+          "src": "merch-optimized/polo/noir-face-a3bb8d6ca0-full.webp",
           "w": 1085,
           "h": 1531
         }
@@ -549,12 +549,12 @@
         "view": "dos",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/polo/noir-dos-thumb.webp",
+          "src": "merch-optimized/polo/noir-dos-55fc8b2c56-thumb.webp",
           "w": 640,
           "h": 844
         },
         "full": {
-          "src": "merch-optimized/polo/noir-dos-full.webp",
+          "src": "merch-optimized/polo/noir-dos-55fc8b2c56-full.webp",
           "w": 1164,
           "h": 1535
         }
@@ -567,12 +567,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/tablier/kaki-face-thumb.webp",
+          "src": "merch-optimized/tablier/kaki-face-cac9f299e6-thumb.webp",
           "w": 640,
           "h": 636
         },
         "full": {
-          "src": "merch-optimized/tablier/kaki-face-full.webp",
+          "src": "merch-optimized/tablier/kaki-face-cac9f299e6-full.webp",
           "w": 1600,
           "h": 1591
         }
@@ -583,12 +583,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/tablier/noir-face-thumb.webp",
+          "src": "merch-optimized/tablier/noir-face-1f880c4e7c-thumb.webp",
           "w": 640,
           "h": 636
         },
         "full": {
-          "src": "merch-optimized/tablier/noir-face-full.webp",
+          "src": "merch-optimized/tablier/noir-face-1f880c4e7c-full.webp",
           "w": 1600,
           "h": 1591
         }
@@ -601,12 +601,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/tshirt/blanc-face-thumb.webp",
+          "src": "merch-optimized/tshirt/blanc-face-18cce2d4c7-thumb.webp",
           "w": 640,
           "h": 573
         },
         "full": {
-          "src": "merch-optimized/tshirt/blanc-face-full.webp",
+          "src": "merch-optimized/tshirt/blanc-face-18cce2d4c7-full.webp",
           "w": 1600,
           "h": 1432
         }
@@ -617,12 +617,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/tshirt/kaki-face-thumb.webp",
+          "src": "merch-optimized/tshirt/kaki-face-632d2ba1ff-thumb.webp",
           "w": 640,
           "h": 567
         },
         "full": {
-          "src": "merch-optimized/tshirt/kaki-face-full.webp",
+          "src": "merch-optimized/tshirt/kaki-face-632d2ba1ff-full.webp",
           "w": 1600,
           "h": 1418
         }
@@ -633,12 +633,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/tshirt/noir-face-thumb.webp",
+          "src": "merch-optimized/tshirt/noir-face-28d6fa1ef8-thumb.webp",
           "w": 640,
           "h": 542
         },
         "full": {
-          "src": "merch-optimized/tshirt/noir-face-full.webp",
+          "src": "merch-optimized/tshirt/noir-face-28d6fa1ef8-full.webp",
           "w": 1001,
           "h": 848
         }
@@ -651,12 +651,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/tshirt-chasse/camouflage-face-thumb.webp",
+          "src": "merch-optimized/tshirt-chasse/camouflage-face-4214ebbda3-thumb.webp",
           "w": 640,
           "h": 587
         },
         "full": {
-          "src": "merch-optimized/tshirt-chasse/camouflage-face-full.webp",
+          "src": "merch-optimized/tshirt-chasse/camouflage-face-4214ebbda3-full.webp",
           "w": 1600,
           "h": 1466
         }
@@ -669,12 +669,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/tshirt-enfant/blanc-face-thumb.webp",
+          "src": "merch-optimized/tshirt-enfant/blanc-face-bc4ad8938a-thumb.webp",
           "w": 640,
           "h": 576
         },
         "full": {
-          "src": "merch-optimized/tshirt-enfant/blanc-face-full.webp",
+          "src": "merch-optimized/tshirt-enfant/blanc-face-bc4ad8938a-full.webp",
           "w": 1600,
           "h": 1441
         }
@@ -685,12 +685,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/tshirt-enfant/bleu-face-thumb.webp",
+          "src": "merch-optimized/tshirt-enfant/bleu-face-da35dee1ae-thumb.webp",
           "w": 640,
           "h": 560
         },
         "full": {
-          "src": "merch-optimized/tshirt-enfant/bleu-face-full.webp",
+          "src": "merch-optimized/tshirt-enfant/bleu-face-da35dee1ae-full.webp",
           "w": 1600,
           "h": 1399
         }
@@ -701,12 +701,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/tshirt-enfant/lavande-face-thumb.webp",
+          "src": "merch-optimized/tshirt-enfant/lavande-face-86d4605f72-thumb.webp",
           "w": 640,
           "h": 579
         },
         "full": {
-          "src": "merch-optimized/tshirt-enfant/lavande-face-full.webp",
+          "src": "merch-optimized/tshirt-enfant/lavande-face-86d4605f72-full.webp",
           "w": 1600,
           "h": 1448
         }
@@ -717,12 +717,12 @@
         "view": "face",
         "transparent": true,
         "thumb": {
-          "src": "merch-optimized/tshirt-enfant/orange-face-thumb.webp",
+          "src": "merch-optimized/tshirt-enfant/orange-face-bff48af3bd-thumb.webp",
           "w": 640,
           "h": 564
         },
         "full": {
-          "src": "merch-optimized/tshirt-enfant/orange-face-full.webp",
+          "src": "merch-optimized/tshirt-enfant/orange-face-bff48af3bd-full.webp",
           "w": 1600,
           "h": 1410
         }

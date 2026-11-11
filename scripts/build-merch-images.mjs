@@ -18,9 +18,10 @@
  * views exist for each. Safe to run with no public/merch/ directory at all
  * (writes an empty manifest) — that's the state until real photos are added.
  */
-import { existsSync, mkdirSync, readdirSync, writeFileSync, rmSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createHash } from 'node:crypto'
 import sharp from 'sharp'
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)))
@@ -62,8 +63,12 @@ async function buildOne(productId, file) {
     transparent = channels[channels.length - 1].min < 255
   }
 
-  const thumbName = `${colorId}-${view}-thumb.webp`
-  const fullName = `${colorId}-${view}-full.webp`
+  // Content hash in the filename so a photo swap for an existing colour/view
+  // gets a brand-new URL — otherwise browsers and the GitHub Pages CDN can
+  // keep serving a stale cached copy under the old (reused) filename.
+  const hash = createHash('sha1').update(readFileSync(srcPath)).digest('hex').slice(0, 10)
+  const thumbName = `${colorId}-${view}-${hash}-thumb.webp`
+  const fullName = `${colorId}-${view}-${hash}-full.webp`
 
   const [thumbInfo, fullInfo] = await Promise.all([
     sharp(srcPath)
