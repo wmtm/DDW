@@ -16,7 +16,8 @@ export default function HeroBanner() {
       </div>
       <div className="boutique-hero-mockups">
         {featured.map((p) => {
-          const defaultColorId = availableColorIds(p.id)[0] ?? p.colors[0].id
+          const availableIds = new Set(availableColorIds(p.id))
+          const defaultColorId = p.colors.find((c) => availableIds.has(c.id))?.id ?? p.colors[0].id
           const images = imagesFor(p.id, defaultColorId)
           return (
             <div key={p.id} className="boutique-hero-mockup">
