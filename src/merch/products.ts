@@ -248,19 +248,6 @@ export const PRODUCTS: Product[] = [
     sizes: ['S', 'M', 'L'],
     logoZone: { logo: 'crest', finish: 'fabric', xPct: 500, yPct: 470, widthPct: 220 },
   },
-  {
-    id: 'laisse',
-    category: 'animaux',
-    name: 'Laisse Wolmar',
-    description: 'Laisse résistante avec passant logoté, finition cuir et métal.',
-    base: 'leash',
-    colors: [
-      { id: 'brun', label: 'Brun', hex: '#4a3626' },
-      { id: 'noir', label: 'Noir', hex: '#1c1b19' },
-    ],
-    sizes: ['Unique'],
-    logoZone: { logo: 'pocket', finish: 'engraved', xPct: 500, yPct: 500, widthPct: 46 },
-  },
 ]
 
 export function productsByCategory(category: Product['category']): Product[] {
