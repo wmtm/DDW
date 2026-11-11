@@ -417,6 +417,24 @@
       }
     ]
   },
+  "medaille": {
+    "laiton": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/medaille/laiton-face-thumb.webp",
+          "w": 640,
+          "h": 504
+        },
+        "full": {
+          "src": "merch-optimized/medaille/laiton-face-full.webp",
+          "w": 1600,
+          "h": 1261
+        }
+      }
+    ]
+  },
   "mug": {
     "blanc": [
       {
