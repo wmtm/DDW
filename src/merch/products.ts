@@ -53,12 +53,11 @@ export const PRODUCTS: Product[] = [
     description: 'Casquette ajustable, broderie sur la façade avant.',
     base: 'cap',
     colors: [
+      { id: 'orange', label: 'Orange fluo', hex: '#ff6a1a' },
       { id: 'noir', label: 'Noir', hex: '#1c1b19' },
       { id: 'kaki', label: 'Kaki', hex: '#54502f' },
       { id: 'sable', label: 'Sable', hex: '#cdbfa0' },
-      { id: 'blanc', label: 'Blanc', hex: '#f3ede0' },
       { id: 'vert', label: 'Vert', hex: '#3a6b3f' },
-      { id: 'orange', label: 'Orange fluo', hex: '#ff6a1a' },
     ],
     sizes: ['Réglable'],
     logoZone: { logo: 'crest', finish: 'curved', xPct: 500, yPct: 335, widthPct: 170, curve: 0.4 },

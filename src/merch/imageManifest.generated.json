@@ -1,21 +1,5 @@
 {
   "casquette": {
-    "blanc": [
-      {
-        "view": "face",
-        "transparent": true,
-        "thumb": {
-          "src": "merch-optimized/casquette/blanc-face-thumb.webp",
-          "w": 640,
-          "h": 640
-        },
-        "full": {
-          "src": "merch-optimized/casquette/blanc-face-full.webp",
-          "w": 1600,
-          "h": 1600
-        }
-      }
-    ],
     "kaki": [
       {
         "view": "face",
