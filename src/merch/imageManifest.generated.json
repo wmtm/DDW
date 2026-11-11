@@ -16,19 +16,51 @@
         }
       }
     ],
+    "kaki": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/casquette/kaki-face-thumb.webp",
+          "w": 640,
+          "h": 533
+        },
+        "full": {
+          "src": "merch-optimized/casquette/kaki-face-full.webp",
+          "w": 1323,
+          "h": 1102
+        }
+      }
+    ],
     "noir": [
       {
         "view": "face",
         "transparent": true,
         "thumb": {
           "src": "merch-optimized/casquette/noir-face-thumb.webp",
-          "w": 360,
-          "h": 360
+          "w": 640,
+          "h": 538
         },
         "full": {
           "src": "merch-optimized/casquette/noir-face-full.webp",
-          "w": 360,
-          "h": 360
+          "w": 1600,
+          "h": 1346
+        }
+      }
+    ],
+    "orange": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/casquette/orange-face-thumb.webp",
+          "w": 640,
+          "h": 531
+        },
+        "full": {
+          "src": "merch-optimized/casquette/orange-face-full.webp",
+          "w": 1324,
+          "h": 1098
         }
       }
     ],
@@ -55,12 +87,12 @@
         "thumb": {
           "src": "merch-optimized/casquette/vert-face-thumb.webp",
           "w": 640,
-          "h": 640
+          "h": 535
         },
         "full": {
           "src": "merch-optimized/casquette/vert-face-full.webp",
-          "w": 1600,
-          "h": 1600
+          "w": 1325,
+          "h": 1108
         }
       }
     ]
