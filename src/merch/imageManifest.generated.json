@@ -115,6 +115,190 @@
       }
     ]
   },
+  "casquette-enfant": {
+    "kaki": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/casquette-enfant/kaki-face-thumb.webp",
+          "w": 640,
+          "h": 533
+        },
+        "full": {
+          "src": "merch-optimized/casquette-enfant/kaki-face-full.webp",
+          "w": 1323,
+          "h": 1102
+        }
+      }
+    ],
+    "noir": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/casquette-enfant/noir-face-thumb.webp",
+          "w": 640,
+          "h": 538
+        },
+        "full": {
+          "src": "merch-optimized/casquette-enfant/noir-face-full.webp",
+          "w": 1600,
+          "h": 1346
+        }
+      }
+    ],
+    "orange": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/casquette-enfant/orange-face-thumb.webp",
+          "w": 640,
+          "h": 531
+        },
+        "full": {
+          "src": "merch-optimized/casquette-enfant/orange-face-full.webp",
+          "w": 1324,
+          "h": 1098
+        }
+      }
+    ],
+    "sable": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/casquette-enfant/sable-face-thumb.webp",
+          "w": 640,
+          "h": 546
+        },
+        "full": {
+          "src": "merch-optimized/casquette-enfant/sable-face-full.webp",
+          "w": 1600,
+          "h": 1366
+        }
+      }
+    ],
+    "vert": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/casquette-enfant/vert-face-thumb.webp",
+          "w": 640,
+          "h": 535
+        },
+        "full": {
+          "src": "merch-optimized/casquette-enfant/vert-face-full.webp",
+          "w": 1325,
+          "h": 1108
+        }
+      }
+    ]
+  },
+  "doudou": {
+    "sable": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/doudou/sable-face-thumb.webp",
+          "w": 640,
+          "h": 956
+        },
+        "full": {
+          "src": "merch-optimized/doudou/sable-face-full.webp",
+          "w": 1312,
+          "h": 1960
+        }
+      }
+    ]
+  },
+  "frisbee": {
+    "bleu": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/frisbee/bleu-face-thumb.webp",
+          "w": 640,
+          "h": 519
+        },
+        "full": {
+          "src": "merch-optimized/frisbee/bleu-face-full.webp",
+          "w": 1553,
+          "h": 1259
+        }
+      }
+    ],
+    "orange": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/frisbee/orange-face-thumb.webp",
+          "w": 640,
+          "h": 519
+        },
+        "full": {
+          "src": "merch-optimized/frisbee/orange-face-full.webp",
+          "w": 1555,
+          "h": 1260
+        }
+      }
+    ],
+    "rose": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/frisbee/rose-face-thumb.webp",
+          "w": 640,
+          "h": 518
+        },
+        "full": {
+          "src": "merch-optimized/frisbee/rose-face-full.webp",
+          "w": 1552,
+          "h": 1256
+        }
+      }
+    ]
+  },
+  "gobelet-enfant": {
+    "orange": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/gobelet-enfant/orange-face-thumb.webp",
+          "w": 640,
+          "h": 1387
+        },
+        "full": {
+          "src": "merch-optimized/gobelet-enfant/orange-face-full.webp",
+          "w": 889,
+          "h": 1927
+        }
+      }
+    ],
+    "vert": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/gobelet-enfant/vert-face-thumb.webp",
+          "w": 640,
+          "h": 1387
+        },
+        "full": {
+          "src": "merch-optimized/gobelet-enfant/vert-face-full.webp",
+          "w": 886,
+          "h": 1920
+        }
+      }
+    ]
+  },
   "golf": {
     "blanc": [
       {
@@ -423,6 +607,72 @@
           "src": "merch-optimized/tshirt-chasse/camouflage-face-full.webp",
           "w": 1600,
           "h": 1466
+        }
+      }
+    ]
+  },
+  "tshirt-enfant": {
+    "blanc": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/tshirt-enfant/blanc-face-thumb.webp",
+          "w": 640,
+          "h": 576
+        },
+        "full": {
+          "src": "merch-optimized/tshirt-enfant/blanc-face-full.webp",
+          "w": 1600,
+          "h": 1441
+        }
+      }
+    ],
+    "bleu": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/tshirt-enfant/bleu-face-thumb.webp",
+          "w": 640,
+          "h": 560
+        },
+        "full": {
+          "src": "merch-optimized/tshirt-enfant/bleu-face-full.webp",
+          "w": 1600,
+          "h": 1399
+        }
+      }
+    ],
+    "lavande": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/tshirt-enfant/lavande-face-thumb.webp",
+          "w": 640,
+          "h": 579
+        },
+        "full": {
+          "src": "merch-optimized/tshirt-enfant/lavande-face-full.webp",
+          "w": 1600,
+          "h": 1448
+        }
+      }
+    ],
+    "orange": [
+      {
+        "view": "face",
+        "transparent": true,
+        "thumb": {
+          "src": "merch-optimized/tshirt-enfant/orange-face-thumb.webp",
+          "w": 640,
+          "h": 564
+        },
+        "full": {
+          "src": "merch-optimized/tshirt-enfant/orange-face-full.webp",
+          "w": 1600,
+          "h": 1410
         }
       }
     ]
