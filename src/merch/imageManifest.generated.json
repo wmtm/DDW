@@ -3,32 +3,32 @@
     "blanc": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/bandana/blanc-face-thumb.webp",
           "w": 640,
-          "h": 605
+          "h": 1300
         },
         "full": {
           "src": "merch-optimized/bandana/blanc-face-full.webp",
-          "w": 1600,
-          "h": 1513
+          "w": 938,
+          "h": 1906
         }
       }
     ],
     "rouge": [
       {
         "view": "face",
-        "transparent": false,
+        "transparent": true,
         "thumb": {
           "src": "merch-optimized/bandana/rouge-face-thumb.webp",
           "w": 640,
-          "h": 605
+          "h": 1298
         },
         "full": {
           "src": "merch-optimized/bandana/rouge-face-full.webp",
-          "w": 1600,
-          "h": 1513
+          "w": 939,
+          "h": 1905
         }
       }
     ]
