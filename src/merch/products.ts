@@ -179,20 +179,6 @@ export const PRODUCTS: Product[] = [
     logoZone: { logo: 'crest', finish: 'curved', xPct: 500, yPct: 335, widthPct: 170, curve: 0.4 },
   },
   {
-    id: 'gourde-enfant',
-    category: 'enfants',
-    name: 'Petite gourde enfant',
-    description: 'Format 350 ml avec bouchon à paille, facile à tenir en main.',
-    base: 'kidsBottle',
-    colors: [
-      { id: 'bleu', label: 'Bleu', hex: '#3f6f93' },
-      { id: 'rose', label: 'Rose', hex: '#c77b8f' },
-      { id: 'vert', label: 'Vert', hex: '#5f8f5a' },
-    ],
-    sizes: ['350 ml'],
-    logoZone: { logo: 'crest', finish: 'curved', xPct: 500, yPct: 520, widthPct: 110, curve: 0.5 },
-  },
-  {
     id: 'frisbee',
     category: 'enfants',
     name: 'Frisbee Wolmar',
@@ -257,6 +243,7 @@ export const PRODUCTS: Product[] = [
     colors: [
       { id: 'kaki', label: 'Kaki', hex: '#54502f' },
       { id: 'rouge', label: 'Rouge', hex: '#8f4336' },
+      { id: 'blanc', label: 'Blanc', hex: '#f3ede0' },
     ],
     sizes: ['S', 'M', 'L'],
     logoZone: { logo: 'crest', finish: 'fabric', xPct: 500, yPct: 470, widthPct: 220 },
