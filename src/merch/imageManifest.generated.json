@@ -1,4 +1,38 @@
 {
+  "bandana": {
+    "blanc": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/bandana/blanc-face-thumb.webp",
+          "w": 640,
+          "h": 605
+        },
+        "full": {
+          "src": "merch-optimized/bandana/blanc-face-full.webp",
+          "w": 1600,
+          "h": 1513
+        }
+      }
+    ],
+    "rouge": [
+      {
+        "view": "face",
+        "transparent": false,
+        "thumb": {
+          "src": "merch-optimized/bandana/rouge-face-thumb.webp",
+          "w": 640,
+          "h": 605
+        },
+        "full": {
+          "src": "merch-optimized/bandana/rouge-face-full.webp",
+          "w": 1600,
+          "h": 1513
+        }
+      }
+    ]
+  },
   "carnet-chasse": {
     "beige": [
       {
