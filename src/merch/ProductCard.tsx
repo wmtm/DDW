@@ -23,6 +23,7 @@ export default function ProductCard({ product, onOpen }: { product: Product; onO
       onMouseLeave={() => setHover(false)}
     >
       <span className="boutique-card-mockup">
+        {product.featured && <span className="boutique-card-badge">Coup de cœur</span>}
         <Photo image={shown} size="thumb" alt={product.name} />
       </span>
       <span className="boutique-card-body">
