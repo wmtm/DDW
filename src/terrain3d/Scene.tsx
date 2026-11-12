@@ -147,7 +147,13 @@ export default function Scene({
       <group>
         <TerrainMesh terrain={terrain} textures={textures} exaggeration={exaggeration} canopyExaggeration={canopyExaggeration} />
         <CutawayWalls terrain={terrain} exaggeration={exaggeration} sunDirection={sunDirection} />
-        <Markers terrain={terrain} landmarks={landmarks} exaggeration={exaggeration} onSelectLandmark={onSelectLandmark} />
+        <Markers
+          terrain={terrain}
+          landmarks={landmarks}
+          exaggeration={exaggeration}
+          canopyExaggeration={canopyExaggeration}
+          onSelectLandmark={onSelectLandmark}
+        />
       </group>
 
       {/* Scaled much closer to the footprint than before (was 2.2x — a
