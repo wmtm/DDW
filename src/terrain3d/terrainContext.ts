@@ -137,9 +137,12 @@ export function displayHeightAtLocal(terrain: TerrainContext, x: number, z: numb
  * The full displayed surface height for the top mesh: the exaggerated
  * ground (see displayHeightAtLocal) plus canopy height on top, scaled by
  * its own independent exaggeration slider. Everything else that places
- * geometry at ground level — the cutaway walls, the boundary minimum, the
- * landmark markers — intentionally keeps using displayHeightAtLocal alone:
- * those represent real ground/soil, not the tree canopy sitting above it.
+ * geometry at ground level — the cutaway walls, the boundary minimum, and
+ * most landmark markers — intentionally keeps using displayHeightAtLocal
+ * alone: those represent real ground/soil, not the tree canopy sitting
+ * above it. Mirador/chute pins are the one exception (see Markers.tsx):
+ * they're physically built up in a tree, so they use this function too,
+ * to sit on the canopy top instead of being buried at ground level under it.
  */
 export function displaySurfaceHeightAtLocal(
   terrain: TerrainContext,

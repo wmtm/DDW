@@ -3,7 +3,7 @@ import { Html } from '@react-three/drei'
 import { landmarkCategoryColors, landmarkCategoryIcons, type Landmark } from '../landmarks'
 import { pois, type Poi } from '../poi'
 import PoiIcon from '../PoiIcon'
-import { SCENE_ORIGIN, displayHeightAtLocal } from './terrainContext'
+import { SCENE_ORIGIN, displayHeightAtLocal, displaySurfaceHeightAtLocal } from './terrainContext'
 import { toLocalXZ, pointInPolygon } from './projection'
 import { BOUNDARY_LOCAL } from './terrainContext'
 import type { TerrainContext } from './terrainContext'
@@ -19,6 +19,8 @@ interface Props {
   landmarks: Landmark[]
   /** Used with displayHeightAtLocal so pins sit on the same detrended+exaggerated surface as the mesh, not a plain group scale any more. */
   exaggeration: number
+  /** Used (mirador pins only) so a chute built up in a tree sits on the canopy top, not buried at ground level under it — see the per-pin height choice below. */
+  canopyExaggeration: number
   onSelectLandmark?: (landmark: Landmark) => void
 }
 
@@ -31,7 +33,7 @@ interface Props {
  * are shown, since anything outside it has no visible ground under it
  * (the terrain mesh is alpha-clipped to the boundary).
  */
-export default function Markers({ terrain, landmarks, exaggeration, onSelectLandmark }: Props) {
+export default function Markers({ terrain, landmarks, exaggeration, canopyExaggeration, onSelectLandmark }: Props) {
   const placedLandmarks = useMemo(() => {
     return landmarks
       .map((l) => {
@@ -53,7 +55,15 @@ export default function Markers({ terrain, landmarks, exaggeration, onSelectLand
   return (
     <group>
       {placedLandmarks.map(({ landmark, x, z }) => {
-        const y = displayHeightAtLocal(terrain, x, z, exaggeration)
+        // Miradors are physically built up in a tree, not standing on bare
+        // ground — anchoring them to ground height alone left the pin
+        // buried inside the mesh's own (exaggerated) canopy bump at that
+        // spot, often hard to spot at all. Every other category really is
+        // a ground-level feature, so it keeps the plain ground height.
+        const y =
+          landmark.category === 'mirador'
+            ? displaySurfaceHeightAtLocal(terrain, x, z, exaggeration, canopyExaggeration)
+            : displayHeightAtLocal(terrain, x, z, exaggeration)
         return (
           <Html key={landmark.id} position={[x, y, z]} center distanceFactor={140} zIndexRange={[10, 0]}>
             <div
