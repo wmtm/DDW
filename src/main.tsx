@@ -9,6 +9,7 @@ import './index.css'
 const App = lazy(() => import('./App'))
 const LeaderboardPage = lazy(() => import('./LeaderboardPage'))
 const MerchPage = lazy(() => import('./MerchPage'))
+const FieldReportPage = lazy(() => import('./FieldReportPage'))
 
 const fallback = <div style={{ position: 'fixed', inset: 0, background: '#14100c' }} />
 
@@ -23,7 +24,15 @@ function Root() {
 
   return (
     <Suspense fallback={fallback}>
-      {hash === '#/leaderboard' ? <LeaderboardPage /> : hash === '#/merch' ? <MerchPage /> : <App />}
+      {hash === '#/leaderboard' ? (
+        <LeaderboardPage />
+      ) : hash === '#/merch' ? (
+        <MerchPage />
+      ) : hash === '#/signaler' ? (
+        <FieldReportPage />
+      ) : (
+        <App />
+      )}
     </Suspense>
   )
 }

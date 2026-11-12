@@ -1,0 +1,35 @@
+// Firestore security rules for the live field-reporting features.
+// Paste this into Firebase console > Firestore Database > Rules > Publish
+// (see the setup steps at the top of src/firebaseConfig.ts).
+//
+// Same casual-privacy philosophy as the site's passcode gate (see
+// src/passcode.ts): this keeps the data tidy and on-shape, not locked down
+// against a determined bad actor. Nothing here is more sensitive than a
+// rough GPS point that already expires in a few hours.
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /woundedDeer/{reportId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly(['latitude', 'longitude', 'note', 'createdAt', 'expiresAt'])
+        && request.resource.data.latitude is number
+        && request.resource.data.longitude is number
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.expiresAt is timestamp
+        && request.resource.data.expiresAt > request.resource.data.createdAt
+        && (!('note' in request.resource.data)
+            || request.resource.data.note == null
+            || (request.resource.data.note is string && request.resource.data.note.size() <= 280));
+
+      // No client-side edits/deletes — a report is write-once and just
+      // stops showing up once subscribeActiveWoundedDeerReports() filters
+      // it out as expired (see src/fieldReports.ts). Optionally also set a
+      // Firestore TTL policy on `expiresAt` in the console so old documents
+      // get cleaned up for real after a while — purely housekeeping, not
+      // required for the map to behave correctly.
+      allow update, delete: if false;
+    }
+  }
+}

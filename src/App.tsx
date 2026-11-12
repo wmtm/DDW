@@ -52,6 +52,8 @@ import {
   landmarkNumberSortKey,
   type Landmark,
 } from './landmarks'
+import { isFirebaseConfigured } from './firebaseConfig'
+import type { WoundedDeerReport } from './fieldReports'
 import ControlsPanel, { type SectionKey } from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
 import PhotoLightbox from './PhotoLightbox'
@@ -164,6 +166,8 @@ export default function App() {
   const imageryLoadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [unlocked, setUnlockedState] = useState(isUnlocked())
   const [showChutes, setShowChutes] = useState(true)
+  const [woundedDeerReports, setWoundedDeerReports] = useState<WoundedDeerReport[]>([])
+  const [selectedWoundedDeerReport, setSelectedWoundedDeerReport] = useState<WoundedDeerReport | null>(null)
   const [showDrawnMap, setShowDrawnMap] = useState(false)
   const [showWindCones, setShowWindCones] = useState(false)
   const [showSitePois, setShowSitePois] = useState(true)
@@ -194,6 +198,31 @@ export default function App() {
     [chutesVisible],
   )
   const currentTourLandmark = landmarkTourIndex !== null ? chuteLandmarks[landmarkTourIndex] : null
+
+  // Live wounded-deer pins (src/FieldReportPage.tsx writes them, this
+  // subscribes and re-renders whenever one is added or expires). Gated the
+  // same way as the chutes — private, unlocked-only — and entirely inert
+  // until a real Firebase project is wired up in src/firebaseConfig.ts.
+  // fieldReports.ts is dynamically imported here (not a top-level import)
+  // so the ~150kB-gzipped Firestore SDK is only ever fetched once someone
+  // actually unlocks the map with a real Firebase project configured —
+  // never on a plain visit to the public map.
+  useEffect(() => {
+    if (!unlocked || !isFirebaseConfigured) {
+      setWoundedDeerReports([])
+      return
+    }
+    let unsubscribe: (() => void) | undefined
+    let cancelled = false
+    import('./fieldReports').then(({ subscribeActiveWoundedDeerReports }) => {
+      if (cancelled) return
+      unsubscribe = subscribeActiveWoundedDeerReports(setWoundedDeerReports)
+    })
+    return () => {
+      cancelled = true
+      unsubscribe?.()
+    }
+  }, [unlocked])
 
   const windConeGeoJSON = useMemo(() => {
     if (!showWindCones || !chutesVisible || chuteLandmarks.length === 0 || !weather) return null
@@ -901,6 +930,38 @@ export default function App() {
           </div>
         </Marker>
       ))}
+
+      {woundedDeerReports.map((report) => (
+        <Marker
+          key={report.id}
+          longitude={report.longitude}
+          latitude={report.latitude}
+          anchor="center"
+          onClick={(e) => {
+            e.originalEvent.stopPropagation()
+            setSelectedWoundedDeerReport(report)
+          }}
+        >
+          <div className="wounded-deer-pin" title="Biche touchée" />
+        </Marker>
+      ))}
+
+      {selectedWoundedDeerReport && (
+        <Popup
+          longitude={selectedWoundedDeerReport.longitude}
+          latitude={selectedWoundedDeerReport.latitude}
+          anchor="top"
+          onClose={() => setSelectedWoundedDeerReport(null)}
+          closeOnClick={false}
+        >
+          <strong>Biche touchée</strong>
+          <p>
+            Signalé à{' '}
+            {selectedWoundedDeerReport.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+          </p>
+          {selectedWoundedDeerReport.note && <p>{selectedWoundedDeerReport.note}</p>}
+        </Popup>
+      )}
 
       {selectedLandmark && (
         <Popup

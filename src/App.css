@@ -112,6 +112,27 @@
   animation: pin-pulse 1.6s ease-in-out infinite;
 }
 
+.wounded-deer-pin {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #d94436;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 4px rgba(217, 68, 54, 0.4), 0 1px 3px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  animation: wounded-deer-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes wounded-deer-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px rgba(217, 68, 54, 0.4), 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(217, 68, 54, 0.18), 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+}
+
 @keyframes pin-pulse {
   0%,
   100% {
