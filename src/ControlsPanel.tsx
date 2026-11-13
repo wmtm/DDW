@@ -418,6 +418,9 @@ export default function ControlsPanel({
                     Cône indicatif dans le sens où porte le vent actuel, pas une garantie.
                   </span>
                 )}
+                <a href="#/signaler" className="action-button field-report-link">
+                  📍 Signaler une biche touchée
+                </a>
               </PasscodeGate>
             </ControlGroup>
           </>

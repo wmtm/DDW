@@ -988,6 +988,12 @@
   transform: scale(0.98);
 }
 
+.field-report-link {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+}
+
 .action-button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
