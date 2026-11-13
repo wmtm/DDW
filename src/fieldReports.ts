@@ -1,6 +1,8 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   onSnapshot,
   Timestamp,
   type Unsubscribe,
@@ -32,6 +34,11 @@ export async function reportWoundedDeer(latitude: number, longitude: number, not
     createdAt: now,
     expiresAt,
   })
+}
+
+/** Removes a report outright — anyone can retract one (same casual-privacy model as the rest of the chutes tooling), not just whoever placed it. */
+export async function deleteWoundedDeerReport(id: string): Promise<void> {
+  await deleteDoc(doc(getDb(), COLLECTION, id))
 }
 
 /**

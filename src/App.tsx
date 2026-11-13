@@ -167,6 +167,12 @@ export default function App() {
   const [showChutes, setShowChutes] = useState(true)
   const [woundedDeerReports, setWoundedDeerReports] = useState<WoundedDeerReport[]>([])
   const [selectedWoundedDeerReport, setSelectedWoundedDeerReport] = useState<WoundedDeerReport | null>(null)
+  const [reportingDeer, setReportingDeer] = useState(false)
+  const [draftDeerPoint, setDraftDeerPoint] = useState<{ lng: number; lat: number } | null>(null)
+  const [hunterPosition, setHunterPosition] = useState<{ lng: number; lat: number } | null>(null)
+  const [deerNote, setDeerNote] = useState('')
+  const [deerSubmitting, setDeerSubmitting] = useState(false)
+  const [deerActionError, setDeerActionError] = useState<string | null>(null)
   const [showDrawnMap, setShowDrawnMap] = useState(false)
   const [showWindCones, setShowWindCones] = useState(false)
   const [showSitePois, setShowSitePois] = useState(true)
@@ -230,6 +236,62 @@ export default function App() {
 
   const handleUnlock = useCallback(() => setUnlockedState(true), [])
   const handleToggleChutes = useCallback(() => setShowChutes((v) => !v), [])
+
+  // Map-based wounded-deer reporting: tap the floating button to arm it,
+  // tap anywhere on the map to drop/move a draft pin (a "you are here" dot
+  // from one-shot geolocation sits alongside it as a reference point, since
+  // the real hit location is an eyeballed approximation, not the hunter's
+  // own exact position), then confirm to actually write it.
+  const handleToggleReportingDeer = useCallback(() => {
+    setReportingDeer((active) => {
+      const next = !active
+      setDraftDeerPoint(null)
+      setDeerNote('')
+      setDeerActionError(null)
+      if (next) {
+        setMeasureActive(false)
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => setHunterPosition({ lng: pos.coords.longitude, lat: pos.coords.latitude }),
+            () => setHunterPosition(null),
+            { enableHighAccuracy: true, timeout: 15000 },
+          )
+        }
+      } else {
+        setHunterPosition(null)
+      }
+      return next
+    })
+  }, [])
+
+  const handleConfirmDeerReport = useCallback(async () => {
+    if (!draftDeerPoint) return
+    setDeerSubmitting(true)
+    setDeerActionError(null)
+    try {
+      const { reportWoundedDeer } = await import('./fieldReports')
+      await reportWoundedDeer(draftDeerPoint.lat, draftDeerPoint.lng, deerNote)
+      setReportingDeer(false)
+      setDraftDeerPoint(null)
+      setHunterPosition(null)
+      setDeerNote('')
+    } catch {
+      setDeerActionError("Échec de l'envoi — réessayez.")
+    } finally {
+      setDeerSubmitting(false)
+    }
+  }, [draftDeerPoint, deerNote])
+
+  const handleDeleteDeerReport = useCallback(async (id: string) => {
+    setDeerActionError(null)
+    try {
+      const { deleteWoundedDeerReport } = await import('./fieldReports')
+      await deleteWoundedDeerReport(id)
+      setSelectedWoundedDeerReport(null)
+    } catch {
+      setDeerActionError('Échec de la suppression — réessayez.')
+    }
+  }, [])
   const handleToggleDrawnMap = useCallback(() => setShowDrawnMap((v) => !v), [])
   const handleToggleWindCones = useCallback(() => setShowWindCones((v) => !v), [])
   const handleToggleSitePois = useCallback(() => setShowSitePois((v) => !v), [])
@@ -330,13 +392,17 @@ export default function App() {
 
   const handleMapClick = useCallback(
     (e: MapLayerMouseEvent) => {
+      if (reportingDeer) {
+        setDraftDeerPoint({ lng: e.lngLat.lng, lat: e.lngLat.lat })
+        return
+      }
       if (!measureActive || measureClosed) return
       const map = e.target
       const elevation = map.queryTerrainElevation(e.lngLat)
       const point: MeasurePoint = { lngLat: [e.lngLat.lng, e.lngLat.lat], elevation }
       setMeasurePoints((prev) => [...prev, point])
     },
-    [measureActive, measureClosed],
+    [reportingDeer, measureActive, measureClosed],
   )
 
   const handleMapMouseMove = useCallback((e: MapLayerMouseEvent) => {
@@ -655,7 +721,7 @@ export default function App() {
           )
         }
       }}
-      cursor={measureActive ? 'crosshair' : mapDragging ? 'grabbing' : 'grab'}
+      cursor={reportingDeer || measureActive ? 'crosshair' : mapDragging ? 'grabbing' : 'grab'}
     >
       {/* These control the hidden 2D map, and their fixed top-right anchor
           collides with the 3D view's own axis gizmo/minimap in that same
@@ -702,6 +768,17 @@ export default function App() {
       </button>
       {!isolate3dHintDismissed && !wolmarOnly && (
         <div className="isolate-3d-hint">Cliquez pour une vue 3D isolée</div>
+      )}
+      {unlocked && !wolmarOnly && (
+        <button
+          type="button"
+          className={`report-deer-button ${reportingDeer ? 'report-deer-button-active' : ''}`}
+          onClick={handleToggleReportingDeer}
+          aria-label={reportingDeer ? 'Annuler le signalement' : 'Signaler une biche touchée'}
+          title={reportingDeer ? 'Annuler le signalement' : 'Signaler une biche touchée'}
+        >
+          🦌
+        </button>
       )}
       {/* The 3D view has its own compass (reflecting the 3D camera's
           azimuth, not the hidden 2D map's) in the same corner — showing
@@ -933,6 +1010,50 @@ export default function App() {
         </Marker>
       ))}
 
+      {hunterPosition && (
+        <Marker longitude={hunterPosition.lng} latitude={hunterPosition.lat} anchor="center">
+          <div className="hunter-position-dot" title="Votre position" />
+        </Marker>
+      )}
+
+      {draftDeerPoint && (
+        <Marker longitude={draftDeerPoint.lng} latitude={draftDeerPoint.lat} anchor="center">
+          <div className="wounded-deer-pin wounded-deer-pin-draft" title="Point à confirmer" />
+        </Marker>
+      )}
+
+      {reportingDeer && (
+        <div className="deer-report-panel">
+          {!draftDeerPoint ? (
+            <p className="hint">
+              Touchez la carte à l'endroit approximatif où la biche a été touchée.
+              {hunterPosition && ' Le point bleu indique votre position actuelle, à titre de repère.'}
+            </p>
+          ) : (
+            <>
+              <p className="hint">Confirmez l'emplacement, ou touchez à nouveau la carte pour l'ajuster.</p>
+              <textarea
+                className="field-report-note-input"
+                placeholder="Note optionnelle (ex : zone broussailleuse près du grand chêne)"
+                value={deerNote}
+                onChange={(e) => setDeerNote(e.target.value)}
+                maxLength={280}
+                rows={2}
+              />
+              {deerActionError && <p className="field-report-error">{deerActionError}</p>}
+              <div className="deer-report-panel-actions">
+                <button type="button" className="action-button" onClick={handleConfirmDeerReport} disabled={deerSubmitting}>
+                  {deerSubmitting ? 'Envoi…' : 'Confirmer'}
+                </button>
+                <button type="button" className="action-button" onClick={handleToggleReportingDeer} disabled={deerSubmitting}>
+                  Annuler
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
       {selectedWoundedDeerReport && (
         <Popup
           longitude={selectedWoundedDeerReport.longitude}
@@ -947,6 +1068,14 @@ export default function App() {
             {selectedWoundedDeerReport.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
           </p>
           {selectedWoundedDeerReport.note && <p>{selectedWoundedDeerReport.note}</p>}
+          {deerActionError && <p className="field-report-error">{deerActionError}</p>}
+          <button
+            type="button"
+            className="action-button"
+            onClick={() => handleDeleteDeerReport(selectedWoundedDeerReport.id)}
+          >
+            Supprimer
+          </button>
         </Popup>
       )}
 
