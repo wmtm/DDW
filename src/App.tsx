@@ -143,7 +143,6 @@ export default function App() {
   const [historicalYear, setHistoricalYear] = useState<ImagerySelection>(shared.historicalYear ?? null)
   const [hoverElevation, setHoverElevation] = useState<ElevationSample | null>(null)
   const [mapReady, setMapReady] = useState(false)
-  const [mapLoadError, setMapLoadError] = useState(false)
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [weatherError, setWeatherError] = useState<string | null>(null)
   const [slopeContrast, setSlopeContrast] = useState(false)
@@ -631,10 +630,13 @@ export default function App() {
       onDragEnd={() => setMapDragging(false)}
       onError={(e) => {
         // Cancelled tile requests (panning away mid-fetch) fire as errors too
-        // and are completely normal — only a failure before the map has ever
-        // finished loading is worth telling the visitor about.
+        // and are completely normal. A transient failure before the map has
+        // loaded isn't worth alarming the visitor over either — MapLibre
+        // retries failed tile/style requests on its own, so the loading
+        // animation below just keeps showing until onLoad actually fires;
+        // only log it so a genuinely stuck load is still diagnosable.
         if (e.error?.name === 'AbortError') return
-        if (!mapReady) setMapLoadError(true)
+        if (!mapReady) console.warn('[map] load error (will keep retrying):', e.error)
       }}
       onLoad={() => {
         setMapReady(true)
@@ -671,23 +673,8 @@ export default function App() {
       {basemapTransitioning && <div className="basemap-transition-veil" />}
       {!mapReady && (
         <div className="map-loading-overlay">
-          {mapLoadError ? (
-            <>
-              <div className="map-loading-icon map-loading-icon-warning">!</div>
-              <p>
-                Le chargement prend plus de temps que prévu : un service de carte est peut-être
-                temporairement indisponible.
-              </p>
-              <button className="action-button" onClick={() => window.location.reload()}>
-                Réessayer
-              </button>
-            </>
-          ) : (
-            <>
-              <div className="map-loading-spinner" />
-              <p>Chargement de la carte…</p>
-            </>
-          )}
+          <div className="map-loading-spinner" />
+          <p>Chargement de la carte…</p>
         </div>
       )}
       <button

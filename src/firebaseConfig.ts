@@ -24,12 +24,12 @@
  * site works exactly as before.
  */
 export const firebaseConfig = {
-  apiKey: '',
-  authDomain: '',
-  projectId: '',
-  storageBucket: '',
-  messagingSenderId: '',
-  appId: '',
+  apiKey: 'AIzaSyB_PLdubOPGxfa9Nl49cJXPr4sq3jLaoU8',
+  authDomain: 'domaine-de-wolmar.firebaseapp.com',
+  projectId: 'domaine-de-wolmar',
+  storageBucket: 'domaine-de-wolmar.firebasestorage.app',
+  messagingSenderId: '767954521616',
+  appId: '1:767954521616:web:57bf61581816424ec94495',
 }
 
 /**

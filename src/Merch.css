@@ -674,14 +674,20 @@
   .boutique-modal-mockup {
     aspect-ratio: 4 / 3;
   }
+
+  /* .boutique-shell sits inside .boutique-page's own 16px side padding
+     (see Leaderboard.css, shared by both page shells), so the grid's real
+     available width is viewport minus 64px of combined padding, not just
+     this shell's own 32px — the breakpoint below is sized for that. Below
+     ~382px even this doesn't fit two 150px tracks, so it falls back to one
+     full-width column, which is still a fine, deliberate look there. */
+  .boutique-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
 }
 
 @media (max-width: 420px) {
   .boutique-hero-mockups {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .boutique-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 }
