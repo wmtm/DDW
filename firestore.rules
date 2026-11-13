@@ -23,13 +23,17 @@ service cloud.firestore {
             || request.resource.data.note == null
             || (request.resource.data.note is string && request.resource.data.note.size() <= 280));
 
-      // No client-side edits/deletes — a report is write-once and just
-      // stops showing up once subscribeActiveWoundedDeerReports() filters
-      // it out as expired (see src/fieldReports.ts). Optionally also set a
-      // Firestore TTL policy on `expiresAt` in the console so old documents
-      // get cleaned up for real after a while — purely housekeeping, not
-      // required for the map to behave correctly.
-      allow update, delete: if false;
+      // Anyone can remove a report outright (e.g. placed by mistake, or the
+      // deer was recovered) — same casual-privacy model as the rest of the
+      // chutes tooling, not locked to whoever placed it, since there's no
+      // real auth here. Still no edits: a report is otherwise write-once,
+      // and just stops showing up once subscribeActiveWoundedDeerReports()
+      // filters it out as expired (see src/fieldReports.ts). Optionally
+      // also set a Firestore TTL policy on `expiresAt` in the console so
+      // old documents get cleaned up for real after a while — purely
+      // housekeeping, not required for the map to behave correctly.
+      allow delete: if true;
+      allow update: if false;
     }
   }
 }

@@ -116,21 +116,88 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #d94436;
+  background: #000;
   border: 2px solid #fff;
-  box-shadow: 0 0 0 4px rgba(217, 68, 54, 0.4), 0 1px 3px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.4);
   cursor: pointer;
   animation: wounded-deer-pulse 1.6s ease-in-out infinite;
+}
+
+.wounded-deer-pin-draft {
+  opacity: 0.75;
+  animation: none;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 @keyframes wounded-deer-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 4px rgba(217, 68, 54, 0.4), 0 1px 3px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.4);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(217, 68, 54, 0.18), 0 1px 3px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 8px rgba(0, 0, 0, 0.18), 0 1px 3px rgba(0, 0, 0, 0.4);
   }
+}
+
+.hunter-position-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 4px rgba(109, 179, 255, 0.35), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.deer-report-panel {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  width: min(340px, calc(100% - 32px));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(var(--panel-blur));
+  border: 1.5px solid var(--accent-amber);
+  border-radius: var(--panel-radius);
+  box-shadow: var(--panel-shadow);
+}
+
+.deer-report-panel .hint {
+  margin: 0;
+}
+
+.deer-report-panel-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.deer-report-panel-actions .action-button {
+  flex: 1;
+}
+
+.field-report-note-input {
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.field-report-note-input:focus {
+  outline: 1px solid var(--accent-blue);
+}
+
+.field-report-error {
+  margin: 0;
+  font-size: 12px;
+  color: #e0876a;
 }
 
 @keyframes pin-pulse {
@@ -595,6 +662,36 @@
 .isolate-3d-button-active {
   background: var(--accent-amber);
   color: #1a1407;
+}
+
+.report-deer-button {
+  position: absolute;
+  bottom: 118px;
+  left: 16px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel-bg);
+  backdrop-filter: blur(var(--panel-blur));
+  border: 1.5px solid var(--accent-amber);
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: var(--panel-shadow);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.report-deer-button:hover {
+  transform: scale(1.06);
+}
+
+.report-deer-button-active {
+  background: var(--accent-amber);
+  animation: wounded-deer-pulse 1.6s ease-in-out infinite;
 }
 
 /* One-time callout pointing at the new persistent 3D toggle, same visual
