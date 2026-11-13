@@ -19,8 +19,15 @@ interface Props {
 
 const DEFAULT_EXAGGERATION = 2.75
 const DEFAULT_CANOPY_EXAGGERATION = 1.75
-const DEFAULT_SUN_AZIMUTH = 55
-const DEFAULT_SUN_ELEVATION = 28
+// CameraRig's own default viewing azimuth is 35° (see settledPosition in
+// Scene.tsx) — a sun azimuth/elevation this close to the camera's own angle
+// (55°/28°, the old defaults) lights the terrain almost head-on. With barely
+// any raking shadow to show real relief, that's exactly the setup that
+// triggers the "inverted terrain" illusion (hills read as hollows) — the
+// classic fix is clear side-light, offset roughly 90° in azimuth from the
+// camera and high enough to cast confident, unambiguous shadows.
+const DEFAULT_SUN_AZIMUTH = 315
+const DEFAULT_SUN_ELEVATION = 45
 
 /**
  * The premium 3D cutaway: a dedicated Three.js scene (not MapLibre), lazy-
