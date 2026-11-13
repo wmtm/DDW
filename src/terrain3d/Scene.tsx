@@ -11,6 +11,7 @@ import { BOUNDARY_LOCAL, BOUNDARY_LOCAL_BOUNDS, displayHeightAtLocal } from './t
 import type { TerrainContext } from './terrainContext'
 import type { TerrainTextures } from './satelliteTexture'
 import type { Landmark } from '../landmarks'
+import type { WoundedDeerReport } from '../fieldReports'
 import type { CameraOrientation, CameraRigHandle } from './CameraRig'
 
 interface Props {
@@ -23,6 +24,7 @@ interface Props {
   isMobile: boolean
   resetToken: number
   landmarks: Landmark[]
+  woundedDeerReports: WoundedDeerReport[]
   onSelectLandmark?: (landmark: Landmark) => void
   cameraRigRef: React.RefObject<CameraRigHandle>
   orientationRef: React.MutableRefObject<CameraOrientation>
@@ -38,6 +40,7 @@ export default function Scene({
   isMobile,
   resetToken,
   landmarks,
+  woundedDeerReports,
   onSelectLandmark,
   cameraRigRef,
   orientationRef,
@@ -150,6 +153,7 @@ export default function Scene({
         <Markers
           terrain={terrain}
           landmarks={landmarks}
+          woundedDeerReports={woundedDeerReports}
           exaggeration={exaggeration}
           canopyExaggeration={canopyExaggeration}
           onSelectLandmark={onSelectLandmark}

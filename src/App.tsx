@@ -1105,7 +1105,12 @@ export default function App() {
       />
       {wolmarOnly && (
         <Suspense fallback={null}>
-          <Isolate3DView onClose={handleToggleWolmarOnly} landmarks={visibleLandmarks} onSelectLandmark={handleSelectLandmark} />
+          <Isolate3DView
+            onClose={handleToggleWolmarOnly}
+            landmarks={visibleLandmarks}
+            woundedDeerReports={woundedDeerReports}
+            onSelectLandmark={handleSelectLandmark}
+          />
         </Suspense>
       )}
     </Map>
