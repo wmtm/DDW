@@ -55,6 +55,7 @@ import {
 } from './landmarks'
 import { isFirebaseConfigured } from './firebaseConfig'
 import type { WoundedDeerReport } from './fieldReports'
+import type { Warning, WarningComment } from './warnings'
 import ControlsPanel, { type SectionKey } from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
 import PhotoLightbox from './PhotoLightbox'
@@ -176,6 +177,17 @@ export default function App() {
   const [deerSubmitting, setDeerSubmitting] = useState(false)
   const [deerActionError, setDeerActionError] = useState<string | null>(null)
   const [myReporterId] = useState(() => getReporterId())
+
+  const [warnings, setWarnings] = useState<Warning[]>([])
+  const [selectedWarning, setSelectedWarning] = useState<Warning | null>(null)
+  const [warningComments, setWarningComments] = useState<WarningComment[]>([])
+  const [newCommentText, setNewCommentText] = useState('')
+  const [commentSubmitting, setCommentSubmitting] = useState(false)
+  const [placingWarning, setPlacingWarning] = useState(false)
+  const [draftWarningPoint, setDraftWarningPoint] = useState<{ lng: number; lat: number } | null>(null)
+  const [warningNote, setWarningNote] = useState('')
+  const [warningSubmitting, setWarningSubmitting] = useState(false)
+  const [warningActionError, setWarningActionError] = useState<string | null>(null)
   const [showDrawnMap, setShowDrawnMap] = useState(false)
   const [showWindCones, setShowWindCones] = useState(false)
   const [showSitePois, setShowSitePois] = useState(true)
@@ -232,6 +244,47 @@ export default function App() {
     }
   }, [unlocked])
 
+  // Live warning pins (anything unusual on the site, with a comment log —
+  // see the 🦌/⚠️ buttons below). Same gating/lazy-import reasoning as the
+  // wounded-deer subscription above — warnings.ts is a separate module but
+  // shares the same Firestore project/SDK.
+  useEffect(() => {
+    if (!unlocked || !isFirebaseConfigured) {
+      setWarnings([])
+      return
+    }
+    let unsubscribe: (() => void) | undefined
+    let cancelled = false
+    import('./warnings').then(({ subscribeActiveWarnings }) => {
+      if (cancelled) return
+      unsubscribe = subscribeActiveWarnings(setWarnings)
+    })
+    return () => {
+      cancelled = true
+      unsubscribe?.()
+    }
+  }, [unlocked])
+
+  // Comment thread for whichever warning's popup is currently open — only
+  // subscribed while a popup is actually open, not once per pin on the map.
+  useEffect(() => {
+    if (!selectedWarning) {
+      setWarningComments([])
+      return
+    }
+    let unsubscribe: (() => void) | undefined
+    let cancelled = false
+    const warningId = selectedWarning.id
+    import('./warnings').then(({ subscribeWarningComments }) => {
+      if (cancelled) return
+      unsubscribe = subscribeWarningComments(warningId, setWarningComments)
+    })
+    return () => {
+      cancelled = true
+      unsubscribe?.()
+    }
+  }, [selectedWarning])
+
   const windConeGeoJSON = useMemo(() => {
     if (!showWindCones || !chutesVisible || chuteLandmarks.length === 0 || !weather) return null
     return buildWindConeGeoJSON(chuteLandmarks, weather.windDirectionDeg, weather.windSpeedKmh)
@@ -257,6 +310,8 @@ export default function App() {
       setDeerActionError(null)
       if (next) {
         setMeasureActive(false)
+        setPlacingWarning(false)
+        setDraftWarningPoint(null)
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             (pos) => setHunterPosition({ lng: pos.coords.longitude, lat: pos.coords.latitude }),
@@ -309,6 +364,86 @@ export default function App() {
       setDeerActionError('Échec — réessayez.')
     }
   }, [])
+
+  // Map-based warning reporting — same tap-to-place-then-confirm flow as
+  // the animal-report one above, with its own comment log once placed.
+  const handleTogglePlacingWarning = useCallback(() => {
+    setPlacingWarning((active) => {
+      const next = !active
+      setDraftWarningPoint(null)
+      setWarningNote('')
+      setWarningActionError(null)
+      if (next) {
+        setMeasureActive(false)
+        setReportingDeer(false)
+        setDraftDeerPoint(null)
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => setHunterPosition({ lng: pos.coords.longitude, lat: pos.coords.latitude }),
+            () => setHunterPosition(null),
+            { enableHighAccuracy: true, timeout: 15000 },
+          )
+        }
+      } else {
+        setHunterPosition(null)
+      }
+      return next
+    })
+  }, [])
+
+  const handleConfirmWarning = useCallback(async () => {
+    if (!draftWarningPoint) return
+    setWarningSubmitting(true)
+    setWarningActionError(null)
+    try {
+      const { reportWarning } = await import('./warnings')
+      await reportWarning(draftWarningPoint.lat, draftWarningPoint.lng, warningNote)
+      setPlacingWarning(false)
+      setDraftWarningPoint(null)
+      setHunterPosition(null)
+      setWarningNote('')
+    } catch {
+      setWarningActionError("Échec de l'envoi — réessayez.")
+    } finally {
+      setWarningSubmitting(false)
+    }
+  }, [draftWarningPoint, warningNote])
+
+  const handleResolveWarning = useCallback(async (id: string) => {
+    setWarningActionError(null)
+    try {
+      const { resolveWarning } = await import('./warnings')
+      await resolveWarning(id)
+    } catch {
+      setWarningActionError('Échec — réessayez.')
+    }
+  }, [])
+
+  const handleDeleteWarning = useCallback(async (id: string) => {
+    setWarningActionError(null)
+    try {
+      const { deleteWarning } = await import('./warnings')
+      await deleteWarning(id)
+      setSelectedWarning(null)
+    } catch {
+      setWarningActionError('Échec de la suppression — réessayez.')
+    }
+  }, [])
+
+  const handleAddWarningComment = useCallback(async () => {
+    if (!selectedWarning || !newCommentText.trim()) return
+    setCommentSubmitting(true)
+    setWarningActionError(null)
+    try {
+      const { addWarningComment } = await import('./warnings')
+      await addWarningComment(selectedWarning.id, newCommentText)
+      setNewCommentText('')
+    } catch {
+      setWarningActionError("Échec de l'envoi du commentaire — réessayez.")
+    } finally {
+      setCommentSubmitting(false)
+    }
+  }, [selectedWarning, newCommentText])
   const handleToggleDrawnMap = useCallback(() => setShowDrawnMap((v) => !v), [])
   const handleToggleWindCones = useCallback(() => setShowWindCones((v) => !v), [])
   const handleToggleSitePois = useCallback(() => setShowSitePois((v) => !v), [])
@@ -413,13 +548,17 @@ export default function App() {
         setDraftDeerPoint({ lng: e.lngLat.lng, lat: e.lngLat.lat })
         return
       }
+      if (placingWarning) {
+        setDraftWarningPoint({ lng: e.lngLat.lng, lat: e.lngLat.lat })
+        return
+      }
       if (!measureActive || measureClosed) return
       const map = e.target
       const elevation = map.queryTerrainElevation(e.lngLat)
       const point: MeasurePoint = { lngLat: [e.lngLat.lng, e.lngLat.lat], elevation }
       setMeasurePoints((prev) => [...prev, point])
     },
-    [reportingDeer, measureActive, measureClosed],
+    [reportingDeer, placingWarning, measureActive, measureClosed],
   )
 
   const handleMapMouseMove = useCallback((e: MapLayerMouseEvent) => {
@@ -738,7 +877,7 @@ export default function App() {
           )
         }
       }}
-      cursor={reportingDeer || measureActive ? 'crosshair' : mapDragging ? 'grabbing' : 'grab'}
+      cursor={reportingDeer || placingWarning || measureActive ? 'crosshair' : mapDragging ? 'grabbing' : 'grab'}
     >
       {/* These control the hidden 2D map, and their fixed top-right anchor
           collides with the 3D view's own axis gizmo/minimap in that same
@@ -795,6 +934,17 @@ export default function App() {
           title={reportingDeer ? 'Annuler le signalement' : 'Signaler un animal blessé'}
         >
           🦌
+        </button>
+      )}
+      {unlocked && !wolmarOnly && (
+        <button
+          type="button"
+          className={`report-warning-button ${placingWarning ? 'report-warning-button-active' : ''}`}
+          onClick={handleTogglePlacingWarning}
+          aria-label={placingWarning ? 'Annuler le signalement' : 'Signaler un point inhabituel'}
+          title={placingWarning ? 'Annuler le signalement' : 'Signaler un point inhabituel'}
+        >
+          ⚠️
         </button>
       )}
       {/* The 3D view has its own compass (reflecting the 3D camera's
@@ -1128,6 +1278,154 @@ export default function App() {
         </Popup>
       )}
 
+      {warnings.map((warning) => (
+        <Marker
+          key={warning.id}
+          longitude={warning.longitude}
+          latitude={warning.latitude}
+          anchor="center"
+          onClick={(e) => {
+            e.originalEvent.stopPropagation()
+            setSelectedWarning(warning)
+          }}
+        >
+          <div
+            className={`warning-pin ${warning.resolvedAt ? 'warning-pin-resolved' : ''}`}
+            title={warning.resolvedAt ? 'Résolu' : 'Point inhabituel'}
+          >
+            !
+          </div>
+        </Marker>
+      ))}
+
+      {draftWarningPoint && (
+        <Marker longitude={draftWarningPoint.lng} latitude={draftWarningPoint.lat} anchor="center">
+          <div className="warning-pin warning-pin-draft" title="Point à confirmer">
+            !
+          </div>
+        </Marker>
+      )}
+
+      {placingWarning && (
+        <div className="deer-report-panel">
+          {!draftWarningPoint ? (
+            <p className="hint">
+              Touchez la carte à l'endroit approximatif de ce qui est inhabituel.
+              {hunterPosition && ' Le point bleu indique votre position actuelle, à titre de repère.'}
+            </p>
+          ) : (
+            <>
+              <p className="hint">Confirmez l'emplacement, ou touchez à nouveau la carte pour l'ajuster.</p>
+              <textarea
+                className="field-report-note-input"
+                placeholder="Décrivez ce que vous avez vu (optionnel)"
+                value={warningNote}
+                onChange={(e) => setWarningNote(e.target.value)}
+                maxLength={280}
+                rows={2}
+              />
+              {warningActionError && <p className="field-report-error">{warningActionError}</p>}
+              <div className="deer-report-panel-actions">
+                <button
+                  type="button"
+                  className="action-button action-button-cancel"
+                  onClick={handleTogglePlacingWarning}
+                  disabled={warningSubmitting}
+                >
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  className="action-button action-button-confirm"
+                  onClick={handleConfirmWarning}
+                  disabled={warningSubmitting}
+                >
+                  {warningSubmitting ? 'Envoi…' : 'Confirmer'}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {selectedWarning && (
+        <Popup
+          longitude={selectedWarning.longitude}
+          latitude={selectedWarning.latitude}
+          anchor="top"
+          onClose={() => setSelectedWarning(null)}
+          closeOnClick={false}
+        >
+          <div className="warning-popup">
+            <strong>{selectedWarning.resolvedAt ? 'Point résolu' : 'Point inhabituel'}</strong>
+            <p>
+              Signalé à{' '}
+              {selectedWarning.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+            </p>
+            {selectedWarning.resolvedAt && (
+              <p>
+                Résolu à{' '}
+                {selectedWarning.resolvedAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+              </p>
+            )}
+            {selectedWarning.note && <p>{selectedWarning.note}</p>}
+
+            <div className="warning-comment-log">
+              {warningComments.length === 0 ? (
+                <p className="hint">Aucun commentaire pour l'instant.</p>
+              ) : (
+                warningComments.map((comment) => (
+                  <div key={comment.id} className="warning-comment">
+                    <span className="hint">
+                      {comment.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    <p>{comment.text}</p>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <textarea
+              className="field-report-note-input"
+              placeholder="Ajouter un commentaire…"
+              value={newCommentText}
+              onChange={(e) => setNewCommentText(e.target.value)}
+              maxLength={500}
+              rows={2}
+            />
+            {warningActionError && <p className="field-report-error">{warningActionError}</p>}
+            <div className="deer-report-panel-actions">
+              <button
+                type="button"
+                className="action-button"
+                onClick={handleAddWarningComment}
+                disabled={commentSubmitting || !newCommentText.trim()}
+              >
+                {commentSubmitting ? 'Envoi…' : 'Commenter'}
+              </button>
+              {!selectedWarning.resolvedAt && (
+                <button
+                  type="button"
+                  className="action-button"
+                  onClick={() => handleResolveWarning(selectedWarning.id)}
+                >
+                  Résolu
+                </button>
+              )}
+              {(adminUnlocked || selectedWarning.reporterId === myReporterId) && (
+                <button
+                  type="button"
+                  className="action-button"
+                  onClick={() => handleDeleteWarning(selectedWarning.id)}
+                >
+                  Supprimer
+                </button>
+              )}
+            </div>
+          </div>
+        </Popup>
+      )}
+
       {selectedLandmark && (
         <Popup
           longitude={selectedLandmark.longitude}
@@ -1289,6 +1587,7 @@ export default function App() {
             onClose={handleToggleWolmarOnly}
             landmarks={visibleLandmarks}
             woundedDeerReports={woundedDeerReports}
+            warnings={warnings}
             onSelectLandmark={handleSelectLandmark}
           />
         </Suspense>

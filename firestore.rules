@@ -46,5 +46,40 @@ service cloud.firestore {
       // purely housekeeping, not required for the map to behave correctly.
       allow delete: if true;
     }
+
+    match /warnings/{warningId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly(['latitude', 'longitude', 'note', 'reporterId', 'createdAt', 'resolvedAt'])
+        && request.resource.data.latitude is number
+        && request.resource.data.longitude is number
+        && request.resource.data.reporterId is string
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.resolvedAt == null
+        && (!('note' in request.resource.data)
+            || request.resource.data.note == null
+            || (request.resource.data.note is string && request.resource.data.note.size() <= 280));
+
+      // Only "mark resolved" (resolvedAt null -> timestamp, or back to null
+      // to un-resolve) — never the position/note/reporterId/createdAt.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['resolvedAt'])
+        && (request.resource.data.resolvedAt == null || request.resource.data.resolvedAt is timestamp);
+
+      // Same casual model as woundedDeer: the UI restricts this to the
+      // reporter or an admin, not enforced here.
+      allow delete: if true;
+
+      match /comments/{commentId} {
+        allow read: if true;
+        // Append-only log — no edits or deletes, so "what was said" can't be rewritten after the fact.
+        allow create: if request.resource.data.keys().hasOnly(['text', 'authorId', 'createdAt'])
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 500
+          && request.resource.data.authorId is string
+          && request.resource.data.createdAt is timestamp;
+        allow update, delete: if false;
+      }
+    }
   }
 }
