@@ -5,7 +5,10 @@
 // Same casual-privacy philosophy as the site's passcode gate (see
 // src/passcode.ts): this keeps the data tidy and on-shape, not locked down
 // against a determined bad actor. Nothing here is more sensitive than a
-// rough GPS point that already expires in a few hours.
+// rough GPS point that already expires in a few hours. In particular, the
+// app's "only the reporter or an admin can edit/delete" rule is enforced in
+// the UI only (reporterId is a client-generated id, trivially spoofable) —
+// there's no real login anywhere in this app to check it against here.
 rules_version = '2';
 
 service cloud.firestore {
@@ -13,27 +16,35 @@ service cloud.firestore {
     match /woundedDeer/{reportId} {
       allow read: if true;
 
-      allow create: if request.resource.data.keys().hasOnly(['latitude', 'longitude', 'note', 'createdAt', 'expiresAt'])
+      allow create: if request.resource.data.keys().hasOnly(['latitude', 'longitude', 'note', 'reporterId', 'createdAt', 'expiresAt', 'foundAt'])
         && request.resource.data.latitude is number
         && request.resource.data.longitude is number
+        && request.resource.data.reporterId is string
         && request.resource.data.createdAt is timestamp
         && request.resource.data.expiresAt is timestamp
         && request.resource.data.expiresAt > request.resource.data.createdAt
+        && request.resource.data.foundAt == null
+        && (!('note' in request.resource.data)
+            || request.resource.data.note == null
+            || (request.resource.data.note is string && request.resource.data.note.size() <= 280));
+
+      // Covers both "mark found" (foundAt null -> timestamp) and an admin
+      // edit of the position/note — never createdAt/expiresAt/reporterId.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['latitude', 'longitude', 'note', 'foundAt'])
+        && request.resource.data.latitude is number
+        && request.resource.data.longitude is number
+        && (request.resource.data.foundAt == null || request.resource.data.foundAt is timestamp)
         && (!('note' in request.resource.data)
             || request.resource.data.note == null
             || (request.resource.data.note is string && request.resource.data.note.size() <= 280));
 
       // Anyone can remove a report outright (e.g. placed by mistake, or the
-      // deer was recovered) — same casual-privacy model as the rest of the
-      // chutes tooling, not locked to whoever placed it, since there's no
-      // real auth here. Still no edits: a report is otherwise write-once,
-      // and just stops showing up once subscribeActiveWoundedDeerReports()
-      // filters it out as expired (see src/fieldReports.ts). Optionally
-      // also set a Firestore TTL policy on `expiresAt` in the console so
-      // old documents get cleaned up for real after a while — purely
-      // housekeeping, not required for the map to behave correctly.
+      // animal was recovered) — the UI restricts this to the reporter or an
+      // admin, but that's a client-side convenience, not enforced here.
+      // Optionally also set a Firestore TTL policy on `expiresAt` in the
+      // console so old documents get cleaned up for real after a while —
+      // purely housekeeping, not required for the map to behave correctly.
       allow delete: if true;
-      allow update: if false;
     }
   }
 }

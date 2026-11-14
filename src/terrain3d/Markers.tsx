@@ -96,7 +96,10 @@ export default function Markers({ terrain, landmarks, woundedDeerReports, exagge
         const y = displayHeightAtLocal(terrain, x, z, exaggeration)
         return (
           <Html key={report.id} position={[x, y, z]} center distanceFactor={140} zIndexRange={[10, 0]}>
-            <div className="wounded-deer-pin" title="Biche touchée" />
+            <div
+              className={`wounded-deer-pin ${report.foundAt ? 'wounded-deer-pin-found' : ''}`}
+              title={report.foundAt ? 'Animal trouvé' : 'Animal blessé'}
+            />
           </Html>
         )
       })}

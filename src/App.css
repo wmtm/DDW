@@ -129,6 +129,13 @@
   box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
+/* Marked "Trouvé" — settled/resolved, so it stops pulsing (that urgency was for the still-active search) and turns green. */
+.wounded-deer-pin-found {
+  background: #3a8f4f;
+  animation: none;
+  box-shadow: 0 0 0 4px rgba(58, 143, 79, 0.35), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
 @keyframes wounded-deer-pulse {
   0%,
   100% {

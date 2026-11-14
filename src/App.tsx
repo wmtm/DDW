@@ -26,7 +26,8 @@ import { mapStyle } from './mapStyle'
 import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
 import { estateBoundary } from './boundary'
 import { ISOLATE_VIEW } from './isolateMode'
-import { isUnlocked } from './passcode'
+import { isUnlocked, isAdminUnlocked, setAdminUnlocked } from './passcode'
+import { getReporterId } from './reporterId'
 import drawnMapImage from './assets/estate-drawn-map.png'
 import { historicalYears, waybackTileUrl, currentImageryTileUrl, type ImagerySelection } from './historicalImagery'
 import {
@@ -164,6 +165,7 @@ export default function App() {
   const [imageryLoading, setImageryLoading] = useState(false)
   const imageryLoadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [unlocked, setUnlockedState] = useState(isUnlocked())
+  const [adminUnlocked, setAdminUnlockedState] = useState(isAdminUnlocked())
   const [showChutes, setShowChutes] = useState(true)
   const [woundedDeerReports, setWoundedDeerReports] = useState<WoundedDeerReport[]>([])
   const [selectedWoundedDeerReport, setSelectedWoundedDeerReport] = useState<WoundedDeerReport | null>(null)
@@ -173,6 +175,7 @@ export default function App() {
   const [deerNote, setDeerNote] = useState('')
   const [deerSubmitting, setDeerSubmitting] = useState(false)
   const [deerActionError, setDeerActionError] = useState<string | null>(null)
+  const [myReporterId] = useState(() => getReporterId())
   const [showDrawnMap, setShowDrawnMap] = useState(false)
   const [showWindCones, setShowWindCones] = useState(false)
   const [showSitePois, setShowSitePois] = useState(true)
@@ -235,6 +238,10 @@ export default function App() {
   }, [showWindCones, chutesVisible, chuteLandmarks, weather])
 
   const handleUnlock = useCallback(() => setUnlockedState(true), [])
+  const handleAdminUnlock = useCallback(() => {
+    setAdminUnlocked()
+    setAdminUnlockedState(true)
+  }, [])
   const handleToggleChutes = useCallback(() => setShowChutes((v) => !v), [])
 
   // Map-based wounded-deer reporting: tap the floating button to arm it,
@@ -290,6 +297,16 @@ export default function App() {
       setSelectedWoundedDeerReport(null)
     } catch {
       setDeerActionError('Échec de la suppression — réessayez.')
+    }
+  }, [])
+
+  const handleMarkDeerFound = useCallback(async (id: string) => {
+    setDeerActionError(null)
+    try {
+      const { markWoundedDeerFound } = await import('./fieldReports')
+      await markWoundedDeerFound(id)
+    } catch {
+      setDeerActionError('Échec — réessayez.')
     }
   }, [])
   const handleToggleDrawnMap = useCallback(() => setShowDrawnMap((v) => !v), [])
@@ -774,8 +791,8 @@ export default function App() {
           type="button"
           className={`report-deer-button ${reportingDeer ? 'report-deer-button-active' : ''}`}
           onClick={handleToggleReportingDeer}
-          aria-label={reportingDeer ? 'Annuler le signalement' : 'Signaler une biche touchée'}
-          title={reportingDeer ? 'Annuler le signalement' : 'Signaler une biche touchée'}
+          aria-label={reportingDeer ? 'Annuler le signalement' : 'Signaler un animal blessé'}
+          title={reportingDeer ? 'Annuler le signalement' : 'Signaler un animal blessé'}
         >
           🦌
         </button>
@@ -1006,7 +1023,10 @@ export default function App() {
             setSelectedWoundedDeerReport(report)
           }}
         >
-          <div className="wounded-deer-pin" title="Biche touchée" />
+          <div
+            className={`wounded-deer-pin ${report.foundAt ? 'wounded-deer-pin-found' : ''}`}
+            title={report.foundAt ? 'Animal trouvé' : 'Animal blessé'}
+          />
         </Marker>
       ))}
 
@@ -1026,7 +1046,7 @@ export default function App() {
         <div className="deer-report-panel">
           {!draftDeerPoint ? (
             <p className="hint">
-              Touchez la carte à l'endroit approximatif où la biche a été touchée.
+              Touchez la carte à l'endroit approximatif où l'animal a été blessé.
               {hunterPosition && ' Le point bleu indique votre position actuelle, à titre de repère.'}
             </p>
           ) : (
@@ -1062,20 +1082,39 @@ export default function App() {
           onClose={() => setSelectedWoundedDeerReport(null)}
           closeOnClick={false}
         >
-          <strong>Biche touchée</strong>
+          <strong>{selectedWoundedDeerReport.foundAt ? 'Animal trouvé' : 'Animal blessé'}</strong>
           <p>
             Signalé à{' '}
             {selectedWoundedDeerReport.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
           </p>
+          {selectedWoundedDeerReport.foundAt && (
+            <p>
+              Trouvé à{' '}
+              {selectedWoundedDeerReport.foundAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+            </p>
+          )}
           {selectedWoundedDeerReport.note && <p>{selectedWoundedDeerReport.note}</p>}
           {deerActionError && <p className="field-report-error">{deerActionError}</p>}
-          <button
-            type="button"
-            className="action-button"
-            onClick={() => handleDeleteDeerReport(selectedWoundedDeerReport.id)}
-          >
-            Supprimer
-          </button>
+          <div className="deer-report-panel-actions">
+            {!selectedWoundedDeerReport.foundAt && (
+              <button
+                type="button"
+                className="action-button"
+                onClick={() => handleMarkDeerFound(selectedWoundedDeerReport.id)}
+              >
+                Trouvé
+              </button>
+            )}
+            {(adminUnlocked || selectedWoundedDeerReport.reporterId === myReporterId) && (
+              <button
+                type="button"
+                className="action-button"
+                onClick={() => handleDeleteDeerReport(selectedWoundedDeerReport.id)}
+              >
+                Supprimer
+              </button>
+            )}
+          </div>
         </Popup>
       )}
 
@@ -1196,6 +1235,8 @@ export default function App() {
         landmarks={visibleLandmarks}
         onSelectLandmark={handleSelectLandmark}
         onUnlock={handleUnlock}
+        adminUnlocked={adminUnlocked}
+        onAdminUnlock={handleAdminUnlock}
         activeSection={activeSection}
         onSectionChange={setActiveSection}
         showChutes={showChutes}
