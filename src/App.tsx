@@ -54,7 +54,7 @@ import {
   type Landmark,
 } from './landmarks'
 import { isFirebaseConfigured } from './firebaseConfig'
-import type { WoundedDeerReport } from './fieldReports'
+import type { WoundedDeerReport, WoundedDeerComment } from './fieldReports'
 import type { Warning, WarningComment } from './warnings'
 import ControlsPanel, { type SectionKey } from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
@@ -176,6 +176,9 @@ export default function App() {
   const [deerNote, setDeerNote] = useState('')
   const [deerSubmitting, setDeerSubmitting] = useState(false)
   const [deerActionError, setDeerActionError] = useState<string | null>(null)
+  const [deerComments, setDeerComments] = useState<WoundedDeerComment[]>([])
+  const [newDeerCommentText, setNewDeerCommentText] = useState('')
+  const [deerCommentSubmitting, setDeerCommentSubmitting] = useState(false)
   const [myReporterId] = useState(() => getReporterId())
 
   const [warnings, setWarnings] = useState<Warning[]>([])
@@ -285,6 +288,26 @@ export default function App() {
     }
   }, [selectedWarning])
 
+  // Comment thread for whichever wounded-deer report's popup is currently
+  // open — same lazy-subscribe-only-while-open pattern as warnings above.
+  useEffect(() => {
+    if (!selectedWoundedDeerReport) {
+      setDeerComments([])
+      return
+    }
+    let unsubscribe: (() => void) | undefined
+    let cancelled = false
+    const reportId = selectedWoundedDeerReport.id
+    import('./fieldReports').then(({ subscribeWoundedDeerComments }) => {
+      if (cancelled) return
+      unsubscribe = subscribeWoundedDeerComments(reportId, setDeerComments)
+    })
+    return () => {
+      cancelled = true
+      unsubscribe?.()
+    }
+  }, [selectedWoundedDeerReport])
+
   const windConeGeoJSON = useMemo(() => {
     if (!showWindCones || !chutesVisible || chuteLandmarks.length === 0 || !weather) return null
     return buildWindConeGeoJSON(chuteLandmarks, weather.windDirectionDeg, weather.windSpeedKmh)
@@ -364,6 +387,21 @@ export default function App() {
       setDeerActionError('Échec — réessayez.')
     }
   }, [])
+
+  const handleAddDeerComment = useCallback(async () => {
+    if (!selectedWoundedDeerReport || !newDeerCommentText.trim()) return
+    setDeerCommentSubmitting(true)
+    setDeerActionError(null)
+    try {
+      const { addWoundedDeerComment } = await import('./fieldReports')
+      await addWoundedDeerComment(selectedWoundedDeerReport.id, newDeerCommentText)
+      setNewDeerCommentText('')
+    } catch {
+      setDeerActionError("Échec de l'envoi du commentaire — réessayez.")
+    } finally {
+      setDeerCommentSubmitting(false)
+    }
+  }, [selectedWoundedDeerReport, newDeerCommentText])
 
   // Map-based warning reporting — same tap-to-place-then-confirm flow as
   // the animal-report one above, with its own comment log once placed.
@@ -1208,7 +1246,7 @@ export default function App() {
                 rows={2}
               />
               {deerActionError && <p className="field-report-error">{deerActionError}</p>}
-              <div className="deer-report-panel-actions">
+              <div className="deer-report-panel-actions deer-report-panel-actions-icons">
                 <button
                   type="button"
                   className="action-button action-button-cancel"
@@ -1243,38 +1281,72 @@ export default function App() {
           onClose={() => setSelectedWoundedDeerReport(null)}
           closeOnClick={false}
         >
-          <strong>{selectedWoundedDeerReport.foundAt ? 'Animal trouvé' : 'Animal blessé'}</strong>
-          <p>
-            Signalé à{' '}
-            {selectedWoundedDeerReport.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-          </p>
-          {selectedWoundedDeerReport.foundAt && (
+          <div className="field-report-popup">
+            <strong>{selectedWoundedDeerReport.foundAt ? 'Animal trouvé' : 'Animal blessé'}</strong>
             <p>
-              Trouvé à{' '}
-              {selectedWoundedDeerReport.foundAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+              Signalé à{' '}
+              {selectedWoundedDeerReport.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
             </p>
-          )}
-          {selectedWoundedDeerReport.note && <p>{selectedWoundedDeerReport.note}</p>}
-          {deerActionError && <p className="field-report-error">{deerActionError}</p>}
-          <div className="deer-report-panel-actions">
-            {!selectedWoundedDeerReport.foundAt && (
+            {selectedWoundedDeerReport.foundAt && (
+              <p>
+                Trouvé à{' '}
+                {selectedWoundedDeerReport.foundAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+              </p>
+            )}
+            {selectedWoundedDeerReport.note && <p>{selectedWoundedDeerReport.note}</p>}
+
+            <div className="field-report-comment-log">
+              {deerComments.length === 0 ? (
+                <p className="hint">Aucun commentaire pour l'instant.</p>
+              ) : (
+                deerComments.map((comment) => (
+                  <div key={comment.id} className="field-report-comment">
+                    <span className="hint">
+                      {comment.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    <p>{comment.text}</p>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <textarea
+              className="field-report-note-input"
+              placeholder="Ajouter un commentaire…"
+              value={newDeerCommentText}
+              onChange={(e) => setNewDeerCommentText(e.target.value)}
+              maxLength={500}
+              rows={2}
+            />
+            {deerActionError && <p className="field-report-error">{deerActionError}</p>}
+            <div className="deer-report-panel-actions">
               <button
                 type="button"
                 className="action-button"
-                onClick={() => handleMarkDeerFound(selectedWoundedDeerReport.id)}
+                onClick={handleAddDeerComment}
+                disabled={deerCommentSubmitting || !newDeerCommentText.trim()}
               >
-                Trouvé
+                {deerCommentSubmitting ? 'Envoi…' : 'Commenter'}
               </button>
-            )}
-            {(adminUnlocked || selectedWoundedDeerReport.reporterId === myReporterId) && (
-              <button
-                type="button"
-                className="action-button"
-                onClick={() => handleDeleteDeerReport(selectedWoundedDeerReport.id)}
-              >
-                Supprimer
-              </button>
-            )}
+              {!selectedWoundedDeerReport.foundAt && (
+                <button
+                  type="button"
+                  className="action-button"
+                  onClick={() => handleMarkDeerFound(selectedWoundedDeerReport.id)}
+                >
+                  Trouvé
+                </button>
+              )}
+              {(adminUnlocked || selectedWoundedDeerReport.reporterId === myReporterId) && (
+                <button
+                  type="button"
+                  className="action-button"
+                  onClick={() => handleDeleteDeerReport(selectedWoundedDeerReport.id)}
+                >
+                  Supprimer
+                </button>
+              )}
+            </div>
           </div>
         </Popup>
       )}
@@ -1323,7 +1395,7 @@ export default function App() {
                 rows={2}
               />
               {warningActionError && <p className="field-report-error">{warningActionError}</p>}
-              <div className="deer-report-panel-actions">
+              <div className="deer-report-panel-actions deer-report-panel-actions-icons">
                 <button
                   type="button"
                   className="action-button action-button-cancel"
@@ -1358,7 +1430,7 @@ export default function App() {
           onClose={() => setSelectedWarning(null)}
           closeOnClick={false}
         >
-          <div className="warning-popup">
+          <div className="field-report-popup">
             <strong>{selectedWarning.resolvedAt ? 'Point résolu' : 'Point inhabituel'}</strong>
             <p>
               Signalé à{' '}
@@ -1372,12 +1444,12 @@ export default function App() {
             )}
             {selectedWarning.note && <p>{selectedWarning.note}</p>}
 
-            <div className="warning-comment-log">
+            <div className="field-report-comment-log">
               {warningComments.length === 0 ? (
                 <p className="hint">Aucun commentaire pour l'instant.</p>
               ) : (
                 warningComments.map((comment) => (
-                  <div key={comment.id} className="warning-comment">
+                  <div key={comment.id} className="field-report-comment">
                     <span className="hint">
                       {comment.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                     </span>
