@@ -11,8 +11,8 @@ import {
 import { getDb } from './firebase'
 import { getReporterId } from './reporterId'
 
-/** How long an animal-report pin stays visible on the map after it's reported. */
-export const WOUNDED_DEER_VISIBLE_HOURS = 4
+/** How long an animal-report pin stays visible on the map after it's reported, unless removed sooner by the reporter or an admin. */
+export const WOUNDED_DEER_VISIBLE_HOURS = 24
 
 export interface WoundedDeerReport {
   id: string
