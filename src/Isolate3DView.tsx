@@ -11,6 +11,7 @@ import type { CameraOrientation, CameraRigHandle } from './terrain3d/CameraRig'
 import type { TerrainContext } from './terrain3d/terrainContext'
 import type { Landmark } from './landmarks'
 import type { WoundedDeerReport } from './fieldReports'
+import type { Warning } from './warnings'
 
 interface Props {
   onClose: () => void
@@ -18,6 +19,8 @@ interface Props {
   onSelectLandmark?: (landmark: Landmark) => void
   /** Live pins from the field-report page (see App.tsx) — same data as the 2D map, just also rendered here. */
   woundedDeerReports: WoundedDeerReport[]
+  /** Live warning pins (see App.tsx) — same data as the 2D map, just also rendered here. */
+  warnings: Warning[]
 }
 
 const DEFAULT_EXAGGERATION = 2.75
@@ -40,7 +43,7 @@ const DEFAULT_SUN_ELEVATION = 45
  * heightmap (see terrain3d/elevationData.ts) and satellite tiles fetched
  * live for just the estate's footprint.
  */
-export default function Isolate3DView({ onClose, landmarks, onSelectLandmark, woundedDeerReports }: Props) {
+export default function Isolate3DView({ onClose, landmarks, onSelectLandmark, woundedDeerReports, warnings }: Props) {
   const [terrain, setTerrain] = useState<TerrainContext | null>(null)
   const [textures, setTextures] = useState<TerrainTextures | null>(null)
   const [loadError, setLoadError] = useState(false)
@@ -144,6 +147,7 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark, wo
                 resetToken={resetToken}
                 landmarks={landmarks}
                 woundedDeerReports={woundedDeerReports}
+                warnings={warnings}
                 onSelectLandmark={onSelectLandmark}
                 cameraRigRef={cameraRigRef}
                 orientationRef={orientationRef}

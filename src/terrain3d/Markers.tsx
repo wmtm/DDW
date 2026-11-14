@@ -4,6 +4,7 @@ import { landmarkCategoryColors, landmarkCategoryIcons, type Landmark } from '..
 import { pois, type Poi } from '../poi'
 import PoiIcon from '../PoiIcon'
 import type { WoundedDeerReport } from '../fieldReports'
+import type { Warning } from '../warnings'
 import { SCENE_ORIGIN, displayHeightAtLocal, displaySurfaceHeightAtLocal } from './terrainContext'
 import { toLocalXZ, pointInPolygon } from './projection'
 import { BOUNDARY_LOCAL } from './terrainContext'
@@ -20,6 +21,8 @@ interface Props {
   landmarks: Landmark[]
   /** Live pins from the field-report page (src/FieldReportPage.tsx) — same data the 2D map renders, kept in sync here too. */
   woundedDeerReports: WoundedDeerReport[]
+  /** Live warning pins (src/warnings.ts) — same data the 2D map renders. */
+  warnings: Warning[]
   /** Used with displayHeightAtLocal so pins sit on the same detrended+exaggerated surface as the mesh, not a plain group scale any more. */
   exaggeration: number
   /** Used (mirador pins only) so a chute built up in a tree sits on the canopy top, not buried at ground level under it — see the per-pin height choice below. */
@@ -36,7 +39,7 @@ interface Props {
  * are shown, since anything outside it has no visible ground under it
  * (the terrain mesh is alpha-clipped to the boundary).
  */
-export default function Markers({ terrain, landmarks, woundedDeerReports, exaggeration, canopyExaggeration, onSelectLandmark }: Props) {
+export default function Markers({ terrain, landmarks, woundedDeerReports, warnings, exaggeration, canopyExaggeration, onSelectLandmark }: Props) {
   const placedLandmarks = useMemo(() => {
     return landmarks
       .map((l) => {
@@ -54,6 +57,15 @@ export default function Markers({ terrain, landmarks, woundedDeerReports, exagge
       })
       .filter(({ x, z }) => pointInPolygon(x, z, BOUNDARY_LOCAL))
   }, [woundedDeerReports])
+
+  const placedWarnings = useMemo(() => {
+    return warnings
+      .map((w) => {
+        const [x, z] = toLocalXZ(SCENE_ORIGIN, w.longitude, w.latitude)
+        return { warning: w, x, z }
+      })
+      .filter(({ x, z }) => pointInPolygon(x, z, BOUNDARY_LOCAL))
+  }, [warnings])
 
   const placedPois = useMemo(() => {
     return pois
@@ -100,6 +112,19 @@ export default function Markers({ terrain, landmarks, woundedDeerReports, exagge
               className={`wounded-deer-pin ${report.foundAt ? 'wounded-deer-pin-found' : ''}`}
               title={report.foundAt ? 'Animal trouvé' : 'Animal blessé'}
             />
+          </Html>
+        )
+      })}
+      {placedWarnings.map(({ warning, x, z }) => {
+        const y = displayHeightAtLocal(terrain, x, z, exaggeration)
+        return (
+          <Html key={warning.id} position={[x, y, z]} center distanceFactor={140} zIndexRange={[10, 0]}>
+            <div
+              className={`warning-pin ${warning.resolvedAt ? 'warning-pin-resolved' : ''}`}
+              title={warning.resolvedAt ? 'Résolu' : 'Point inhabituel'}
+            >
+              !
+            </div>
           </Html>
         )
       })}

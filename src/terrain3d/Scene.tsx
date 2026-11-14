@@ -12,6 +12,7 @@ import type { TerrainContext } from './terrainContext'
 import type { TerrainTextures } from './satelliteTexture'
 import type { Landmark } from '../landmarks'
 import type { WoundedDeerReport } from '../fieldReports'
+import type { Warning } from '../warnings'
 import type { CameraOrientation, CameraRigHandle } from './CameraRig'
 
 interface Props {
@@ -25,6 +26,7 @@ interface Props {
   resetToken: number
   landmarks: Landmark[]
   woundedDeerReports: WoundedDeerReport[]
+  warnings: Warning[]
   onSelectLandmark?: (landmark: Landmark) => void
   cameraRigRef: React.RefObject<CameraRigHandle>
   orientationRef: React.MutableRefObject<CameraOrientation>
@@ -41,6 +43,7 @@ export default function Scene({
   resetToken,
   landmarks,
   woundedDeerReports,
+  warnings,
   onSelectLandmark,
   cameraRigRef,
   orientationRef,
@@ -154,6 +157,7 @@ export default function Scene({
           terrain={terrain}
           landmarks={landmarks}
           woundedDeerReports={woundedDeerReports}
+          warnings={warnings}
           exaggeration={exaggeration}
           canopyExaggeration={canopyExaggeration}
           onSelectLandmark={onSelectLandmark}
