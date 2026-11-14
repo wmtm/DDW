@@ -161,20 +161,23 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
-  width: min(340px, calc(100% - 32px));
+  width: min(320px, calc(100% - 32px));
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 12px 14px;
-  background: var(--panel-bg);
-  backdrop-filter: blur(var(--panel-blur));
+  padding: 10px 12px;
+  background: var(--panel-bg-solid);
   border: 1.5px solid var(--accent-amber);
   border-radius: var(--panel-radius);
   box-shadow: var(--panel-shadow);
+  color: var(--text-primary);
 }
 
 .deer-report-panel .hint {
   margin: 0;
+  color: var(--text-muted);
+  opacity: 1;
+  line-height: 1.4;
 }
 
 .deer-report-panel-actions {
@@ -184,6 +187,24 @@
 
 .deer-report-panel-actions .action-button {
   flex: 1;
+}
+
+.action-button.action-button-confirm {
+  background: rgba(58, 143, 79, 0.3);
+  border-color: rgba(58, 143, 79, 0.6);
+}
+
+.action-button.action-button-confirm:hover:not(:disabled) {
+  background: rgba(58, 143, 79, 0.45);
+}
+
+.action-button.action-button-cancel {
+  background: rgba(168, 69, 60, 0.3);
+  border-color: rgba(168, 69, 60, 0.6);
+}
+
+.action-button.action-button-cancel:hover:not(:disabled) {
+  background: rgba(168, 69, 60, 0.45);
 }
 
 .field-report-note-input {
