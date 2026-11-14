@@ -5,10 +5,21 @@ interface Props {
   label: string
   children: ReactNode
   onUnlock?: () => void
+  /** Override to gate on a different passcode (e.g. the admin one) instead of the site-wide default. */
+  passcode?: string
+  checkUnlocked?: () => boolean
+  persistUnlocked?: () => void
 }
 
-export default function PasscodeGate({ label, children, onUnlock }: Props) {
-  const [unlocked, setUnlockedLocal] = useState(isUnlocked())
+export default function PasscodeGate({
+  label,
+  children,
+  onUnlock,
+  passcode = PASSCODE,
+  checkUnlocked = isUnlocked,
+  persistUnlocked = setUnlocked,
+}: Props) {
+  const [unlocked, setUnlockedLocal] = useState(checkUnlocked())
   const [code, setCode] = useState('')
   const [error, setError] = useState(false)
 
@@ -16,8 +27,8 @@ export default function PasscodeGate({ label, children, onUnlock }: Props) {
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
-    if (code === PASSCODE) {
-      setUnlocked()
+    if (code === passcode) {
+      persistUnlocked()
       setUnlockedLocal(true)
       setError(false)
       onUnlock?.()

@@ -9,6 +9,7 @@ import WindCompass from './WindCompass'
 import WeatherIcon, { SunriseIcon, SunsetIcon } from './WeatherIcon'
 import WindForecastChart from './WindForecastChart'
 import PasscodeGate from './PasscodeGate'
+import { ADMIN_PASSCODE, isAdminUnlocked, setAdminUnlocked } from './passcode'
 import {
   ToggleIconButton,
   SlopeContrastIcon,
@@ -429,7 +430,13 @@ export default function ControlsPanel({
               {adminUnlocked ? (
                 <span className="hint">Mode administrateur actif — vous pouvez modifier ou supprimer les points de tout le monde.</span>
               ) : (
-                <PasscodeGate label="Code administrateur — pour gérer les points ajoutés par d'autres." onUnlock={onAdminUnlock}>
+                <PasscodeGate
+                  label="Code administrateur — pour gérer les points ajoutés par d'autres."
+                  onUnlock={onAdminUnlock}
+                  passcode={ADMIN_PASSCODE}
+                  checkUnlocked={isAdminUnlocked}
+                  persistUnlocked={setAdminUnlocked}
+                >
                   {null}
                 </PasscodeGate>
               )}
