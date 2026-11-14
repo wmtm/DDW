@@ -35,6 +35,8 @@ interface Props {
   landmarks: Landmark[]
   onSelectLandmark: (landmark: Landmark) => void
   onUnlock: () => void
+  adminUnlocked: boolean
+  onAdminUnlock: () => void
   activeSection: SectionKey
   onSectionChange: (section: SectionKey) => void
   showChutes: boolean
@@ -148,6 +150,8 @@ export default function ControlsPanel({
   landmarks,
   onSelectLandmark,
   onUnlock,
+  adminUnlocked,
+  onAdminUnlock,
   activeSection,
   onSectionChange,
   showChutes,
@@ -419,8 +423,15 @@ export default function ControlsPanel({
                   </span>
                 )}
                 <a href="#/signaler" className="action-button field-report-link">
-                  📍 Signaler une biche touchée
+                  📍 Signaler un animal blessé
                 </a>
+                {adminUnlocked ? (
+                  <span className="hint">Mode administrateur actif — vous pouvez modifier ou supprimer les points de tout le monde.</span>
+                ) : (
+                  <PasscodeGate label="Code administrateur (optionnel) — pour gérer les points des autres." onUnlock={onAdminUnlock}>
+                    {null}
+                  </PasscodeGate>
+                )}
               </PasscodeGate>
             </ControlGroup>
           </>

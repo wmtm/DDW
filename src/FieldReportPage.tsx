@@ -59,7 +59,7 @@ export default function FieldReportPage() {
 
         <div className="leaderboard-hero">
           <span className="leaderboard-badge">Saison de chasse</span>
-          <h1>Signaler une biche touchée</h1>
+          <h1>Signaler un animal blessé</h1>
           <h2>Visible sur la carte pendant {WOUNDED_DEER_VISIBLE_HOURS}h</h2>
         </div>
 
@@ -83,7 +83,7 @@ export default function FieldReportPage() {
           ) : (
             <div className="field-report-form">
               <p className="field-report-note">
-                Appuyez sur le bouton à l'endroit où vous vous trouvez, au moment où vous touchez la biche. Votre
+                Appuyez sur le bouton à l'endroit où vous vous trouvez, au moment où vous blessez l'animal. Votre
                 position actuelle sera envoyée.
               </p>
               <textarea
@@ -104,7 +104,7 @@ export default function FieldReportPage() {
                   ? 'Localisation en cours…'
                   : status === 'sending'
                     ? 'Envoi…'
-                    : '📍 Biche touchée ici'}
+                    : '📍 Animal blessé ici'}
               </button>
               {status === 'error' && <p className="field-report-error">{errorMessage}</p>}
             </div>
