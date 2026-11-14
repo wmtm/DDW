@@ -4,6 +4,8 @@ import {
   deleteDoc,
   doc,
   onSnapshot,
+  orderBy,
+  query,
   updateDoc,
   Timestamp,
   type Unsubscribe,
@@ -24,6 +26,13 @@ export interface WoundedDeerReport {
   expiresAt: Date
   /** Set once someone marks the animal found/recovered — also the display color trigger (black -> green). */
   foundAt: Date | null
+}
+
+export interface WoundedDeerComment {
+  id: string
+  text: string
+  authorId: string
+  createdAt: Date
 }
 
 const COLLECTION = 'woundedDeer'
@@ -85,5 +94,37 @@ export function subscribeActiveWoundedDeerReports(callback: (reports: WoundedDee
       .filter((r) => r.expiresAt.getTime() > now)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     callback(reports)
+  })
+}
+
+/** Adds one entry to a report's comment log — same "review/explain/say something" thread as warnings. */
+export async function addWoundedDeerComment(reportId: string, text: string): Promise<void> {
+  const trimmed = text.trim()
+  if (!trimmed) return
+  await addDoc(collection(getDb(), COLLECTION, reportId, 'comments'), {
+    text: trimmed,
+    authorId: getReporterId(),
+    createdAt: Timestamp.now(),
+  })
+}
+
+/** Live-subscribes to one report's comment thread, oldest first — only call this for a report whose popup is actually open, not for every pin on the map. */
+export function subscribeWoundedDeerComments(
+  reportId: string,
+  callback: (comments: WoundedDeerComment[]) => void,
+): Unsubscribe {
+  const q = query(collection(getDb(), COLLECTION, reportId, 'comments'), orderBy('createdAt', 'asc'))
+  return onSnapshot(q, (snapshot) => {
+    callback(
+      snapshot.docs.map((d) => {
+        const data = d.data()
+        return {
+          id: d.id,
+          text: data.text as string,
+          authorId: (data.authorId as string | undefined) ?? '',
+          createdAt: (data.createdAt as Timestamp).toDate(),
+        }
+      }),
+    )
   })
 }
