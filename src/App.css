@@ -189,6 +189,24 @@
   flex: 1;
 }
 
+.action-button.action-button-confirm {
+  background: rgba(58, 143, 79, 0.3);
+  border-color: rgba(58, 143, 79, 0.6);
+}
+
+.action-button.action-button-confirm:hover:not(:disabled) {
+  background: rgba(58, 143, 79, 0.45);
+}
+
+.action-button.action-button-cancel {
+  background: rgba(168, 69, 60, 0.3);
+  border-color: rgba(168, 69, 60, 0.6);
+}
+
+.action-button.action-button-cancel:hover:not(:disabled) {
+  background: rgba(168, 69, 60, 0.45);
+}
+
 .field-report-note-input {
   font: inherit;
   font-size: 13px;

@@ -1062,11 +1062,21 @@ export default function App() {
               />
               {deerActionError && <p className="field-report-error">{deerActionError}</p>}
               <div className="deer-report-panel-actions">
-                <button type="button" className="action-button" onClick={handleConfirmDeerReport} disabled={deerSubmitting}>
-                  {deerSubmitting ? 'Envoi…' : 'Confirmer'}
-                </button>
-                <button type="button" className="action-button" onClick={handleToggleReportingDeer} disabled={deerSubmitting}>
+                <button
+                  type="button"
+                  className="action-button action-button-cancel"
+                  onClick={handleToggleReportingDeer}
+                  disabled={deerSubmitting}
+                >
                   Annuler
+                </button>
+                <button
+                  type="button"
+                  className="action-button action-button-confirm"
+                  onClick={handleConfirmDeerReport}
+                  disabled={deerSubmitting}
+                >
+                  {deerSubmitting ? 'Envoi…' : 'Confirmer'}
                 </button>
               </div>
             </>
