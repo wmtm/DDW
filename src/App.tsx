@@ -1195,16 +1195,13 @@ export default function App() {
       {reportingDeer && (
         <div className="deer-report-panel">
           {!draftDeerPoint ? (
-            <p className="hint">
-              Touchez la carte à l'endroit approximatif où l'animal a été blessé.
-              {hunterPosition && ' Le point bleu indique votre position actuelle, à titre de repère.'}
-            </p>
+            <p className="hint">Touchez l'endroit approximatif sur la carte.</p>
           ) : (
             <>
-              <p className="hint">Confirmez l'emplacement, ou touchez à nouveau la carte pour l'ajuster.</p>
+              <p className="hint">Confirmez, ou retouchez pour ajuster.</p>
               <textarea
                 className="field-report-note-input"
-                placeholder="Note optionnelle (ex : zone broussailleuse près du grand chêne)"
+                placeholder="Ajouter un mot (optionnel)"
                 value={deerNote}
                 onChange={(e) => setDeerNote(e.target.value)}
                 maxLength={280}
@@ -1217,16 +1214,20 @@ export default function App() {
                   className="action-button action-button-cancel"
                   onClick={handleToggleReportingDeer}
                   disabled={deerSubmitting}
+                  aria-label="Annuler"
+                  title="Annuler"
                 >
-                  Annuler
+                  ✕
                 </button>
                 <button
                   type="button"
                   className="action-button action-button-confirm"
                   onClick={handleConfirmDeerReport}
                   disabled={deerSubmitting}
+                  aria-label="Confirmer"
+                  title="Confirmer"
                 >
-                  {deerSubmitting ? 'Envoi…' : 'Confirmer'}
+                  {deerSubmitting ? '…' : '✓'}
                 </button>
               </div>
             </>
@@ -1309,16 +1310,13 @@ export default function App() {
       {placingWarning && (
         <div className="deer-report-panel">
           {!draftWarningPoint ? (
-            <p className="hint">
-              Touchez la carte à l'endroit approximatif de ce qui est inhabituel.
-              {hunterPosition && ' Le point bleu indique votre position actuelle, à titre de repère.'}
-            </p>
+            <p className="hint">Touchez l'endroit approximatif sur la carte.</p>
           ) : (
             <>
-              <p className="hint">Confirmez l'emplacement, ou touchez à nouveau la carte pour l'ajuster.</p>
+              <p className="hint">Confirmez, ou retouchez pour ajuster.</p>
               <textarea
                 className="field-report-note-input"
-                placeholder="Décrivez ce que vous avez vu (optionnel)"
+                placeholder="Ajouter un mot (optionnel)"
                 value={warningNote}
                 onChange={(e) => setWarningNote(e.target.value)}
                 maxLength={280}
@@ -1331,16 +1329,20 @@ export default function App() {
                   className="action-button action-button-cancel"
                   onClick={handleTogglePlacingWarning}
                   disabled={warningSubmitting}
+                  aria-label="Annuler"
+                  title="Annuler"
                 >
-                  Annuler
+                  ✕
                 </button>
                 <button
                   type="button"
                   className="action-button action-button-confirm"
                   onClick={handleConfirmWarning}
                   disabled={warningSubmitting}
+                  aria-label="Confirmer"
+                  title="Confirmer"
                 >
-                  {warningSubmitting ? 'Envoi…' : 'Confirmer'}
+                  {warningSubmitting ? '…' : '✓'}
                 </button>
               </div>
             </>

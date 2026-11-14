@@ -422,17 +422,17 @@ export default function ControlsPanel({
                     Cône indicatif dans le sens où porte le vent actuel, pas une garantie.
                   </span>
                 )}
-                <a href="#/signaler" className="action-button field-report-link">
-                  📍 Signaler un animal blessé
-                </a>
-                {adminUnlocked ? (
-                  <span className="hint">Mode administrateur actif — vous pouvez modifier ou supprimer les points de tout le monde.</span>
-                ) : (
-                  <PasscodeGate label="Code administrateur (optionnel) — pour gérer les points des autres." onUnlock={onAdminUnlock}>
-                    {null}
-                  </PasscodeGate>
-                )}
               </PasscodeGate>
+            </ControlGroup>
+
+            <ControlGroup label="Administration">
+              {adminUnlocked ? (
+                <span className="hint">Mode administrateur actif — vous pouvez modifier ou supprimer les points de tout le monde.</span>
+              ) : (
+                <PasscodeGate label="Code administrateur — pour gérer les points ajoutés par d'autres." onUnlock={onAdminUnlock}>
+                  {null}
+                </PasscodeGate>
+              )}
             </ControlGroup>
           </>
         )}

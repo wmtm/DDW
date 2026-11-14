@@ -287,6 +287,10 @@
 
 .deer-report-panel-actions .action-button {
   flex: 1;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1;
+  padding: 10px 12px;
 }
 
 .action-button.action-button-confirm {
@@ -1241,12 +1245,6 @@
 
 .action-button:active:not(:disabled) {
   transform: scale(0.98);
-}
-
-.field-report-link {
-  display: inline-block;
-  text-decoration: none;
-  text-align: center;
 }
 
 .action-button:disabled {
