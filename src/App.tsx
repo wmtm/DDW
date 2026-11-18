@@ -26,6 +26,7 @@ import PoiIcon from './PoiIcon'
 import MapCompass from './MapCompass'
 import { mapStyle } from './mapStyle'
 import { pathLengthMeters, polygonAreaSquareMeters, haversineDistanceMeters, formatDistanceMeters } from './geo'
+import { useNewItemIds } from './useNewItemIds'
 import { estateBoundary } from './boundary'
 import { ISOLATE_VIEW } from './isolateMode'
 import { isUnlocked, isAdminUnlocked, setAdminUnlocked } from './passcode'
@@ -271,6 +272,13 @@ export default function App() {
       unsubscribe?.()
     }
   }, [unlocked])
+
+  // Briefly flags pins that just arrived via the live onSnapshot feed (not
+  // ones already on the map at initial load) so they can get a short pulse
+  // — a visible cue that something appeared without the page refreshing.
+  const newDeerPinIds = useNewItemIds(useMemo(() => woundedDeerReports.map((r) => r.id), [woundedDeerReports]))
+  const newWarningPinIds = useNewItemIds(useMemo(() => warnings.map((w) => w.id), [warnings]))
+  const activeAlertCount = woundedDeerReports.filter((r) => !r.foundAt).length + warnings.filter((w) => !w.resolvedAt).length
 
   // Comment thread for whichever warning's popup is currently open — only
   // subscribed while a popup is actually open, not once per pin on the map.
@@ -1231,7 +1239,7 @@ export default function App() {
           }}
         >
           <div
-            className={`wounded-deer-pin ${report.foundAt ? 'wounded-deer-pin-found' : ''}`}
+            className={`wounded-deer-pin ${report.foundAt ? 'wounded-deer-pin-found' : ''} ${newDeerPinIds.has(report.id) ? 'pin-new-pulse' : ''}`}
             title={report.foundAt ? 'Animal trouvé' : 'Animal blessé'}
           />
         </Marker>
@@ -1382,7 +1390,7 @@ export default function App() {
           }}
         >
           <div
-            className={`warning-pin ${warning.resolvedAt ? 'warning-pin-resolved' : ''}`}
+            className={`warning-pin ${warning.resolvedAt ? 'warning-pin-resolved' : ''} ${newWarningPinIds.has(warning.id) ? 'pin-new-pulse' : ''}`}
             title={warning.resolvedAt ? 'Résolu' : 'Point inhabituel'}
           >
             !
@@ -1647,6 +1655,7 @@ export default function App() {
         landmarks={visibleLandmarks}
         onSelectLandmark={handleSelectLandmark}
         myLocation={myLocation}
+        activeAlertCount={activeAlertCount}
         onUnlock={handleUnlock}
         adminUnlocked={adminUnlocked}
         onAdminUnlock={handleAdminUnlock}

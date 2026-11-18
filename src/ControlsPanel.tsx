@@ -37,6 +37,8 @@ interface Props {
   landmarks: Landmark[]
   onSelectLandmark: (landmark: Landmark) => void
   myLocation: { lng: number; lat: number } | null
+  /** Unresolved warnings + not-yet-found deer reports — shown as a small badge on the menu toggle. */
+  activeAlertCount: number
   onUnlock: () => void
   adminUnlocked: boolean
   onAdminUnlock: () => void
@@ -153,6 +155,7 @@ export default function ControlsPanel({
   landmarks,
   onSelectLandmark,
   myLocation,
+  activeAlertCount,
   onUnlock,
   adminUnlocked,
   onAdminUnlock,
@@ -209,9 +212,14 @@ export default function ControlsPanel({
         type="button"
         className={`panel-edge-toggle ${collapsed ? 'panel-edge-toggle-collapsed' : ''}`}
         onClick={() => setCollapsed((c) => !c)}
-        aria-label={collapsed ? 'Afficher les commandes' : 'Masquer les commandes'}
+        aria-label={
+          collapsed
+            ? `Afficher les commandes${activeAlertCount > 0 ? ` (${activeAlertCount} alerte${activeAlertCount > 1 ? 's' : ''} active${activeAlertCount > 1 ? 's' : ''})` : ''}`
+            : 'Masquer les commandes'
+        }
       >
         {collapsed ? '›' : '‹'}
+        {activeAlertCount > 0 && <span className="alert-badge">{activeAlertCount > 9 ? '9+' : activeAlertCount}</span>}
       </button>
 
       <div className={`controls-panel ${collapsed ? 'controls-panel-collapsed' : ''}`}>
