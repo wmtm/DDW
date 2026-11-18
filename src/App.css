@@ -249,6 +249,65 @@
   background: rgba(0, 0, 0, 0.1);
 }
 
+/* Fullscreen/Navigation/Geolocate controls ship styled for a white page —
+   this app is dark, so the default white button boxes stood out as the
+   one unstyled piece of chrome on the map. Restyled as one family. */
+.maplibregl-ctrl-group {
+  background: var(--panel-bg-solid);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--panel-shadow);
+}
+
+.maplibregl-ctrl-group button {
+  background: transparent;
+}
+
+.maplibregl-ctrl-group button + button {
+  border-top: 1px solid var(--panel-border);
+}
+
+.maplibregl-ctrl-group button:hover {
+  background: var(--surface-card-hover);
+}
+
+.maplibregl-ctrl-group button:disabled .maplibregl-ctrl-icon {
+  opacity: 0.3;
+}
+
+/* MapLibre's zoom/compass/fullscreen icons are baked-in SVG data URIs
+   tuned for a light button (dark fill) — recolored to light fill for a
+   dark button, same shapes. Geolocate's blue "active" state is kept as
+   this site's own --accent-blue so the "locating" affordance still reads
+   as the same blue it uses for the user-position dot elsewhere. */
+.maplibregl-ctrl-icon {
+  filter: invert(1) brightness(1.6);
+}
+
+.maplibregl-ctrl-geolocate .maplibregl-ctrl-icon,
+.maplibregl-ctrl-geolocate-active .maplibregl-ctrl-icon,
+.maplibregl-ctrl-geolocate-active-error .maplibregl-ctrl-icon,
+.maplibregl-ctrl-geolocate-background .maplibregl-ctrl-icon,
+.maplibregl-ctrl-geolocate-background-error .maplibregl-ctrl-icon {
+  filter: none;
+}
+
+.maplibregl-ctrl-geolocate .maplibregl-ctrl-icon {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2229%22%20height%3D%2229%22%20fill%3D%22%23f2f2f2%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M10%204C9%204%209%205%209%205v.1A5%205%200%200%200%205.1%209H5s-1%200-1%201%201%201%201%201h.1A5%205%200%200%200%209%2014.9v.1s0%201%201%201%201-1%201-1v-.1a5%205%200%200%200%203.9-3.9h.1s1%200%201-1-1-1-1-1h-.1A5%205%200%200%200%2011%205.1V5s0-1-1-1m0%202.5a3.5%203.5%200%201%201%200%207%203.5%203.5%200%201%201%200-7%22%2F%3E%3Ccircle%20cx%3D%2210%22%20cy%3D%2210%22%20r%3D%222%22%2F%3E%3C%2Fsvg%3E") !important;
+}
+
+.maplibregl-ctrl-geolocate-active .maplibregl-ctrl-icon {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2229%22%20height%3D%2229%22%20fill%3D%22%236db3ff%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M10%204C9%204%209%205%209%205v.1A5%205%200%200%200%205.1%209H5s-1%200-1%201%201%201%201%201h.1A5%205%200%200%200%209%2014.9v.1s0%201%201%201%201-1%201-1v-.1a5%205%200%200%200%203.9-3.9h.1s1%200%201-1-1-1-1-1h-.1A5%205%200%200%200%2011%205.1V5s0-1-1-1m0%202.5a3.5%203.5%200%201%201%200%207%203.5%203.5%200%201%201%200-7%22%2F%3E%3Ccircle%20cx%3D%2210%22%20cy%3D%2210%22%20r%3D%222%22%2F%3E%3C%2Fsvg%3E") !important;
+}
+
+.maplibregl-ctrl-geolocate-active-error .maplibregl-ctrl-icon,
+.maplibregl-ctrl-geolocate-background-error .maplibregl-ctrl-icon {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2229%22%20height%3D%2229%22%20fill%3D%22%23e0876a%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M10%204C9%204%209%205%209%205v.1A5%205%200%200%200%205.1%209H5s-1%200-1%201%201%201%201%201h.1A5%205%200%200%200%209%2014.9v.1s0%201%201%201%201-1%201-1v-.1a5%205%200%200%200%203.9-3.9h.1s1%200%201-1-1-1-1-1h-.1A5%205%200%200%200%2011%205.1V5s0-1-1-1m0%202.5a3.5%203.5%200%201%201%200%207%203.5%203.5%200%201%201%200-7%22%2F%3E%3Ccircle%20cx%3D%2210%22%20cy%3D%2210%22%20r%3D%222%22%2F%3E%3C%2Fsvg%3E") !important;
+}
+
+.maplibregl-ctrl-geolocate-background .maplibregl-ctrl-icon {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2229%22%20height%3D%2229%22%20fill%3D%22%23b8b8b8%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M10%204C9%204%209%205%209%205v.1A5%205%200%200%200%205.1%209H5s-1%200-1%201%201%201%201%201h.1A5%205%200%200%200%209%2014.9v.1s0%201%201%201%201-1%201-1v-.1a5%205%200%200%200%203.9-3.9h.1s1%200%201-1-1-1-1-1h-.1A5%205%200%200%200%2011%205.1V5s0-1-1-1m0%202.5a3.5%203.5%200%201%201%200%207%203.5%203.5%200%201%201%200-7%22%2F%3E%3Ccircle%20cx%3D%2210%22%20cy%3D%2210%22%20r%3D%222%22%2F%3E%3C%2Fsvg%3E") !important;
+}
+
 .hunter-position-dot {
   width: 14px;
   height: 14px;
@@ -1417,6 +1476,24 @@
   color: #1a1a1a;
   font-size: 11px;
   font-weight: 700;
+}
+
+.search-result-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result-distance {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.landmark-distance-tag {
+  font-size: 12px;
+  color: var(--accent-blue);
 }
 
 .hint {

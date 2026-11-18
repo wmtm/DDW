@@ -4,10 +4,12 @@ import Map, {
   Popup,
   NavigationControl,
   FullscreenControl,
+  GeolocateControl,
   Source,
   Layer,
   type MapRef,
   type MapLayerMouseEvent,
+  type GeolocateResultEvent,
 } from 'react-map-gl/maplibre'
 import { setWorkerUrl, type MapSourceDataEvent } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -23,7 +25,7 @@ import { pois, type Poi } from './poi'
 import PoiIcon from './PoiIcon'
 import MapCompass from './MapCompass'
 import { mapStyle } from './mapStyle'
-import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
+import { pathLengthMeters, polygonAreaSquareMeters, haversineDistanceMeters, formatDistanceMeters } from './geo'
 import { estateBoundary } from './boundary'
 import { ISOLATE_VIEW } from './isolateMode'
 import { isUnlocked, isAdminUnlocked, setAdminUnlocked } from './passcode'
@@ -152,6 +154,8 @@ export default function App() {
   const [basemapTransitioning, setBasemapTransitioning] = useState(false)
   const basemapMountedRef = useRef(false)
   const [selectedLandmark, setSelectedLandmark] = useState<Landmark | null>(null)
+  /** Live position from the map's own GeolocateControl (tap-to-enable blue dot) — distinct from hunterPosition, which is a one-shot reference dot grabbed only while placing a deer/warning report. Used to show distance-to-chute. */
+  const [myLocation, setMyLocation] = useState<{ lng: number; lat: number } | null>(null)
   const [openPopupPhotoIndex, setOpenPopupPhotoIndex] = useState<number | null>(null)
   const [landmarkTourIndex, setLandmarkTourIndex] = useState<number | null>(null)
   const [zoom, setZoom] = useState(Math.max(targetView.zoom - 3, 5))
@@ -631,6 +635,14 @@ export default function App() {
     if (map) map.easeTo({ bearing: 0, duration: 500 })
   }, [])
 
+  const handleGeolocate = useCallback((e: GeolocateResultEvent) => {
+    setMyLocation({ lng: e.coords.longitude, lat: e.coords.latitude })
+  }, [])
+
+  const handleGeolocateEnd = useCallback(() => {
+    setMyLocation(null)
+  }, [])
+
   const handleToggleOverlay = useCallback(() => {
     setShowOverlay((v) => !v)
   }, [])
@@ -925,6 +937,13 @@ export default function App() {
         <>
           <FullscreenControl position="top-right" />
           <NavigationControl position="top-right" visualizePitch />
+          <GeolocateControl
+            position="top-right"
+            trackUserLocation
+            onGeolocate={handleGeolocate}
+            onTrackUserLocationEnd={handleGeolocateEnd}
+            onError={handleGeolocateEnd}
+          />
         </>
       )}
       {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && !wolmarOnly && (
@@ -1525,6 +1544,17 @@ export default function App() {
               {selectedLandmark.size === 'large' ? 'Grand mirador' : 'Petit mirador'}
             </p>
           )}
+          {myLocation && (
+            <p className="landmark-distance-tag">
+              {formatDistanceMeters(
+                haversineDistanceMeters(
+                  [myLocation.lng, myLocation.lat],
+                  [selectedLandmark.longitude, selectedLandmark.latitude],
+                ),
+              )}{' '}
+              de vous
+            </p>
+          )}
           {selectedLandmark.photos.length === 0 && <p className="landmark-photos-pending">Photos à venir</p>}
           {selectedLandmark.photos.map((photo, i) => (
             <button
@@ -1616,6 +1646,7 @@ export default function App() {
       <ControlsPanel
         landmarks={visibleLandmarks}
         onSelectLandmark={handleSelectLandmark}
+        myLocation={myLocation}
         onUnlock={handleUnlock}
         adminUnlocked={adminUnlocked}
         onAdminUnlock={handleAdminUnlock}

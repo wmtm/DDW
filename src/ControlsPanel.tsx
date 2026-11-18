@@ -4,6 +4,7 @@ import { basemapOptions, usesSatelliteImagery, type BasemapStyle } from './basem
 import type { ElevationSample } from './elevation'
 import type { WeatherData } from './weather'
 import type { Landmark } from './landmarks'
+import { haversineDistanceMeters, formatDistanceMeters } from './geo'
 import DateTimeWidget from './DateTimeWidget'
 import WindCompass from './WindCompass'
 import WeatherIcon, { SunriseIcon, SunsetIcon } from './WeatherIcon'
@@ -35,6 +36,7 @@ export type SectionKey = 'weather' | 'timeTravel' | 'miradors' | 'hallOfFame' | 
 interface Props {
   landmarks: Landmark[]
   onSelectLandmark: (landmark: Landmark) => void
+  myLocation: { lng: number; lat: number } | null
   onUnlock: () => void
   adminUnlocked: boolean
   onAdminUnlock: () => void
@@ -150,6 +152,7 @@ function ControlGroup({ label, children }: { label?: string; children: ReactNode
 export default function ControlsPanel({
   landmarks,
   onSelectLandmark,
+  myLocation,
   onUnlock,
   adminUnlocked,
   onAdminUnlock,
@@ -380,7 +383,19 @@ export default function ControlsPanel({
                       {landmark.number !== null && (
                         <span className="search-result-number">{landmark.number}</span>
                       )}
-                      {landmark.name || (landmark.number !== null ? `Chute ${landmark.number}` : '')}
+                      <span className="search-result-name">
+                        {landmark.name || (landmark.number !== null ? `Chute ${landmark.number}` : '')}
+                      </span>
+                      {myLocation && (
+                        <span className="search-result-distance">
+                          {formatDistanceMeters(
+                            haversineDistanceMeters(
+                              [myLocation.lng, myLocation.lat],
+                              [landmark.longitude, landmark.latitude],
+                            ),
+                          )}
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
