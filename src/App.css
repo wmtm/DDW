@@ -1,3 +1,21 @@
+/* Global safety net: every animation/transition in this file (including
+   ones from before prefers-reduced-motion was a concern here — the
+   deer/warning pin pulses, the weather icon float, loading spinners,
+   etc.) collapses to near-instant for anyone who's asked for reduced
+   motion, rather than relying on each one having been individually
+   wrapped in its own @media guard. An infinite pulse still settles on
+   its resting frame (iteration-count: 1), not a half-finished state. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 .poi-marker {
   display: flex;
   align-items: center;
@@ -320,6 +338,23 @@
   border-radius: var(--panel-radius);
   box-shadow: var(--panel-shadow);
   color: var(--text-primary);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .deer-report-panel {
+    animation: deer-report-panel-in 0.22s ease-out;
+  }
+}
+
+@keyframes deer-report-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 .deer-report-panel .hint {
