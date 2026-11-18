@@ -4,6 +4,7 @@ import { basemapOptions, usesSatelliteImagery, type BasemapStyle } from './basem
 import type { ElevationSample } from './elevation'
 import type { WeatherData } from './weather'
 import type { Landmark } from './landmarks'
+import { haversineDistanceMeters, formatDistanceMeters } from './geo'
 import DateTimeWidget from './DateTimeWidget'
 import WindCompass from './WindCompass'
 import WeatherIcon, { SunriseIcon, SunsetIcon } from './WeatherIcon'
@@ -35,6 +36,9 @@ export type SectionKey = 'weather' | 'timeTravel' | 'miradors' | 'hallOfFame' | 
 interface Props {
   landmarks: Landmark[]
   onSelectLandmark: (landmark: Landmark) => void
+  myLocation: { lng: number; lat: number } | null
+  /** Unresolved warnings + not-yet-found deer reports — shown as a small badge on the menu toggle. */
+  activeAlertCount: number
   onUnlock: () => void
   adminUnlocked: boolean
   onAdminUnlock: () => void
@@ -150,6 +154,8 @@ function ControlGroup({ label, children }: { label?: string; children: ReactNode
 export default function ControlsPanel({
   landmarks,
   onSelectLandmark,
+  myLocation,
+  activeAlertCount,
   onUnlock,
   adminUnlocked,
   onAdminUnlock,
@@ -206,9 +212,14 @@ export default function ControlsPanel({
         type="button"
         className={`panel-edge-toggle ${collapsed ? 'panel-edge-toggle-collapsed' : ''}`}
         onClick={() => setCollapsed((c) => !c)}
-        aria-label={collapsed ? 'Afficher les commandes' : 'Masquer les commandes'}
+        aria-label={
+          collapsed
+            ? `Afficher les commandes${activeAlertCount > 0 ? ` (${activeAlertCount} alerte${activeAlertCount > 1 ? 's' : ''} active${activeAlertCount > 1 ? 's' : ''})` : ''}`
+            : 'Masquer les commandes'
+        }
       >
         {collapsed ? '›' : '‹'}
+        {activeAlertCount > 0 && <span className="alert-badge">{activeAlertCount > 9 ? '9+' : activeAlertCount}</span>}
       </button>
 
       <div className={`controls-panel ${collapsed ? 'controls-panel-collapsed' : ''}`}>
@@ -380,7 +391,19 @@ export default function ControlsPanel({
                       {landmark.number !== null && (
                         <span className="search-result-number">{landmark.number}</span>
                       )}
-                      {landmark.name || (landmark.number !== null ? `Chute ${landmark.number}` : '')}
+                      <span className="search-result-name">
+                        {landmark.name || (landmark.number !== null ? `Chute ${landmark.number}` : '')}
+                      </span>
+                      {myLocation && (
+                        <span className="search-result-distance">
+                          {formatDistanceMeters(
+                            haversineDistanceMeters(
+                              [myLocation.lng, myLocation.lat],
+                              [landmark.longitude, landmark.latitude],
+                            ),
+                          )}
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -545,13 +568,17 @@ export default function ControlsPanel({
             </ControlGroup>
 
             <ControlGroup label="Distances">
-              <button
-                className={`action-button ${measureActive ? 'chip-active' : ''}`}
-                onClick={onToggleMeasure}
-                disabled={tourRunning || landmarkTourActive}
-              >
-                {measureActive ? 'Quitter le mode mesure' : 'Mesurer une distance'}
-              </button>
+              {measureActive ? (
+                <button
+                  className="action-button chip-active"
+                  onClick={onToggleMeasure}
+                  disabled={tourRunning || landmarkTourActive}
+                >
+                  Quitter le mode mesure
+                </button>
+              ) : (
+                <span className="hint">Mesurer une distance : bouton d'actions en bas à droite de la carte.</span>
+              )}
               {measureActive && measurePointCount === 0 && (
                 <span className="hint">Cliquez sur le terrain pour tracer un parcours</span>
               )}

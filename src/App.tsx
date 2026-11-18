@@ -4,10 +4,12 @@ import Map, {
   Popup,
   NavigationControl,
   FullscreenControl,
+  GeolocateControl,
   Source,
   Layer,
   type MapRef,
   type MapLayerMouseEvent,
+  type GeolocateResultEvent,
 } from 'react-map-gl/maplibre'
 import { setWorkerUrl, type MapSourceDataEvent } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -23,7 +25,8 @@ import { pois, type Poi } from './poi'
 import PoiIcon from './PoiIcon'
 import MapCompass from './MapCompass'
 import { mapStyle } from './mapStyle'
-import { pathLengthMeters, polygonAreaSquareMeters } from './geo'
+import { pathLengthMeters, polygonAreaSquareMeters, haversineDistanceMeters, formatDistanceMeters } from './geo'
+import { useNewItemIds } from './useNewItemIds'
 import { estateBoundary } from './boundary'
 import { ISOLATE_VIEW } from './isolateMode'
 import { isUnlocked, isAdminUnlocked, setAdminUnlocked } from './passcode'
@@ -58,6 +61,13 @@ import type { WoundedDeerReport, WoundedDeerComment } from './fieldReports'
 import type { Warning, WarningComment } from './warnings'
 import ControlsPanel, { type SectionKey } from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
+import { RecenterIcon, CheckIcon, CrossIcon } from './MapActionIcons'
+import MapActionFab from './MapActionFab'
+import ToastStack from './ToastStack'
+import { useToasts } from './useToasts'
+import { describeActionError } from './actionError'
+import { formatRelativeTime } from './relativeTime'
+import { useNow } from './useNow'
 import PhotoLightbox from './PhotoLightbox'
 import OnboardingCard from './OnboardingCard'
 import './App.css'
@@ -152,6 +162,8 @@ export default function App() {
   const [basemapTransitioning, setBasemapTransitioning] = useState(false)
   const basemapMountedRef = useRef(false)
   const [selectedLandmark, setSelectedLandmark] = useState<Landmark | null>(null)
+  /** Live position from the map's own GeolocateControl (tap-to-enable blue dot) — distinct from hunterPosition, which is a one-shot reference dot grabbed only while placing a deer/warning report. Used to show distance-to-chute. */
+  const [myLocation, setMyLocation] = useState<{ lng: number; lat: number } | null>(null)
   const [openPopupPhotoIndex, setOpenPopupPhotoIndex] = useState<number | null>(null)
   const [landmarkTourIndex, setLandmarkTourIndex] = useState<number | null>(null)
   const [zoom, setZoom] = useState(Math.max(targetView.zoom - 3, 5))
@@ -180,6 +192,8 @@ export default function App() {
   const [newDeerCommentText, setNewDeerCommentText] = useState('')
   const [deerCommentSubmitting, setDeerCommentSubmitting] = useState(false)
   const [myReporterId] = useState(() => getReporterId())
+  const { toasts, pushToast, dismissToast } = useToasts()
+  const now = useNow()
 
   const [warnings, setWarnings] = useState<Warning[]>([])
   const [selectedWarning, setSelectedWarning] = useState<Warning | null>(null)
@@ -248,7 +262,7 @@ export default function App() {
   }, [unlocked])
 
   // Live warning pins (anything unusual on the site, with a comment log —
-  // see the 🦌/⚠️ buttons below). Same gating/lazy-import reasoning as the
+  // see the paw/warning-icon buttons below). Same gating/lazy-import reasoning as the
   // wounded-deer subscription above — warnings.ts is a separate module but
   // shares the same Firestore project/SDK.
   useEffect(() => {
@@ -267,6 +281,13 @@ export default function App() {
       unsubscribe?.()
     }
   }, [unlocked])
+
+  // Briefly flags pins that just arrived via the live onSnapshot feed (not
+  // ones already on the map at initial load) so they can get a short pulse
+  // — a visible cue that something appeared without the page refreshing.
+  const newDeerPinIds = useNewItemIds(useMemo(() => woundedDeerReports.map((r) => r.id), [woundedDeerReports]))
+  const newWarningPinIds = useNewItemIds(useMemo(() => warnings.map((w) => w.id), [warnings]))
+  const activeAlertCount = woundedDeerReports.filter((r) => !r.foundAt).length + warnings.filter((w) => !w.resolvedAt).length
 
   // Comment thread for whichever warning's popup is currently open — only
   // subscribed while a popup is actually open, not once per pin on the map.
@@ -356,37 +377,47 @@ export default function App() {
     try {
       const { reportWoundedDeer } = await import('./fieldReports')
       await reportWoundedDeer(draftDeerPoint.lat, draftDeerPoint.lng, deerNote)
+      navigator.vibrate?.(30)
+      pushToast('Point ajouté.')
       setReportingDeer(false)
       setDraftDeerPoint(null)
       setHunterPosition(null)
       setDeerNote('')
-    } catch {
-      setDeerActionError("Échec de l'envoi — réessayez.")
+    } catch (error) {
+      const message = describeActionError(error)
+      setDeerActionError(message)
+      pushToast(message, 'error')
     } finally {
       setDeerSubmitting(false)
     }
-  }, [draftDeerPoint, deerNote])
+  }, [draftDeerPoint, deerNote, pushToast])
 
   const handleDeleteDeerReport = useCallback(async (id: string) => {
     setDeerActionError(null)
     try {
       const { deleteWoundedDeerReport } = await import('./fieldReports')
       await deleteWoundedDeerReport(id)
+      pushToast('Point supprimé.')
       setSelectedWoundedDeerReport(null)
-    } catch {
-      setDeerActionError('Échec de la suppression — réessayez.')
+    } catch (error) {
+      const message = describeActionError(error)
+      setDeerActionError(message)
+      pushToast(message, 'error')
     }
-  }, [])
+  }, [pushToast])
 
   const handleMarkDeerFound = useCallback(async (id: string) => {
     setDeerActionError(null)
     try {
       const { markWoundedDeerFound } = await import('./fieldReports')
       await markWoundedDeerFound(id)
-    } catch {
-      setDeerActionError('Échec — réessayez.')
+      pushToast('Marqué comme trouvé.')
+    } catch (error) {
+      const message = describeActionError(error)
+      setDeerActionError(message)
+      pushToast(message, 'error')
     }
-  }, [])
+  }, [pushToast])
 
   const handleAddDeerComment = useCallback(async () => {
     if (!selectedWoundedDeerReport || !newDeerCommentText.trim()) return
@@ -395,13 +426,16 @@ export default function App() {
     try {
       const { addWoundedDeerComment } = await import('./fieldReports')
       await addWoundedDeerComment(selectedWoundedDeerReport.id, newDeerCommentText)
+      pushToast('Commentaire envoyé.')
       setNewDeerCommentText('')
-    } catch {
-      setDeerActionError("Échec de l'envoi du commentaire — réessayez.")
+    } catch (error) {
+      const message = describeActionError(error)
+      setDeerActionError(message)
+      pushToast(message, 'error')
     } finally {
       setDeerCommentSubmitting(false)
     }
-  }, [selectedWoundedDeerReport, newDeerCommentText])
+  }, [selectedWoundedDeerReport, newDeerCommentText, pushToast])
 
   // Map-based warning reporting — same tap-to-place-then-confirm flow as
   // the animal-report one above, with its own comment log once placed.
@@ -436,37 +470,47 @@ export default function App() {
     try {
       const { reportWarning } = await import('./warnings')
       await reportWarning(draftWarningPoint.lat, draftWarningPoint.lng, warningNote)
+      navigator.vibrate?.(30)
+      pushToast('Point ajouté.')
       setPlacingWarning(false)
       setDraftWarningPoint(null)
       setHunterPosition(null)
       setWarningNote('')
-    } catch {
-      setWarningActionError("Échec de l'envoi — réessayez.")
+    } catch (error) {
+      const message = describeActionError(error)
+      setWarningActionError(message)
+      pushToast(message, 'error')
     } finally {
       setWarningSubmitting(false)
     }
-  }, [draftWarningPoint, warningNote])
+  }, [draftWarningPoint, warningNote, pushToast])
 
   const handleResolveWarning = useCallback(async (id: string) => {
     setWarningActionError(null)
     try {
       const { resolveWarning } = await import('./warnings')
       await resolveWarning(id)
-    } catch {
-      setWarningActionError('Échec — réessayez.')
+      pushToast('Marqué comme résolu.')
+    } catch (error) {
+      const message = describeActionError(error)
+      setWarningActionError(message)
+      pushToast(message, 'error')
     }
-  }, [])
+  }, [pushToast])
 
   const handleDeleteWarning = useCallback(async (id: string) => {
     setWarningActionError(null)
     try {
       const { deleteWarning } = await import('./warnings')
       await deleteWarning(id)
+      pushToast('Point supprimé.')
       setSelectedWarning(null)
-    } catch {
-      setWarningActionError('Échec de la suppression — réessayez.')
+    } catch (error) {
+      const message = describeActionError(error)
+      setWarningActionError(message)
+      pushToast(message, 'error')
     }
-  }, [])
+  }, [pushToast])
 
   const handleAddWarningComment = useCallback(async () => {
     if (!selectedWarning || !newCommentText.trim()) return
@@ -475,13 +519,16 @@ export default function App() {
     try {
       const { addWarningComment } = await import('./warnings')
       await addWarningComment(selectedWarning.id, newCommentText)
+      pushToast('Commentaire envoyé.')
       setNewCommentText('')
-    } catch {
-      setWarningActionError("Échec de l'envoi du commentaire — réessayez.")
+    } catch (error) {
+      const message = describeActionError(error)
+      setWarningActionError(message)
+      pushToast(message, 'error')
     } finally {
       setCommentSubmitting(false)
     }
-  }, [selectedWarning, newCommentText])
+  }, [selectedWarning, newCommentText, pushToast])
   const handleToggleDrawnMap = useCallback(() => setShowDrawnMap((v) => !v), [])
   const handleToggleWindCones = useCallback(() => setShowWindCones((v) => !v), [])
   const handleToggleSitePois = useCallback(() => setShowSitePois((v) => !v), [])
@@ -629,6 +676,14 @@ export default function App() {
   const handleResetNorth = useCallback(() => {
     const map = mapRef.current?.getMap()
     if (map) map.easeTo({ bearing: 0, duration: 500 })
+  }, [])
+
+  const handleGeolocate = useCallback((e: GeolocateResultEvent) => {
+    setMyLocation({ lng: e.coords.longitude, lat: e.coords.latitude })
+  }, [])
+
+  const handleGeolocateEnd = useCallback(() => {
+    setMyLocation(null)
   }, [])
 
   const handleToggleOverlay = useCallback(() => {
@@ -925,6 +980,13 @@ export default function App() {
         <>
           <FullscreenControl position="top-right" />
           <NavigationControl position="top-right" visualizePitch />
+          <GeolocateControl
+            position="top-right"
+            trackUserLocation
+            onGeolocate={handleGeolocate}
+            onTrackUserLocationEnd={handleGeolocateEnd}
+            onError={handleGeolocateEnd}
+          />
         </>
       )}
       {zoom >= ROTATE_HINT_MIN_ZOOM && !rotateHintExpired && !wolmarOnly && (
@@ -944,7 +1006,7 @@ export default function App() {
         aria-label="Recentrer sur le domaine"
         title="Recentrer sur le domaine"
       >
-        ⌂
+        <RecenterIcon />
       </button>
       <button
         type="button"
@@ -964,32 +1026,22 @@ export default function App() {
         <div className="isolate-3d-hint">Cliquez pour une vue 3D isolée</div>
       )}
       {unlocked && !wolmarOnly && (
-        <button
-          type="button"
-          className={`report-deer-button ${reportingDeer ? 'report-deer-button-active' : ''}`}
-          onClick={handleToggleReportingDeer}
-          aria-label={reportingDeer ? 'Annuler le signalement' : 'Signaler un animal blessé'}
-          title={reportingDeer ? 'Annuler le signalement' : 'Signaler un animal blessé'}
-        >
-          🦌
-        </button>
-      )}
-      {unlocked && !wolmarOnly && (
-        <button
-          type="button"
-          className={`report-warning-button ${placingWarning ? 'report-warning-button-active' : ''}`}
-          onClick={handleTogglePlacingWarning}
-          aria-label={placingWarning ? 'Annuler le signalement' : 'Signaler un point inhabituel'}
-          title={placingWarning ? 'Annuler le signalement' : 'Signaler un point inhabituel'}
-        >
-          ⚠️
-        </button>
+        <MapActionFab
+          reportingDeer={reportingDeer}
+          onToggleReportingDeer={handleToggleReportingDeer}
+          placingWarning={placingWarning}
+          onTogglePlacingWarning={handleTogglePlacingWarning}
+          measureActive={measureActive}
+          onToggleMeasure={handleToggleMeasure}
+          measureDisabled={tourRunning || landmarkTourIndex !== null}
+        />
       )}
       {/* The 3D view has its own compass (reflecting the 3D camera's
           azimuth, not the hidden 2D map's) in the same corner — showing
           both would be a confusing, overlapping duplicate. */}
       {!wolmarOnly && <MapCompass bearing={bearing} onReset={handleResetNorth} />}
       <OnboardingCard />
+      <ToastStack toasts={toasts} onDismiss={dismissToast} />
 
       {renderedImageryUrl !== null && (
         <Source
@@ -1212,7 +1264,7 @@ export default function App() {
           }}
         >
           <div
-            className={`wounded-deer-pin ${report.foundAt ? 'wounded-deer-pin-found' : ''}`}
+            className={`wounded-deer-pin ${report.foundAt ? 'wounded-deer-pin-found' : ''} ${newDeerPinIds.has(report.id) ? 'pin-new-pulse' : ''}`}
             title={report.foundAt ? 'Animal trouvé' : 'Animal blessé'}
           />
         </Marker>
@@ -1255,7 +1307,7 @@ export default function App() {
                   aria-label="Annuler"
                   title="Annuler"
                 >
-                  ✕
+                  <CrossIcon />
                 </button>
                 <button
                   type="button"
@@ -1265,7 +1317,7 @@ export default function App() {
                   aria-label="Confirmer"
                   title="Confirmer"
                 >
-                  {deerSubmitting ? '…' : '✓'}
+                  {deerSubmitting ? '…' : <CheckIcon />}
                 </button>
               </div>
             </>
@@ -1283,14 +1335,12 @@ export default function App() {
         >
           <div className="field-report-popup">
             <strong>{selectedWoundedDeerReport.foundAt ? 'Animal trouvé' : 'Animal blessé'}</strong>
-            <p>
-              Signalé à{' '}
-              {selectedWoundedDeerReport.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+            <p title={selectedWoundedDeerReport.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}>
+              Signalé {formatRelativeTime(selectedWoundedDeerReport.createdAt, now)}
             </p>
             {selectedWoundedDeerReport.foundAt && (
-              <p>
-                Trouvé à{' '}
-                {selectedWoundedDeerReport.foundAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+              <p title={selectedWoundedDeerReport.foundAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}>
+                Trouvé {formatRelativeTime(selectedWoundedDeerReport.foundAt, now)}
               </p>
             )}
             {selectedWoundedDeerReport.note && <p>{selectedWoundedDeerReport.note}</p>}
@@ -1301,8 +1351,8 @@ export default function App() {
               ) : (
                 deerComments.map((comment) => (
                   <div key={comment.id} className="field-report-comment">
-                    <span className="hint">
-                      {comment.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    <span className="hint" title={comment.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}>
+                      {formatRelativeTime(comment.createdAt, now)}
                     </span>
                     <p>{comment.text}</p>
                   </div>
@@ -1363,7 +1413,7 @@ export default function App() {
           }}
         >
           <div
-            className={`warning-pin ${warning.resolvedAt ? 'warning-pin-resolved' : ''}`}
+            className={`warning-pin ${warning.resolvedAt ? 'warning-pin-resolved' : ''} ${newWarningPinIds.has(warning.id) ? 'pin-new-pulse' : ''}`}
             title={warning.resolvedAt ? 'Résolu' : 'Point inhabituel'}
           >
             !
@@ -1404,7 +1454,7 @@ export default function App() {
                   aria-label="Annuler"
                   title="Annuler"
                 >
-                  ✕
+                  <CrossIcon />
                 </button>
                 <button
                   type="button"
@@ -1414,7 +1464,7 @@ export default function App() {
                   aria-label="Confirmer"
                   title="Confirmer"
                 >
-                  {warningSubmitting ? '…' : '✓'}
+                  {warningSubmitting ? '…' : <CheckIcon />}
                 </button>
               </div>
             </>
@@ -1432,14 +1482,12 @@ export default function App() {
         >
           <div className="field-report-popup">
             <strong>{selectedWarning.resolvedAt ? 'Point résolu' : 'Point inhabituel'}</strong>
-            <p>
-              Signalé à{' '}
-              {selectedWarning.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+            <p title={selectedWarning.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}>
+              Signalé {formatRelativeTime(selectedWarning.createdAt, now)}
             </p>
             {selectedWarning.resolvedAt && (
-              <p>
-                Résolu à{' '}
-                {selectedWarning.resolvedAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+              <p title={selectedWarning.resolvedAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}>
+                Résolu {formatRelativeTime(selectedWarning.resolvedAt, now)}
               </p>
             )}
             {selectedWarning.note && <p>{selectedWarning.note}</p>}
@@ -1450,8 +1498,8 @@ export default function App() {
               ) : (
                 warningComments.map((comment) => (
                   <div key={comment.id} className="field-report-comment">
-                    <span className="hint">
-                      {comment.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    <span className="hint" title={comment.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}>
+                      {formatRelativeTime(comment.createdAt, now)}
                     </span>
                     <p>{comment.text}</p>
                   </div>
@@ -1523,6 +1571,17 @@ export default function App() {
             <p className="landmark-size-tag">
               <span className={`landmark-size-dot landmark-size-dot-${selectedLandmark.size}`} />
               {selectedLandmark.size === 'large' ? 'Grand mirador' : 'Petit mirador'}
+            </p>
+          )}
+          {myLocation && (
+            <p className="landmark-distance-tag">
+              {formatDistanceMeters(
+                haversineDistanceMeters(
+                  [myLocation.lng, myLocation.lat],
+                  [selectedLandmark.longitude, selectedLandmark.latitude],
+                ),
+              )}{' '}
+              de vous
             </p>
           )}
           {selectedLandmark.photos.length === 0 && <p className="landmark-photos-pending">Photos à venir</p>}
@@ -1616,6 +1675,8 @@ export default function App() {
       <ControlsPanel
         landmarks={visibleLandmarks}
         onSelectLandmark={handleSelectLandmark}
+        myLocation={myLocation}
+        activeAlertCount={activeAlertCount}
         onUnlock={handleUnlock}
         adminUnlocked={adminUnlocked}
         onAdminUnlock={handleAdminUnlock}

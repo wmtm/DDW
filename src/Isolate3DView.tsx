@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import './terrain3d/Isolate3D.css'
+import { CrossIcon } from './MapActionIcons'
 import { BOUNDARY_LOCAL, BOUNDARY_LOCAL_BOUNDS, loadTerrainContext } from './terrain3d/terrainContext'
 import { buildTerrainTextures, type TerrainTextures } from './terrain3d/satelliteTexture'
 import Scene from './terrain3d/Scene'
@@ -111,7 +112,7 @@ export default function Isolate3DView({ onClose, landmarks, onSelectLandmark, wo
   return (
     <div className="isolate3d-overlay">
       <button type="button" className="isolate3d-close" onClick={onClose} aria-label="Quitter la vue 3D" title="Quitter la vue 3D">
-        ✕
+        <CrossIcon />
       </button>
 
       {!ready && !loadError && (

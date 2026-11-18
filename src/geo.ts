@@ -23,6 +23,12 @@ export function destinationPoint(
   return [lon + dLon, lat + dLat]
 }
 
+/** French-formatted distance for display: meters under 1km, comma-decimal km above. */
+export function formatDistanceMeters(meters: number): string {
+  if (meters < 1000) return `${Math.round(meters)} m`
+  return `${(meters / 1000).toFixed(1).replace('.', ',')} km`
+}
+
 export function haversineDistanceMeters(a: [number, number], b: [number, number]): number {
   const R = 6371000
   const toRad = (deg: number) => (deg * Math.PI) / 180
