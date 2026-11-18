@@ -61,7 +61,8 @@ import type { WoundedDeerReport, WoundedDeerComment } from './fieldReports'
 import type { Warning, WarningComment } from './warnings'
 import ControlsPanel, { type SectionKey } from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
-import { PawIcon, WarningIcon, RecenterIcon, CheckIcon, CrossIcon } from './MapActionIcons'
+import { RecenterIcon, CheckIcon, CrossIcon } from './MapActionIcons'
+import MapActionFab from './MapActionFab'
 import PhotoLightbox from './PhotoLightbox'
 import OnboardingCard from './OnboardingCard'
 import './App.css'
@@ -992,26 +993,15 @@ export default function App() {
         <div className="isolate-3d-hint">Cliquez pour une vue 3D isolée</div>
       )}
       {unlocked && !wolmarOnly && (
-        <button
-          type="button"
-          className={`report-deer-button ${reportingDeer ? 'report-deer-button-active' : ''}`}
-          onClick={handleToggleReportingDeer}
-          aria-label={reportingDeer ? 'Annuler le signalement' : 'Signaler un animal blessé'}
-          title={reportingDeer ? 'Annuler le signalement' : 'Signaler un animal blessé'}
-        >
-          <PawIcon />
-        </button>
-      )}
-      {unlocked && !wolmarOnly && (
-        <button
-          type="button"
-          className={`report-warning-button ${placingWarning ? 'report-warning-button-active' : ''}`}
-          onClick={handleTogglePlacingWarning}
-          aria-label={placingWarning ? 'Annuler le signalement' : 'Signaler un point inhabituel'}
-          title={placingWarning ? 'Annuler le signalement' : 'Signaler un point inhabituel'}
-        >
-          <WarningIcon />
-        </button>
+        <MapActionFab
+          reportingDeer={reportingDeer}
+          onToggleReportingDeer={handleToggleReportingDeer}
+          placingWarning={placingWarning}
+          onTogglePlacingWarning={handleTogglePlacingWarning}
+          measureActive={measureActive}
+          onToggleMeasure={handleToggleMeasure}
+          measureDisabled={tourRunning || landmarkTourIndex !== null}
+        />
       )}
       {/* The 3D view has its own compass (reflecting the 3D camera's
           azimuth, not the hidden 2D map's) in the same corner — showing

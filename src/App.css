@@ -884,12 +884,24 @@
   color: #1a1407;
 }
 
-.report-deer-button {
+/* Bottom-right expandable action button (report animal / report warning /
+   measure) — thumb reach on mobile. Replaces what used to be three
+   always-visible circles with one, expanding upward into labeled items.
+   44px+ tap targets throughout, per the usual mobile minimum. */
+.map-action-fab {
   position: absolute;
-  bottom: 118px;
-  left: 16px;
-  width: 34px;
-  height: 34px;
+  bottom: 16px;
+  right: 16px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.map-action-fab-main {
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -897,51 +909,77 @@
   backdrop-filter: blur(var(--panel-blur));
   border: 1.5px solid var(--accent-amber);
   border-radius: 50%;
-  font-size: 16px;
-  line-height: 1;
+  color: var(--text-primary);
   cursor: pointer;
-  z-index: 2;
   box-shadow: var(--panel-shadow);
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
-.report-deer-button:hover {
+.map-action-fab-main:hover {
   transform: scale(1.06);
 }
 
-.report-deer-button-active {
+.map-action-fab-main-active {
   background: var(--accent-amber);
-  animation: wounded-deer-pulse 1.6s ease-in-out infinite;
+  color: #1a1407;
 }
 
-.report-warning-button {
-  position: absolute;
-  bottom: 160px;
-  left: 16px;
-  width: 34px;
-  height: 34px;
+.map-action-fab-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.map-action-fab-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: var(--panel-bg);
-  backdrop-filter: blur(var(--panel-blur));
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  background: var(--panel-bg-solid);
   border: 1.5px solid var(--accent-amber);
-  border-radius: 50%;
-  font-size: 16px;
-  line-height: 1;
+  border-radius: 22px;
+  color: var(--text-primary);
+  font-size: 13px;
+  white-space: nowrap;
   cursor: pointer;
-  z-index: 2;
   box-shadow: var(--panel-shadow);
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
-.report-warning-button:hover {
-  transform: scale(1.06);
+.map-action-fab-item:hover:not(:disabled) {
+  background: rgba(255, 209, 102, 0.15);
 }
 
-.report-warning-button-active {
-  background: var(--accent-amber);
-  animation: wounded-deer-pulse 1.6s ease-in-out infinite;
+.map-action-fab-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .map-action-fab-item {
+    animation: fab-item-in 0.2s ease-out backwards;
+  }
+
+  .map-action-fab-item:nth-child(1) {
+    animation-delay: 0.08s;
+  }
+
+  .map-action-fab-item:nth-child(2) {
+    animation-delay: 0.04s;
+  }
+}
+
+@keyframes fab-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* One-time callout pointing at the new persistent 3D toggle, same visual

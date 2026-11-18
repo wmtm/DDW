@@ -568,13 +568,17 @@ export default function ControlsPanel({
             </ControlGroup>
 
             <ControlGroup label="Distances">
-              <button
-                className={`action-button ${measureActive ? 'chip-active' : ''}`}
-                onClick={onToggleMeasure}
-                disabled={tourRunning || landmarkTourActive}
-              >
-                {measureActive ? 'Quitter le mode mesure' : 'Mesurer une distance'}
-              </button>
+              {measureActive ? (
+                <button
+                  className="action-button chip-active"
+                  onClick={onToggleMeasure}
+                  disabled={tourRunning || landmarkTourActive}
+                >
+                  Quitter le mode mesure
+                </button>
+              ) : (
+                <span className="hint">Mesurer une distance : bouton d'actions en bas à droite de la carte.</span>
+              )}
               {measureActive && measurePointCount === 0 && (
                 <span className="hint">Cliquez sur le terrain pour tracer un parcours</span>
               )}
