@@ -63,6 +63,9 @@ import ControlsPanel, { type SectionKey } from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
 import { RecenterIcon, CheckIcon, CrossIcon } from './MapActionIcons'
 import MapActionFab from './MapActionFab'
+import ToastStack from './ToastStack'
+import { useToasts } from './useToasts'
+import { describeActionError } from './actionError'
 import PhotoLightbox from './PhotoLightbox'
 import OnboardingCard from './OnboardingCard'
 import './App.css'
@@ -187,6 +190,7 @@ export default function App() {
   const [newDeerCommentText, setNewDeerCommentText] = useState('')
   const [deerCommentSubmitting, setDeerCommentSubmitting] = useState(false)
   const [myReporterId] = useState(() => getReporterId())
+  const { toasts, pushToast, dismissToast } = useToasts()
 
   const [warnings, setWarnings] = useState<Warning[]>([])
   const [selectedWarning, setSelectedWarning] = useState<Warning | null>(null)
@@ -370,37 +374,47 @@ export default function App() {
     try {
       const { reportWoundedDeer } = await import('./fieldReports')
       await reportWoundedDeer(draftDeerPoint.lat, draftDeerPoint.lng, deerNote)
+      navigator.vibrate?.(30)
+      pushToast('Point ajouté.')
       setReportingDeer(false)
       setDraftDeerPoint(null)
       setHunterPosition(null)
       setDeerNote('')
-    } catch {
-      setDeerActionError("Échec de l'envoi — réessayez.")
+    } catch (error) {
+      const message = describeActionError(error)
+      setDeerActionError(message)
+      pushToast(message, 'error')
     } finally {
       setDeerSubmitting(false)
     }
-  }, [draftDeerPoint, deerNote])
+  }, [draftDeerPoint, deerNote, pushToast])
 
   const handleDeleteDeerReport = useCallback(async (id: string) => {
     setDeerActionError(null)
     try {
       const { deleteWoundedDeerReport } = await import('./fieldReports')
       await deleteWoundedDeerReport(id)
+      pushToast('Point supprimé.')
       setSelectedWoundedDeerReport(null)
-    } catch {
-      setDeerActionError('Échec de la suppression — réessayez.')
+    } catch (error) {
+      const message = describeActionError(error)
+      setDeerActionError(message)
+      pushToast(message, 'error')
     }
-  }, [])
+  }, [pushToast])
 
   const handleMarkDeerFound = useCallback(async (id: string) => {
     setDeerActionError(null)
     try {
       const { markWoundedDeerFound } = await import('./fieldReports')
       await markWoundedDeerFound(id)
-    } catch {
-      setDeerActionError('Échec — réessayez.')
+      pushToast('Marqué comme trouvé.')
+    } catch (error) {
+      const message = describeActionError(error)
+      setDeerActionError(message)
+      pushToast(message, 'error')
     }
-  }, [])
+  }, [pushToast])
 
   const handleAddDeerComment = useCallback(async () => {
     if (!selectedWoundedDeerReport || !newDeerCommentText.trim()) return
@@ -409,13 +423,16 @@ export default function App() {
     try {
       const { addWoundedDeerComment } = await import('./fieldReports')
       await addWoundedDeerComment(selectedWoundedDeerReport.id, newDeerCommentText)
+      pushToast('Commentaire envoyé.')
       setNewDeerCommentText('')
-    } catch {
-      setDeerActionError("Échec de l'envoi du commentaire — réessayez.")
+    } catch (error) {
+      const message = describeActionError(error)
+      setDeerActionError(message)
+      pushToast(message, 'error')
     } finally {
       setDeerCommentSubmitting(false)
     }
-  }, [selectedWoundedDeerReport, newDeerCommentText])
+  }, [selectedWoundedDeerReport, newDeerCommentText, pushToast])
 
   // Map-based warning reporting — same tap-to-place-then-confirm flow as
   // the animal-report one above, with its own comment log once placed.
@@ -450,37 +467,47 @@ export default function App() {
     try {
       const { reportWarning } = await import('./warnings')
       await reportWarning(draftWarningPoint.lat, draftWarningPoint.lng, warningNote)
+      navigator.vibrate?.(30)
+      pushToast('Point ajouté.')
       setPlacingWarning(false)
       setDraftWarningPoint(null)
       setHunterPosition(null)
       setWarningNote('')
-    } catch {
-      setWarningActionError("Échec de l'envoi — réessayez.")
+    } catch (error) {
+      const message = describeActionError(error)
+      setWarningActionError(message)
+      pushToast(message, 'error')
     } finally {
       setWarningSubmitting(false)
     }
-  }, [draftWarningPoint, warningNote])
+  }, [draftWarningPoint, warningNote, pushToast])
 
   const handleResolveWarning = useCallback(async (id: string) => {
     setWarningActionError(null)
     try {
       const { resolveWarning } = await import('./warnings')
       await resolveWarning(id)
-    } catch {
-      setWarningActionError('Échec — réessayez.')
+      pushToast('Marqué comme résolu.')
+    } catch (error) {
+      const message = describeActionError(error)
+      setWarningActionError(message)
+      pushToast(message, 'error')
     }
-  }, [])
+  }, [pushToast])
 
   const handleDeleteWarning = useCallback(async (id: string) => {
     setWarningActionError(null)
     try {
       const { deleteWarning } = await import('./warnings')
       await deleteWarning(id)
+      pushToast('Point supprimé.')
       setSelectedWarning(null)
-    } catch {
-      setWarningActionError('Échec de la suppression — réessayez.')
+    } catch (error) {
+      const message = describeActionError(error)
+      setWarningActionError(message)
+      pushToast(message, 'error')
     }
-  }, [])
+  }, [pushToast])
 
   const handleAddWarningComment = useCallback(async () => {
     if (!selectedWarning || !newCommentText.trim()) return
@@ -489,13 +516,16 @@ export default function App() {
     try {
       const { addWarningComment } = await import('./warnings')
       await addWarningComment(selectedWarning.id, newCommentText)
+      pushToast('Commentaire envoyé.')
       setNewCommentText('')
-    } catch {
-      setWarningActionError("Échec de l'envoi du commentaire — réessayez.")
+    } catch (error) {
+      const message = describeActionError(error)
+      setWarningActionError(message)
+      pushToast(message, 'error')
     } finally {
       setCommentSubmitting(false)
     }
-  }, [selectedWarning, newCommentText])
+  }, [selectedWarning, newCommentText, pushToast])
   const handleToggleDrawnMap = useCallback(() => setShowDrawnMap((v) => !v), [])
   const handleToggleWindCones = useCallback(() => setShowWindCones((v) => !v), [])
   const handleToggleSitePois = useCallback(() => setShowSitePois((v) => !v), [])
@@ -1008,6 +1038,7 @@ export default function App() {
           both would be a confusing, overlapping duplicate. */}
       {!wolmarOnly && <MapCompass bearing={bearing} onReset={handleResetNorth} />}
       <OnboardingCard />
+      <ToastStack toasts={toasts} onDismiss={dismissToast} />
 
       {renderedImageryUrl !== null && (
         <Source
