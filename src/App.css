@@ -187,14 +187,17 @@
   }
 }
 
-.warning-popup {
+/* Shared by both pin popups that have a comment log (warnings, wounded-deer
+   reports) — not warning-specific despite living in the same block it was
+   first written for. */
+.field-report-popup {
   display: flex;
   flex-direction: column;
   gap: 6px;
   max-width: 260px;
 }
 
-.warning-comment-log {
+.field-report-comment-log {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -208,7 +211,7 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
-.warning-comment p {
+.field-report-comment p {
   margin: 2px 0 0;
   font-size: 13px;
 }
@@ -218,7 +221,7 @@
    are correct. Here it sits inside a MapLibre popup instead, which is
    white, not this app's dark theme — the same styling would render as
    near-white text on a near-white background. */
-.warning-popup .field-report-note-input {
+.field-report-popup .field-report-note-input {
   color: #1a1a1a;
   background: rgba(0, 0, 0, 0.04);
   border-color: rgba(0, 0, 0, 0.15);
@@ -227,13 +230,13 @@
 /* Same reasoning — #e0876a is tuned for this app's dark panels, where it's
    this site's error/salmon color at full contrast; on the popup's white
    background it would read as washed out. */
-.warning-popup .field-report-error {
+.field-report-popup .field-report-error {
   color: #b5432f;
 }
 
 /* .action-button is designed for this site's dark panels (white text on a
    faint white fill) — inside a MapLibre popup, which is white, that's
-   nearly invisible. Scoped to any popup rather than just .warning-popup
+   nearly invisible. Scoped to any popup rather than just .field-report-popup
    so this also fixes the pre-existing Trouvé/Supprimer buttons on the
    animal-report popup, which have the exact same issue. */
 .maplibregl-popup-content .action-button {
@@ -287,6 +290,13 @@
 
 .deer-report-panel-actions .action-button {
   flex: 1;
+}
+
+/* Modifier for the draft-placement confirm/cancel pair specifically (a
+   lone ✓/✕ glyph each) — not the popup's own Commenter/Trouvé/Supprimer
+   text-label row, which reuses the same base class just for the flex
+   layout and would overflow a narrow popup at this size. */
+.deer-report-panel-actions-icons .action-button {
   text-align: center;
   font-size: 18px;
   line-height: 1;
