@@ -2188,18 +2188,58 @@
   letter-spacing: 0.01em;
 }
 
-.onboarding-card ul {
-  margin: 0 0 16px;
-  padding-left: 18px;
+.onboarding-dots {
   display: flex;
-  flex-direction: column;
   gap: 6px;
+  margin-bottom: 12px;
+}
+
+.onboarding-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--panel-border);
+  transition: background 0.15s ease, width 0.15s ease;
+}
+
+.onboarding-dot-active {
+  width: 16px;
+  border-radius: 3px;
+  background: var(--accent-amber);
+}
+
+.onboarding-step {
+  animation: panel-section-enter 0.2s ease;
+}
+
+.onboarding-step-body {
+  margin: 0 0 16px;
   font-size: 13px;
   color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.onboarding-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.onboarding-skip {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.onboarding-skip:hover {
+  color: var(--text-primary);
 }
 
 .onboarding-dismiss {
-  width: 100%;
+  flex: 1;
   text-align: center;
 }
 
