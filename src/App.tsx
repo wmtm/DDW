@@ -61,6 +61,7 @@ import type { WoundedDeerReport, WoundedDeerComment } from './fieldReports'
 import type { Warning, WarningComment } from './warnings'
 import ControlsPanel, { type SectionKey } from './ControlsPanel'
 import LandmarkTourCard from './LandmarkTourCard'
+import { PawIcon, WarningIcon, RecenterIcon, CheckIcon, CrossIcon } from './MapActionIcons'
 import PhotoLightbox from './PhotoLightbox'
 import OnboardingCard from './OnboardingCard'
 import './App.css'
@@ -253,7 +254,7 @@ export default function App() {
   }, [unlocked])
 
   // Live warning pins (anything unusual on the site, with a comment log —
-  // see the 🦌/⚠️ buttons below). Same gating/lazy-import reasoning as the
+  // see the paw/warning-icon buttons below). Same gating/lazy-import reasoning as the
   // wounded-deer subscription above — warnings.ts is a separate module but
   // shares the same Firestore project/SDK.
   useEffect(() => {
@@ -971,7 +972,7 @@ export default function App() {
         aria-label="Recentrer sur le domaine"
         title="Recentrer sur le domaine"
       >
-        ⌂
+        <RecenterIcon />
       </button>
       <button
         type="button"
@@ -998,7 +999,7 @@ export default function App() {
           aria-label={reportingDeer ? 'Annuler le signalement' : 'Signaler un animal blessé'}
           title={reportingDeer ? 'Annuler le signalement' : 'Signaler un animal blessé'}
         >
-          🦌
+          <PawIcon />
         </button>
       )}
       {unlocked && !wolmarOnly && (
@@ -1009,7 +1010,7 @@ export default function App() {
           aria-label={placingWarning ? 'Annuler le signalement' : 'Signaler un point inhabituel'}
           title={placingWarning ? 'Annuler le signalement' : 'Signaler un point inhabituel'}
         >
-          ⚠️
+          <WarningIcon />
         </button>
       )}
       {/* The 3D view has its own compass (reflecting the 3D camera's
@@ -1282,7 +1283,7 @@ export default function App() {
                   aria-label="Annuler"
                   title="Annuler"
                 >
-                  ✕
+                  <CrossIcon />
                 </button>
                 <button
                   type="button"
@@ -1292,7 +1293,7 @@ export default function App() {
                   aria-label="Confirmer"
                   title="Confirmer"
                 >
-                  {deerSubmitting ? '…' : '✓'}
+                  {deerSubmitting ? '…' : <CheckIcon />}
                 </button>
               </div>
             </>
@@ -1431,7 +1432,7 @@ export default function App() {
                   aria-label="Annuler"
                   title="Annuler"
                 >
-                  ✕
+                  <CrossIcon />
                 </button>
                 <button
                   type="button"
@@ -1441,7 +1442,7 @@ export default function App() {
                   aria-label="Confirmer"
                   title="Confirmer"
                 >
-                  {warningSubmitting ? '…' : '✓'}
+                  {warningSubmitting ? '…' : <CheckIcon />}
                 </button>
               </div>
             </>

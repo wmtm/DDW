@@ -373,7 +373,9 @@
    text-label row, which reuses the same base class just for the flex
    layout and would overflow a narrow popup at this size. */
 .deer-report-panel-actions-icons .action-button {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 18px;
   line-height: 1;
   padding: 10px 12px;
