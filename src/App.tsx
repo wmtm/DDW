@@ -66,6 +66,8 @@ import MapActionFab from './MapActionFab'
 import ToastStack from './ToastStack'
 import { useToasts } from './useToasts'
 import { describeActionError } from './actionError'
+import { formatRelativeTime } from './relativeTime'
+import { useNow } from './useNow'
 import PhotoLightbox from './PhotoLightbox'
 import OnboardingCard from './OnboardingCard'
 import './App.css'
@@ -191,6 +193,7 @@ export default function App() {
   const [deerCommentSubmitting, setDeerCommentSubmitting] = useState(false)
   const [myReporterId] = useState(() => getReporterId())
   const { toasts, pushToast, dismissToast } = useToasts()
+  const now = useNow()
 
   const [warnings, setWarnings] = useState<Warning[]>([])
   const [selectedWarning, setSelectedWarning] = useState<Warning | null>(null)
@@ -1332,14 +1335,12 @@ export default function App() {
         >
           <div className="field-report-popup">
             <strong>{selectedWoundedDeerReport.foundAt ? 'Animal trouvé' : 'Animal blessé'}</strong>
-            <p>
-              Signalé à{' '}
-              {selectedWoundedDeerReport.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+            <p title={selectedWoundedDeerReport.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}>
+              Signalé {formatRelativeTime(selectedWoundedDeerReport.createdAt, now)}
             </p>
             {selectedWoundedDeerReport.foundAt && (
-              <p>
-                Trouvé à{' '}
-                {selectedWoundedDeerReport.foundAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+              <p title={selectedWoundedDeerReport.foundAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}>
+                Trouvé {formatRelativeTime(selectedWoundedDeerReport.foundAt, now)}
               </p>
             )}
             {selectedWoundedDeerReport.note && <p>{selectedWoundedDeerReport.note}</p>}
@@ -1350,8 +1351,8 @@ export default function App() {
               ) : (
                 deerComments.map((comment) => (
                   <div key={comment.id} className="field-report-comment">
-                    <span className="hint">
-                      {comment.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    <span className="hint" title={comment.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}>
+                      {formatRelativeTime(comment.createdAt, now)}
                     </span>
                     <p>{comment.text}</p>
                   </div>
@@ -1481,14 +1482,12 @@ export default function App() {
         >
           <div className="field-report-popup">
             <strong>{selectedWarning.resolvedAt ? 'Point résolu' : 'Point inhabituel'}</strong>
-            <p>
-              Signalé à{' '}
-              {selectedWarning.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+            <p title={selectedWarning.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}>
+              Signalé {formatRelativeTime(selectedWarning.createdAt, now)}
             </p>
             {selectedWarning.resolvedAt && (
-              <p>
-                Résolu à{' '}
-                {selectedWarning.resolvedAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+              <p title={selectedWarning.resolvedAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}>
+                Résolu {formatRelativeTime(selectedWarning.resolvedAt, now)}
               </p>
             )}
             {selectedWarning.note && <p>{selectedWarning.note}</p>}
@@ -1499,8 +1498,8 @@ export default function App() {
               ) : (
                 warningComments.map((comment) => (
                   <div key={comment.id} className="field-report-comment">
-                    <span className="hint">
-                      {comment.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    <span className="hint" title={comment.createdAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}>
+                      {formatRelativeTime(comment.createdAt, now)}
                     </span>
                     <p>{comment.text}</p>
                   </div>
