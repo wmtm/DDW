@@ -50,3 +50,13 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Root />
   </React.StrictMode>,
 )
+
+// Registered after the initial render so it never competes with the first
+// paint for bandwidth/CPU. See public/sw.js for exactly what it does (just
+// an offline shell fallback) and, as importantly, what it deliberately
+// doesn't touch (Firestore, MapTiler, the hashed JS/CSS bundles).
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch(() => {})
+  })
+}

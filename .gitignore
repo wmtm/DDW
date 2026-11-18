@@ -3,10 +3,16 @@ dist
 # Most of public/ is build-generated (maplibre-gl-*.mjs copied in by
 # scripts/copy-maplibre-worker.mjs, merch-optimized/ by
 # scripts/build-merch-images.mjs) and shouldn't be committed — except
-# public/merch/, the real product photos the site is built from.
+# public/merch/ (the real product photos the site is built from) and the
+# hand-authored PWA files (manifest/service worker/icons), none of which
+# any build script generates.
 public/*
 !public/merch
 !public/merch/**
+!public/manifest.webmanifest
+!public/sw.js
+!public/icons
+!public/icons/**
 *.log
 .claude/settings.local.json
 *.tsbuildinfo
